@@ -1,0 +1,354 @@
+/*color pallete
+#0031a4
+#001c48
+
+#055ca3
+#093759
+#69b3e3
+#0f2734
+*/
+body{
+    background-color: #EEEEEE;
+    margin-left: 10%;
+    margin-right: 10%
+}
+
+h1,h2,h3,h4,h5,h6,p{
+    font-family: 'Rubik', sans-serif;
+}
+
+
+
+.taskbar-containerr{
+    background-color: white;
+    display: flex;
+    border: 2px solid #d4d5d6;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
+    
+  
+}
+
+.logo{
+    height: 75px;
+    padding-left: 1%;
+    padding-top: .5%;
+    margin-right: auto;
+}
+
+.title-text{
+    color: #001c48;
+    border-bottom: 1px dashed #d4d5d6
+}
+
+.task{
+    margin: 10px; 
+}
+.eventName{
+    margin-left: 20px;
+    grid-area: 1/1/2/3;
+}
+
+.mainCard{
+    grid-area: 1/4/2/5;
+}
+
+.mainCard-container{
+    grid-area: 2/4/11/-1;
+    display: grid;
+    grid-template: 1fr 1fr 1fr/1fr 1fr;
+    gap: 5px ;
+}
+
+a{
+ 
+    color: black;
+    font-weight: 400;
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    /*text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000*/
+}
+
+.premium{
+    color: #0031a4;
+    font-weight: 500;
+}
+.main-page-containerr{
+    height: 30rem;
+    width: 100%;
+    border-top: 0px;
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr/1fr 1fr;
+    gap: 15px;
+    padding: 2px;
+    height: 88vh;  
+}
+
+.event-page-containerr{
+    height: 30rem;
+    width: 100%;
+    border-top: 0px;
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 5fr 5fr 1fr 1fr 1fr/1fr 1fr 1fr 3fr 3fr;
+    gap: 15px;
+    height: 120vh;
+    border: 2px solid #d4d5d6;
+    background-color: white;
+    border-radius: 5px;
+    padding: 2% 0;
+}
+
+.fight-listing{
+    display: flex;
+    flex-direction: column;
+}
+
+.fight-listing-row{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.fight-listing-fighter{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.vs{
+    align-self: center;
+    color:#0031a4;
+    font-weight: 600;
+}
+
+.fighter-img{
+    margin-top: 5%;
+    width: max-content;
+    align-self: center;
+    border-radius: 5px;
+    border: 1px solid #d4d5d6;
+}
+
+.fighter-name{
+    align-self: center;
+    color:#0031a4;
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 5%;
+    
+}
+
+.fighter-info{
+    margin: 2px 0;
+}
+
+.best-bets-row{
+    display: flex;
+    align-items: center;
+}
+
+.best-bets-col{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.best-bets-votes{
+    margin: 0;
+}
+
+.best-bets-info{
+    color: black;
+    margin: 0 0 0 2.5%;
+    min-width: 90px;
+}
+
+.best-bet-rank{
+    margin-bottom: 3%;
+}
+
+.best-bets-odds{
+    margin: 0;
+    color: rgba(0, 0, 0, 0.527);
+}
+
+.best-votes{
+    margin-left: 2.5%;
+}
+
+.circle{
+    background-color: #d4d5d6;
+    border-radius: 50%;
+    height: 45px;
+    width: 45px;
+    padding: 10px;
+    border: 1px solid #EEEEEE;
+    text-align: center;
+    font: 30px rubik, sans-serif;
+}
+
+.panel{
+    border: 2px solid #d4d5d6;
+    border-radius: 10px;
+    padding-left: 1%;
+    background-color: white;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
+    
+
+}
+
+.best-bets-container{
+    display: flex;
+    flex-direction: column;
+    margin-left: 3%;
+    padding-left: 10%;
+    grid-area: 8/1/13/4;
+}
+
+.poster{
+    grid-area: 2/1/8/3;
+    height: 350px;
+    padding-left: 5%;
+}
+
+.secondary-page-container{
+    margin-top: 10px;
+    height: 120vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #d4d5d6;
+    background-color: white;
+    border-radius: 5px;
+    padding: 2% 0;
+}
+
+.prelims-container{
+    border-top: 0px;
+    display: grid;
+    grid-template: 1fr 1fr 1fr 1fr/1fr 1fr 1fr;
+    gap: 15px;
+    padding: 2px;
+}
+
+.prelims-title{
+    margin-left: 20px;
+}
+
+.info-container{
+    grid-area:2/3/8/4
+}
+
+.hero-sub-containerr{
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    margin: 1% 0;
+    padding: 1%;
+
+}
+
+.octagon{
+    align-self: center;
+    object-fit: cover;
+    opacity: 90%;
+    height: 80%;
+    padding-left: 20%;
+
+
+}
+
+.hero-containerr{
+    grid-area: 1/1/4/-1;
+    display: flex;
+}
+
+.feature-containerr{
+    display: flex;
+
+}
+
+.description{
+    grid-area: 2/1/4/2;
+}
+
+
+
+.feature-sub-containerr{
+    grid-area: 2/1/4/2;
+    border-radius: 5px;
+    flex-basis: 60%;
+    margin: 2%;
+    padding: 1%;
+
+}
+
+.feature-1{
+    grid-area: 4/1/6/2;
+}
+
+.feature-2{
+    grid-area: 6/1/8/2;
+}
+
+
+.long{
+    grid-area: 4/2/-1/-1;
+}
+
+.button-containerr{
+    display: flex;
+    
+}
+
+
+/* CSS */
+.button-1 {
+  align-items: center;
+  appearance: button;
+  background-color:#001c48;
+  border-radius: 8px;
+  border-style: none;
+  box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  font-family: "RM Neue",sans-serif;
+  font-size: 100%;
+  line-height: 1.15;
+  margin: 0;
+  padding: 10px 21px;
+  text-align: center;
+  text-transform: none;
+  transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-1:active {
+  background-color: #006AE8;
+}
+
+.button-1:hover {
+  background-color: #528dff;
+}
+
+.secondary-page{
+    height: 8rem;
+    width: 100%;
+    background-color: #191919;
+    border: 3px solid black;
+}
+
+.footer-text{
+    text-align: center;
+    color: white;
+}
+
