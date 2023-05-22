@@ -1,0 +1,60 @@
+<%- include("partials/header"); -%>
+<div class="compose-page">
+<h1>Enter the event details below: </h1>
+<form action="/" method="post" enctype="multipart/form-data">
+<div class="compose compose-constructor">
+        <div class="panel compose-constructor">
+            <label for="post" class="form-label">Event Details:</label>
+            <input type="text" name="eventName" class="form-control" placeholder="Enter name of event">
+            <input type="text" name="orgName" class="form-control" placeholder="Enter the mma company of event">
+            <input type="text" name="location" class="form-control" placeholder="Enter the location of event">
+            <input type="text" name="date" class="form-control" placeholder="Enter the date of event">
+            <label for="eventPicture">Upload event image:</label>
+            <input type="file" name="eventPicture" class="form-control-file" >
+            
+        </div>
+        <div class="compose-row">
+            <button type="submit" class="button-1">Submit Event</button>
+            <form target="_self">
+                <input value="add main card fight!" class="newFight button-1" type="button" onclick="newMainCardFight()">
+            </form>
+            <form target="_self">
+                <input value="add prelim fight!" class="newFight button-1" type="button" onclick="newPrelimFight()">
+            </form>
+        </div>
+<div class="compose-row">
+    <div>
+        <h2>Main Card:</h2>
+        <div class="panel compose-card-constructor">
+            <div class="panel compose-constructor main-fight-0">
+                <h4>fight #1</h4>
+                <input type="text" name="mainFighter1Name" class="form-control" placeholder="Enter name of fighter 1">
+                <input type="text" name="mainFighter2Name" class="form-control" placeholder="Enter the name of fighter 2">
+                <input type="text" name="mainWeightClass" class="form-control" placeholder="Enter the weightclass">        
+            </div>
+        </div>
+    </div>
+    <div>
+        <h2>Prelims:</h2>
+        <div class="panel compose-card-constructor">
+            <div class="panel compose-constructor prelim-fight-0">
+                <h4>fight #1</h4>
+                <input type="text" name="prelimFighter1Name" class="form-control" placeholder="Enter name of fighter 1">
+                <input type="text" name="prelimFighter2Name" class="form-control" placeholder="Enter the name of fighter 2">
+                <input type="text" name="prelimWeightClass" class="form-control" placeholder="Enter the weightclass">        
+            </div>
+        </div>
+    </div>
+</div>
+
+     
+</div>
+
+
+
+</form>
+
+
+</div>
+<script type="text/javascript" src="/javascript/compose.js"></script>
+<%- include("partials/footer"); -%>

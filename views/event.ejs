@@ -1,4 +1,95 @@
 <%- include("partials/header"); -%>
+<div class="close"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0,0,256,256"
+    style="fill:#000000;">
+    <g fill="#001c48" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g transform="scale(5.33333,5.33333)"><path transform="translate(24.00059,-9.94113) rotate(45.001)" d="M21.5,4.5h5.001v39h-5.001z"></path><path transform="translate(57.94113,24.00474) rotate(135.008)" d="M21.5,4.5h5v39.001h-5z"></path></g></g>
+    </svg></div>
+<div style="overflow-y:scroll;" class="fighter-page-slide-out panel">
+    <div class="event-fighter-heading">
+    <img src="/image/dustin.jpg" alt="">
+    <h2>Dustin Poirier</h2>
+    <h4>(29-0)</h4>
+    </div>
+    <div class="event-fighter-info">
+        <p>Age: 35</p>
+        <p>Height: 5'11</p>
+        <p>Weight Class: Lightweight</p>
+    </div>
+    <div class="event-fight-history panel">
+        <h2 class="title-text">Fight History</h2>
+        <div class="event-fight-history-row">
+            <h3>Opponent</h3>
+            <h3>Outcome</h3>
+            <h3>Tape Index</h3>
+            <h3>Date</h3>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+        <div class="panel event-fight-history-row">
+            <div class="event-fight-history-col">
+                <a href="">Michael Chandler</a>
+            </div>
+            <div class="event-fight-history-col">
+                <p>Win by R3 Rear Naked Choke</p>
+                <p>UFC 281: Adesanya vs. Poirier</p>               
+            </div>
+            <a>Premium</a>
+            <p>11/12/2022</p>
+        </div>
+    </div>
+</div>
 
     <div class="event-page-containerr">
         <h1 class="title-text eventName">UFC 291</h1>
@@ -57,29 +148,91 @@
         </div>
         <div class="mainCard-container">
 <!--Main card fight panels generated here--> 
-            <div class="panel fight-listing">
-                <div class="fight-listing-row">
-                    <div class="fight-listing-fighter">
-                        <img class="fighter-img" src="/image/dustin.jpg" height="150px" alt="fighter 1 picture">
-                        <a class="fighter-name" href="./event.html">Dustin Poirier </a>
-                        <p class="fighter-info">Record: <span>29-7</span></p>
-                        <p class="fighter-info">Style: Boxer</p>
-                        <p class="fighter-info">Height: 5'9" Reach: 71"</p>
+            
+
+            <% event.mainCard.forEach(function(fight){ %>
+                <div class="panel fight-listing main-card-0">
+                    <div class="weightClass">
+                        <p><%= fight.weightClass %> Bout</p>
                     </div>
-                    <p class="vs">VS.</p>
+                    <div class="fight-listing-row">
+                        <div class="fight-listing-fighter">
+                            <% Fighters.forEach(function(fighter){ %>
+                                <% if (fighter.name == Object.values(fight)[0]){ %>
+                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                            <% }}) %>
+                            <a class="fighter-name"><%= Object.values(fight)[0] %></a>
+                            
+                            <% Fighters.forEach(function(fighter){ %>
+                               <% if (fighter.name == Object.values(fight)[0]){ %>
+                                    <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                    <p class="fighter-info">Style: Boxer</p>
+                                    <p class="fighter-info">Height: <%= fighter.height %></p>
+                                    <p class="fighter-info">Weight: <%= fighter.weight %></p>
+                               <% }}) %>
+                            
+                        </div>
+                        <p class="vs">VS.</p>
+                        <div class="fight-listing-fighter">
+                            <% Fighters.forEach(function(fighter){ %>
+                                <% if (fighter.name == Object.values(fight)[1]){ %>
+                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                            <% }}) %>
+                            <a class="fighter-name"><%= Object.values(fight)[1] %></a>
+                        <% Fighters.forEach(function(fighter){ %>
+                            <% if(Object.values(fight)[1]==fighter.name) { %>
+                                <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                <p class="fighter-info">Style: Boxer</p>
+                                <p class="fighter-info">Height: <%= fighter.height %></p>
+                                <p class="fighter-info">Weight: <%= fighter.weight %></p>
+                           <% }}) %>
+                        </div>
+                    </div>
+                    
+                </div>
+               
+           <% }) %>
+
+           <!-- <% event.mainCard.forEach(function(fight){ %>
+                <% Fighters.forEach(function(fighter){ %>
+
+                    <% if(Object.values(fight)[0]==fighter.name){ %>
+                        <div class="panel fight-listing main-card-0">
+                            <div class="fight-listing-row">
+                                <div class="fight-listing-fighter">
+                                    <img class="fighter-img" src="/image/dustin.jpg" height="150px" alt="fighter 1 picture">
+                                    <a class="fighter-name" href="./event.html"><%= fighter.name %></a>
+                                    <p class="fighter-info">Record: <span>29-7</span></p>
+                                    <p class="fighter-info">Style: Boxer</p>
+                                    <p class="fighter-info">Height: 5'9" Reach: 71"</p>
+                                </div>
+                    <% } %>
+                        <% if(Object.values(fight)[1]==fighter.name){ %>
+                        <p class="vs">VS.</p>
                     <div class="fight-listing-fighter">
                         <img class="fighter-img" src="/image/justin.jpg" height="150px" alt="fighter 1 picture">
-                        <a class="fighter-name" href="./event.html">Justin Gaethje</a>
+                        <a class="fighter-name" href="./event.html"><%= fighter.name %></a>
                         <p class="fighter-info">Record: 24-4</p>
                         <p class="fighter-info">Style: Striker</p>
                         <p class="fighter-info">Height: 5'11" Reach: 70"</p>
                     </div>
                 </div>
             </div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
+                
+                <% } %>       
+                
+                
+                
+                <% }) %>
+
+
+
+            <% }) %> -->
+            
+
+            
+
+            
         </div>
 
     </div>
@@ -87,29 +240,54 @@
     <div class="secondary-page-container">
         <h2 class="title-text prelims-title">Prelims</h2>
         <div class="prelims-container">
-            <div class="panel fight-listing">
-                <div class="fight-listing-row">
-                    <div class="fight-listing-fighter">
-                        <img class="fighter-img" src="/image/dustin.jpg" height="150px" alt="fighter 1 picture">
-                        <a class="fighter-name" href="./event.html">Dustin Poirier </a>
-                        <p class="fighter-info">Record: <span>29-7</span></p>
-                        <p class="fighter-info">Style: Boxer</p>
-                        <p class="fighter-info">Height: 5'9" Reach: 71"</p>
+            <% event.prelims.forEach(function(fight){ %>
+                <div class="panel fight-listing main-card-0">
+                    <div class="weightClass">
+                        <p><%= fight.weightClass %> Bout</p>
                     </div>
-                    <p class="vs">VS.</p>
-                    <div class="fight-listing-fighter">
-                        <img class="fighter-img" src="/image/justin.jpg" height="150px" alt="fighter 1 picture">
-                        <a class="fighter-name" href="./event.html">Justin Gaethje</a>
-                        <p class="fighter-info">Record: 24-4</p>
-                        <p class="fighter-info">Style: Striker</p>
-                        <p class="fighter-info">Height: 5'11" Reach: 70"</p>
+                    <div class="fight-listing-row">
+                        <div class="fight-listing-fighter">
+                            <% Fighters.forEach(function(fighter){ %>
+                                <% if (fighter.name == Object.values(fight)[0]){ %>
+                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                            <% }}) %>
+                            <a class="fighter-name" href=""><%= Object.values(fight)[0] %></a>
+                            
+                            <% Fighters.forEach(function(fighter){ %>
+                               <% if (fighter.name == Object.values(fight)[0]){ %>
+                                    <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                    <p class="fighter-info">Style: Boxer</p>
+                                    <p class="fighter-info">Height: <%= fighter.height %></p>
+                                    <p class="fighter-info">Weight: <%= fighter.weight %></p>
+                               <% }}) %>
+                            
+                        </div>
+                        <p class="vs">VS.</p>
+                        <div class="fight-listing-fighter">
+                            <% Fighters.forEach(function(fighter){ %>
+                                <% if (fighter.name == Object.values(fight)[1]){ %>
+                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                            <% }}) %>
+                            <a class="fighter-name" href="./event.html"><%= Object.values(fight)[1] %></a>
+                        <% Fighters.forEach(function(fighter){ %>
+                            <% if(Object.values(fight)[1]==fighter.name) { %>
+                                <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                <p class="fighter-info">Style: Boxer</p>
+                                <p class="fighter-info">Height: <%= fighter.height %></p>
+                                <p class="fighter-info">Weight: <%= fighter.weight %></p>
+                           <% }}) %>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
-            <div class="panel"></div>
+               
+           <% }) %>
+            
+            
+            
+            
+            
+            
+            
 
 
 
@@ -119,6 +297,6 @@
 
 
     </div>
-
-
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/slide.js"></script>
+    <%- include("partials/footer"); -%>

@@ -1,0 +1,95 @@
+<%- include("partials/header"); -%>
+
+    
+
+
+
+
+
+
+
+<div class="events-page-container">
+    
+    <h2 class="title-text">Upcoming Events: </h2>
+    <h3>UFC</h3>            
+         <div class="swiper-container swiper1">
+            <div class="swiper-wrapper">
+                <% newEvents.reverse().forEach(function(event){ %>                                   
+                   <% if(event.org == "UFC"){ %>
+                    <div class="swiper-slide">
+                        <div class="events-card">
+                        <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
+                        <p><%= event.name %></p>
+                        <p><%= event.date %></p>
+                        <p><%= event.location %></p>
+                        </div>
+                    </div>
+                   <% } %>
+               <% }) %>
+            </div>
+            <div class="swiper-button-prev swiper-button-prev1 swipe"></div>
+            <div class="swiper-button-next swiper-button-next1 swipe"></div>
+         </div>       
+        
+         <h3>LFA</h3>            
+         <div class="swiper-container swiper2">
+            <div class="swiper-wrapper">
+                <% newEvents.reverse().forEach(function(event){ %>                                   
+                   <% if(event.org == "LFA"){ %>
+                    <div class="swiper-slide">
+                        <div class="events-card">
+                        <a href=<%= "/event/"+ event.name %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
+                        <p><%= event.name %></p>
+                        <p><%= event.location %></p>
+                    </div>
+                    </div>
+                   <% } %>
+               <% }) %>
+            </div>
+            <div class="swiper-button-prev swiper-button-prev2 swipe"></div>
+            <div class="swiper-button-next swiper-button-next2 swipe"></div>
+         </div>
+       
+           
+
+   
+    
+    
+</div>
+        
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+<script>
+    const swiper1 = new Swiper('.swiper1', {
+  // Optional parameters
+  slidesPerView:4,
+  slidesPerGroup:4,
+  spaceBetween:5,
+  centeredSlides:false,
+  loop: true,
+
+
+  navigation: {
+    nextEl: '.swiper-button-next1',
+    prevEl: '.swiper-button-prev1',
+  },
+
+});
+
+const swiper2 = new Swiper('.swiper2', {
+  // Optional parameters
+  slidesPerView:4,
+  slidesPerGroup:4,
+  spaceBetween:5,
+  centeredSlides:false,
+  loop: true,
+
+
+  navigation: {
+    nextEl: '.swiper-button-next2',
+    prevEl: '.swiper-button-prev2',
+  },
+
+});
+</script>
+<%- include("partials/footer"); -%>
