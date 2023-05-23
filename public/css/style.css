@@ -12,13 +12,13 @@ body{
     margin-left: 10%;
     margin-right: 10%;
 }
-
+/*all*/
 h1,h2,h3,h4,h5,h6,p{
     font-family: 'Rubik', sans-serif;
 }
 
 
-
+/*all*/
 .taskbar-containerr{
     background-color: white;
     display: flex;
@@ -34,6 +34,7 @@ h1,h2,h3,h4,h5,h6,p{
   
 }
 
+/*all*/
 .logo{
     height: 75px;
     padding-left: 1%;
@@ -41,23 +42,29 @@ h1,h2,h3,h4,h5,h6,p{
     margin-right: auto;
 }
 
+/*all*/
 .title-text{
     color: #001c48;
     border-bottom: 1px dashed #d4d5d6
 }
 
+/*all*/
 .task{
     margin: 10px; 
 }
+
+/*event.ejs*/
 .eventName{
     margin-left: 20px;
     grid-area: 1/1/2/3;
 }
 
+/*event.ejs*/
 .mainCard{
     grid-area: 1/4/2/5;
 }
 
+/*event.ejs*/
 .mainCard-container{
     grid-area: 2/4/11/-1;
     display: grid;
@@ -65,6 +72,7 @@ h1,h2,h3,h4,h5,h6,p{
     gap: 5px ;
 }
 
+/*all*/
 a{
  
     color: black;
@@ -75,10 +83,13 @@ a{
     /*text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000*/
 }
 
+/*all.ejs*/
 .premium{
     color: #0031a4;
     font-weight: 500;
 }
+
+/*event.ejs*/
 .main-page-containerr{
     height: 30rem;
     width: 100%;
@@ -90,6 +101,7 @@ a{
     height: 88vh;  
 }
 
+/*event.ejs*/
 .event-page-containerr{
     height: 30rem;
     width: 100%;
@@ -104,6 +116,7 @@ a{
     padding: 2% 0;
 }
 
+/*event.ejs*/
 .fight-listing{
     display: flex;
     flex-direction: column;
@@ -111,6 +124,7 @@ a{
 
 }
 
+/*event.ejs*/
 .weightClass{
     align-self: center;
     background-color:#19191983;
@@ -119,6 +133,7 @@ a{
     
 }
 
+/*event.ejs*/
 .weightClass p{
     text-align: center;
     color: white;
@@ -127,23 +142,27 @@ a{
     
 }
 
+/*event.ejs*/
 .fight-listing-row{
     display: flex;
     justify-content: space-evenly;
 }
 
+/*event.ejs*/
 .fight-listing-fighter{
     display: flex;
     flex-direction: column;
     
 }
 
+/*event.ejs*/
 .vs{
     align-self: center;
     color:#0031a4;
     font-weight: 600;
 }
 
+/*event.ejs*/
 .fighter-img{
     margin-top: 5%;
     width: max-content;
@@ -152,6 +171,7 @@ a{
     border: 1px solid #d4d5d6;
 }
 
+/*event.ejs*/
 .fighter-name{
     align-self: center;
     color:#0031a4;
@@ -162,44 +182,53 @@ a{
     
 }
 
+/*event.ejs*/
 .fighter-info{
     margin: 2px 0;
 }
 
+/*event.ejs*/
 .best-bets-row{
     display: flex;
     align-items: center;
 }
 
+/*event.ejs*/
 .best-bets-col{
     display: flex;
     flex-direction: column;
 
 }
 
+/*event.ejs*/
 .best-bets-votes{
     margin: 0;
 }
 
+/*event.ejs*/
 .best-bets-info{
     color: black;
     margin: 0 0 0 2.5%;
     min-width: 90px;
 }
 
+/*event.ejs*/
 .best-bet-rank{
     margin-bottom: 3%;
 }
 
+/*event.ejs*/
 .best-bets-odds{
     margin: 0;
     color: rgba(0, 0, 0, 0.527);
 }
 
+/*event.ejs*/
 .best-votes{
     margin-left: 2.5%;
 }
 
+/*event.ejs*/
 .circle{
     background-color: #d4d5d6;
     border-radius: 50%;
@@ -211,6 +240,7 @@ a{
     font: 30px rubik, sans-serif;
 }
 
+/*all.ejs*/
 .panel{
     border: 2px solid #d4d5d6;
     border-radius: 10px;
@@ -221,6 +251,7 @@ a{
 
 }
 
+/*event.ejs*/
 .best-bets-container{
     display: flex;
     flex-direction: column;
@@ -229,12 +260,14 @@ a{
     grid-area: 8/1/13/4;
 }
 
+/*event.ejs*/
 .poster{
     grid-area: 2/1/8/3;
     height: 350px;
     padding-left: 5%;
 }
 
+/*event.ejs*/
 .secondary-page-container{
     margin-top: 10px;
     height: 120vh;
@@ -247,6 +280,7 @@ a{
     padding: 2% 0;
 }
 
+/*event.ejs*/
 .prelims-container{
     border-top: 0px;
     display: grid;
@@ -255,14 +289,17 @@ a{
     padding: 2px;
 }
 
+/*event.ejs*/
 .prelims-title{
     margin-left: 20px;
 }
 
+/*home.ejs*/
 .info-container{
     grid-area:2/3/8/4
 }
 
+/*home.ejs*/
 .hero-sub-containerr{
     display: flex;
     flex-direction: column;
@@ -272,6 +309,7 @@ a{
 
 }
 
+/*home.ejs*/
 .octagon{
     align-self: center;
     object-fit: cover;
@@ -281,23 +319,23 @@ a{
 
 
 }
-
+/*home.ejs*/
 .hero-containerr{
     grid-area: 1/1/4/-1;
     display: flex;
 }
-
+/*home.ejs*/
 .feature-containerr{
     display: flex;
 
 }
-
+/*home.ejs*/
 .description{
     grid-area: 2/1/4/2;
 }
 
 
-
+/*home.ejs*/
 .feature-sub-containerr{
     grid-area: 2/1/4/2;
     border-radius: 5px;
@@ -306,25 +344,25 @@ a{
     padding: 1%;
 
 }
-
+/*home.ejs*/
 .feature-1{
     grid-area: 4/1/6/2;
 }
-
+/*home.ejs*/
 .feature-2{
     grid-area: 6/1/8/2;
 }
 
-
+/*home.ejs*/
 .long{
     grid-area: 4/2/-1/-1;
 }
-
+/*home.ejs*/
 .button-containerr{
     display: flex;
     
 }
-
+/*compose-event.js*/
 .compose-page{
     margin-top: 10px;
     height: 120vh;
@@ -337,6 +375,7 @@ a{
     padding: 2% 0;
 }
 
+/*compose-event.js*/
 .compose-constructor{
     display: flex;
     flex-direction: column;
@@ -344,16 +383,18 @@ a{
     padding: 20px;
 }
 
+/*compose-event.js*/
 .compose-row{
     display: flex;
 }
 
-
+/*compose-event.js*/
 .compose-card-constructor{
     display: grid;
     grid-template: 1fr 1fr 1fr 1fr 1fr/1fr 1fr 1fr;
 }
 
+/*events.js*/
 .events-page-container{
     height: 30rem;
     width: 100%;
@@ -368,31 +409,36 @@ a{
     padding: 2% 0;
 }
 
+/*events.js*/
 .events-page-row{
     display: flex;
 }
 
+/*events.js*/
 .events-page-col{
     display: flex;
     flex-direction: column;
 }
 
-
+/*events.js*/
 .swiper-container{
     width: 100%;
     overflow: hidden;
 }
 
+/*events.js*/
 .swiper-button-prev{
     color: #ffffff !important;
     margin-left: 10%;
 }
 
+/*events.js*/
 .swiper-button-next{
     color: #ffffff !important;
     margin-right: 10%;
 }
 
+/*events.js*/
 .swipe:hover{
     transform: scale(1.2);
     transition: all 100ms ease-in-out;
@@ -400,17 +446,20 @@ a{
 
 }
 
+/*events.js*/
 .swiper-slide{
     transition: all 300ms ease-in-out;
     border-radius: 5px;
 }
 
+/*events.js*/
 .swiper-slide:hover p{
     opacity: 70%;
     transition: all 300ms ease-in-out;
     transition-delay: 300ms;
 }
 
+/*events.js*/
 .swiper-slide:hover img{
     transform: scale(1.1);
     transition: all 300ms ease-in-out;
@@ -418,32 +467,36 @@ a{
     z-index: 1 !important;
 }
 
+/*events.js*/
 .swiper-button-next2{
     top: var(--swiper-navigation-top-offset,94%) !important;
 }
 
+/*events.js*/
 .swiper-button-prev2{
     top: var(--swiper-navigation-top-offset,94%) !important;
 }
 
+/*events.js*/
 .events-Photo{
     width: 100%;
     height: 250px;
     object-fit: cover;
 }
 
+/*events.js*/
 .events-card{
     background-color:#EEEEEE;
 
 }
+/*events.js*/
 .swiper-slide p{
     font-weight: 500;
     padding: 0 0 1% 3%;
 }
 
+/*event.js*/
 .fighter-page-slide-out{
-    display: flex;
-    flex-direction: column;
     position: fixed;
     left: 0;
     height: 100%;
@@ -453,8 +506,7 @@ a{
     visibility: hidden;
 }
 
-
-
+/*event.js*/
 .event-fighter-heading{
     display: flex;
     flex-direction: column;
@@ -462,15 +514,18 @@ a{
 
 }
 
+/*event.js*/
 .event-fighter-heading h2{
     margin-bottom: 10px;
     align-self: center;
 }
+/*event.js*/
 .event-fighter-heading h4{
     margin-top: 0;
     align-self: center;
 }
 
+/*event.js*/
 .event-fighter-info{
     display: flex;
     flex-direction: column;
@@ -478,36 +533,43 @@ a{
 
 }
 
+/*event.js*/
 .event-fighter-info p{
     margin: 0 0 5px 10%;
     min-width:max-content;
 }
 
+/*event.js*/
 .event-fight-history{
     height: 100vh;
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+    margin-bottom: 40px;
 }
 
+/*event.js*/
 .event-fight-history-row{
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 1fr;
     margin: 0 20px;
     align-items: center;
     padding: 0% 2%;
 }
 
+/*event.js*/
 .event-fight-history-col{
     display: flex;
     flex-direction: column;
     margin: 20px 0;
 }
 
+/*event.js*/
 .event-fight-history-col p{
     margin: 0;
 }
 
+/*event.js*/
 .close{
     position: fixed;
     left: 52%;
@@ -516,7 +578,64 @@ a{
     visibility: hidden;
 }
 
-/* CSS */
+/*event.js*/
+.hidden{
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/*event.js*/
+.shown{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/*event.js*/
+.win{
+    color: #00c42a;
+    font-weight: 500;
+}
+/*event.js*/
+.loss{
+    color: #ce0000;
+    font-weight: 500;
+}
+/*event.js*/
+.draw{
+    color: #0070bb;
+    font-weight: 500;
+}
+/*event.js*/
+.NC{
+    color: #444444;
+    font-weight: 500;
+}
+/*event.js*/
+.event-fight-name{
+    opacity: 80%;
+
+}
+
+/*event.js*/
+.event-fighter-info p{
+    font-weight: 500;
+}
+/*event.js*/
+.nickname{
+    color: #9aa4ad;
+    margin: 5px 0;
+    text-align: center;
+}
+/*event.js*/
+.name{
+    margin-top: 0%;
+}
+
+/* all */
 .button-1 {
   align-items: center;
   appearance: button;
