@@ -4,6 +4,8 @@
     "cheerio": "^1.0.0-rc.12",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
+    "g-i-s": "^2.1.6",
+    "google-images": "^2.1.0",
     "googlethis": "^1.7.1",
     "lodash": "^4.17.21",
     "mma-api": "^1.0.3",

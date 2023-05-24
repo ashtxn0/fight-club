@@ -1,0 +1,61 @@
+<%- include("partials/header"); -%>
+<div class="fighter-page-container panel">
+    <h1 class="title-text">Fighter Info: </h1>
+    <div class="fighter-page-row">
+        <div class="fighter-page-intro panel">
+            <div class="fighter-page-heading">
+                <img class="fighter-profile-image" src="<%=fighter.image_url %>" alt="fighter picture">
+                    <h3 class="nickname">"<%= fighter.nickname %>"</h3>
+                    <a  href="/fighter/<%= fighter.name %>"><h2><%= fighter.name %></h2></a>
+                    <h4>(<%= fighter.wins.total %>-<%= fighter.losses.total %>)</h4>   
+                </div>
+                <div class="fighter-page-info">
+                    <p><%= fighter.locality %> | <%= fighter.nationality %></p>
+                    <p>Age: <%= fighter.age %> (Born: <%= fighter.birthday %>)</p>
+                    <p>Height: <%= fighter.height %></p>
+                    <p>Weight Class: <%= fighter.weight_class %> (<%= fighter.weight %>)</p>
+                </div>
+        </div>
+        <div class="fighter-page-comments panel">
+            <h2 class="title-text">Comments: </h2>
+
+        </div>
+    </div>
+    <div class="event-fight-history panel">
+            <h2 class="fighter-history-title title-text">Fight History</h2>
+            <div class="event-fight-history-row">
+                <h3>Opponent</h3>
+                <h3>Outcome</h3>
+                <h3>Tape Index</h3>
+                <h3>Date</h3>
+            </div>
+            <% fighter.fights.forEach(function(fight){ %>
+       
+        <div class="panel event-fight-history-row shown-fights">
+            <div class="event-fight-history-col">
+                <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
+            </div>
+            <div class="event-fight-history-col">
+                <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
+                <% if (fight.isTitleFight) { %>
+                    <div class="belt-row">
+                        <p class="event-fight-name"><%= fight.name %></p>
+                        <img class="belt-image" src="/image/ufc-belt.png">
+                    </div>
+                <% } else{ %>
+                    <p class="event-fight-name"><%= fight.name %></p>
+               <% } %>               
+            </div>
+            <a class="premium">Premium</a>
+            <p><%= fight.date %></p>
+        </div>
+        <%  }) %>
+        
+
+    </div>
+
+
+
+</div>
+
+<%- include("partials/footer"); -%>

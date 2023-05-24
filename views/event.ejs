@@ -11,11 +11,12 @@
 
 <div style="overflow-y:scroll;" class="fighter-page-slide-out panel fighter0">
     <% Fighters.forEach(function(fighter){ %>
+        <% count=0 %>
     <div class="fighter-prof hidden <%= fighter.name %>" >
         <div class="event-fighter-heading">
-        <img src=<%="https://www.sherdog.com/"+fighter.image_url %> alt="fighter picture">
+        <img class="fighter-profile-image" src="<%=fighter.image_url %>" alt="fighter picture">
             <h3 class="nickname">"<%= fighter.nickname %>"</h3>
-            <h2 class="name"><%= fighter.name %></h2>
+            <a  href="/fighter/<%= fighter.name %>"><h2 class="name"><%= fighter.name %></h2></a>
             <h4>(<%= fighter.wins.total %>-<%= fighter.losses.total %>)</h4>   
         </div>
         <div class="event-fighter-info">
@@ -26,7 +27,7 @@
         </div>
         
         <div class="event-fight-history panel">
-            <h2 class="title-text">Fight History</h2>
+            <h2 class="fighter-history-title title-text">Fight History</h2>
             <div class="event-fight-history-row">
                 <h3>Opponent</h3>
                 <h3>Outcome</h3>
@@ -35,18 +36,48 @@
             </div>
             <% fighter.fights.forEach(function(fight){ %>
 
-            
-        <div class="panel event-fight-history-row">
+        <% if (count<5){ %>            
+        <div class="panel event-fight-history-row shown-fights">
             <div class="event-fight-history-col">
-                <a href=""><%= fight.opponent %></a>
+                <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
             </div>
             <div class="event-fight-history-col">
                 <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
-                <p class="event-fight-name"><%= fight.name %></p>               
+                <% if (fight.isTitleFight) { %>
+                    <div class="belt-row">
+                        <p class="event-fight-name"><%= fight.name %></p>
+                        <img class="belt-image" src="/image/<%= event.org %>-belt.png">
+                    </div>
+                <% } else{ %>
+                    <p class="event-fight-name"><%= fight.name %></p>
+               <% } %>                     
             </div>
             <a class="premium">Premium</a>
             <p><%= fight.date %></p>
         </div>
+        <% count++ %>
+        <%  } %>
+        
+        <% if (count>3){ %>            
+            <div class="panel event-fight-history-row hidden-fights hide-fights">
+                <div class="event-fight-history-col">
+                    <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
+                </div>
+                <div class="event-fight-history-col">
+                    <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
+                    <p class="event-fight-name"><%= fight.name %></p>
+                    <% if (fight.isTitleFight) { %>
+                        <img class="belt-image" src="/image/<%= event.org %>-belt.png">
+                    <% } %>              
+                </div>
+                <a class="premium">Premium</a>
+                <p><%= fight.date %></p>
+            </div>
+            <% count++ %>
+            <% if (count===fighter.fights.length){ %>
+                <a class="hidden-fights-show-all">show all...</a>
+            <% } %>
+        <% } %>
         <% }) %>
     </div>
        
@@ -56,19 +87,20 @@
         
     </div>
 <% }) %> 
+<div class="slide-out-footer"></div>
 </div>
 
     <div class="event-page-containerr">
         <h1 class="title-text eventName">UFC 291</h1>
         <h2 class="title-text mainCard">Main Card</h2>
-        <img src="/image/UFC 291.jpg" alt="UFC 291 poster" class="poster">
+        <div class="event-info-row">
+        <img src="<%=event.posterURL %>" alt="UFC 291 poster" class="poster">
         <div class="info-container">
             <p>location: <%= event.location %></p></p>
             <p>Promotion: <%= event.org %></p>
             <p>Date: <%= event.date %></p>
-            
         </div>
-       
+        </div>
         <div class="best-bets-container panel">
             <h2 class="titles-text">Best Bets:</h2>
             <h3>Community Voted:</h3>
@@ -128,7 +160,7 @@
                         <div class="fight-listing-fighter">
                             <% Fighters.forEach(function(fighter){ %>
                                 <% if (fighter.name == Object.values(fight)[0]){ %>
-                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                                    <a class="hide-text fighter-name"><%= Object.values(fight)[0] %> <img class="fighter-img" src="<%=fighter.image_url %>" height="150px" alt="fighter 1 picture"></a>
                             <% }}) %>
                             <a class="fighter-name"><%= Object.values(fight)[0] %></a>
                             
@@ -141,11 +173,19 @@
                                <% }}) %>
                             
                         </div>
-                        <p class="vs">VS.</p>
+                        <% if (fight.isTitleFight){ %>
+                            <div class="belt-container">
+                                <img class="belt-image" src="/image/<%= event.org %>-belt.png" %>.png alt="">
+                                <p class="vs">VS.</p>
+                            </div>
+                        <% } else{ %>
+                            <p class="vs">VS.</p>
+                        <% } %>
+                        
                         <div class="fight-listing-fighter">
                             <% Fighters.forEach(function(fighter){ %>
                                 <% if (fighter.name == Object.values(fight)[1]){ %>
-                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                            <a class="hide-text fighter-name"><%= Object.values(fight)[1] %> <img class="fighter-img" src="<%=fighter.image_url %>" %> height="150px" alt="fighter 1 picture"></a>
                             <% }}) %>
                             <a class="fighter-name"><%= Object.values(fight)[1] %></a>
                         <% Fighters.forEach(function(fighter){ %>
@@ -161,46 +201,6 @@
                 </div>
                
            <% }) %>
-
-           <!-- <% event.mainCard.forEach(function(fight){ %>
-                <% Fighters.forEach(function(fighter){ %>
-
-                    <% if(Object.values(fight)[0]==fighter.name){ %>
-                        <div class="panel fight-listing main-card-0">
-                            <div class="fight-listing-row">
-                                <div class="fight-listing-fighter">
-                                    <img class="fighter-img" src="/image/dustin.jpg" height="150px" alt="fighter 1 picture">
-                                    <a class="fighter-name" href="./event.html"><%= fighter.name %></a>
-                                    <p class="fighter-info">Record: <span>29-7</span></p>
-                                    <p class="fighter-info">Style: Boxer</p>
-                                    <p class="fighter-info">Height: 5'9" Reach: 71"</p>
-                                </div>
-                    <% } %>
-                        <% if(Object.values(fight)[1]==fighter.name){ %>
-                        <p class="vs">VS.</p>
-                    <div class="fight-listing-fighter">
-                        <img class="fighter-img" src="/image/justin.jpg" height="150px" alt="fighter 1 picture">
-                        <a class="fighter-name" href="./event.html"><%= fighter.name %></a>
-                        <p class="fighter-info">Record: 24-4</p>
-                        <p class="fighter-info">Style: Striker</p>
-                        <p class="fighter-info">Height: 5'11" Reach: 70"</p>
-                    </div>
-                </div>
-            </div>
-                
-                <% } %>       
-                
-                
-                
-                <% }) %>
-
-
-
-            <% }) %> -->
-            
-
-            
-
             
         </div>
 
@@ -218,7 +218,7 @@
                         <div class="fight-listing-fighter">
                             <% Fighters.forEach(function(fighter){ %>
                                 <% if (fighter.name == Object.values(fight)[0]){ %>
-                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                                    <a class="hide-text fighter-name"><%= Object.values(fight)[0] %> <img class="fighter-img" src="<%=fighter.image_url %>" %> height="150px" alt="fighter 1 picture"></a>
                             <% }}) %>
                             <a class="fighter-name"><%= Object.values(fight)[0] %></a>
                             
@@ -235,7 +235,7 @@
                         <div class="fight-listing-fighter">
                             <% Fighters.forEach(function(fighter){ %>
                                 <% if (fighter.name == Object.values(fight)[1]){ %>
-                            <img class="fighter-img" src=<%="https://www.sherdog.com/"+fighter.image_url %> height="150px" alt="fighter 1 picture">
+                                    <a class="hide-text fighter-name"><%= Object.values(fight)[1] %> <img class="fighter-img" src="<%=fighter.image_url %>" height="150px" alt="fighter 1 picture"></a>
                             <% }}) %>
                             <a class="fighter-name" href="./event.html"><%= Object.values(fight)[1] %></a>
                         <% Fighters.forEach(function(fighter){ %>

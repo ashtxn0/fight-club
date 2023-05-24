@@ -2,7 +2,10 @@
     $('.fighter-page-slide-out').toggle('slide');
     let isOpen= 0;
 
+
+
 $('.fighter-name').click(function(event){
+    console.log(this.innerHTML);
     let LName= (this.innerHTML).split(" ")[1];
     let FName= (this.innerHTML).split(" ")[0];
     
@@ -23,8 +26,11 @@ $('.fighter-name').click(function(event){
         $('.fighter-prof').removeClass('shown');
         $('.fighter-prof').addClass('hidden');
         $('.close').css('visibility', 'hidden');
+        $(".hidden-fights").removeClass("shown-fights");
+        $(".hidden-fights").addClass("hide-fights");
         }, 390);
         isOpen=0;
+        isShown=0;
     }
 
 })
@@ -36,7 +42,27 @@ $('.close').click(function(event){
         $('.fighter-prof').removeClass('shown');
         $('.fighter-prof').addClass('hidden');
         $('.close').css('visibility', 'hidden');
+        $(".hidden-fights").removeClass("shown-fights");
+        $(".hidden-fights").addClass("hide-fights");
     }, 390);
      isOpen=0;
+     isShown=0;
 })
 
+let isShown=0;
+
+$('.hidden-fights-show-all').click(function(event){
+    
+    if(isShown===0){
+        $(".hidden-fights").removeClass("hide-fights");
+        $(".hidden-fights").addClass("shown-fights");
+        isShown=1;
+    } else{
+        $(".hidden-fights").removeClass("shown-fights");
+        $(".hidden-fights").addClass("hide-fights");
+        isShown=0;
+    }
+
+
+
+})

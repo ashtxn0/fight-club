@@ -8,7 +8,7 @@
 #0f2734
 */
 body{
-    background-color: #EEEEEE;
+    background-color: white;
     margin-left: 10%;
     margin-right: 10%;
 }
@@ -20,23 +20,23 @@ h1,h2,h3,h4,h5,h6,p{
 
 /*all*/
 .taskbar-containerr{
-    background-color: white;
+    background: linear-gradient(180deg, #ffffff, #a8a8a831);
     display: flex;
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     justify-content: center;
     align-items: center;
     width: 100%;
     border-radius: 5px;
     margin-bottom: 15px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
-    border-bottom: 4px solid #0031a4;
+    border-bottom: 4px solid #01255f;
     
   
 }
 
 /*all*/
 .logo{
-    height: 75px;
+    height: 70px;
     padding-left: 1%;
     padding-top: .5%;
     margin-right: auto;
@@ -45,7 +45,7 @@ h1,h2,h3,h4,h5,h6,p{
 /*all*/
 .title-text{
     color: #001c48;
-    border-bottom: 1px dashed #d4d5d6
+    border-bottom: 1px dashed #d4d5d6;
 }
 
 /*all*/
@@ -62,14 +62,36 @@ h1,h2,h3,h4,h5,h6,p{
 /*event.ejs*/
 .mainCard{
     grid-area: 1/4/2/5;
+    align-self: flex-end;
 }
 
 /*event.ejs*/
 .mainCard-container{
-    grid-area: 2/4/11/-1;
+    grid-area: 2/4/-1/-1;
     display: grid;
     grid-template: 1fr 1fr 1fr/1fr 1fr;
     gap: 5px ;
+}
+
+.belt-image{
+    height: 7%;
+}
+.belt-container{
+    display: flex;
+    flex-direction: column;
+}
+.event-fight-history-col img{
+    max-height: 30px;
+}
+.event-fight-history-col a{
+    max-height: 30px;
+    font-weight: 500;
+    color: #00091f;
+}
+
+.belt-row{
+    display: flex;
+    align-items: center;
 }
 
 /*all*/
@@ -110,7 +132,7 @@ a{
     grid-template: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 5fr 5fr 1fr 1fr 1fr/1fr 1fr 1fr 3fr 3fr;
     gap: 15px;
     height: 120vh;
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
@@ -118,6 +140,7 @@ a{
 
 /*event.ejs*/
 .fight-listing{
+    background: linear-gradient(180deg, #ffffff, #d3d3d331);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -127,10 +150,17 @@ a{
 /*event.ejs*/
 .weightClass{
     align-self: center;
-    background-color:#19191983;
+    background-color:#001c48;
+    background-size: 120% 120%;
     width: 110%;
     height: 7%;
+
+
     
+}
+
+.compose-event-row{
+    display: flex;
 }
 
 /*event.ejs*/
@@ -138,7 +168,7 @@ a{
     text-align: center;
     color: white;
     margin: .5% 0;
-    opacity: 85%;
+    opacity: 100%;
     
 }
 
@@ -164,11 +194,28 @@ a{
 
 /*event.ejs*/
 .fighter-img{
-    margin-top: 5%;
-    width: max-content;
+    margin-top: 3%;
+    width: 170px;
+    object-fit: cover;
     align-self: center;
     border-radius: 5px;
-    border: 1px solid #d4d5d6;
+    border: 2px solid #f5f5f5;
+}
+
+.fighter-img:hover{
+    border: 2px solid #0031a4;
+
+}
+
+.fighter-profile-image{
+    max-width: 80%;
+    max-height: 500px;
+    align-self: center;
+    object-fit: cover;
+}
+
+.fight-listing-fighter p{
+    color: #00091f;
 }
 
 /*event.ejs*/
@@ -181,10 +228,15 @@ a{
     cursor: pointer;
     
 }
+.fighter-name:hover{
+    -webkit-text-fill-color:#001c48;
+
+}
 
 /*event.ejs*/
 .fighter-info{
     margin: 2px 0;
+    font-size: .9rem;
 }
 
 /*event.ejs*/
@@ -242,7 +294,7 @@ a{
 
 /*all.ejs*/
 .panel{
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding-left: 1%;
     background-color: white;
@@ -265,6 +317,7 @@ a{
     grid-area: 2/1/8/3;
     height: 350px;
     padding-left: 5%;
+    align-self: flex-end;
 }
 
 /*event.ejs*/
@@ -274,7 +327,7 @@ a{
     width: 100%;
     display: flex;
     flex-direction: column;
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
@@ -291,12 +344,27 @@ a{
 
 /*event.ejs*/
 .prelims-title{
-    margin-left: 20px;
+    margin-left: 2%;
+    margin-bottom: 1%;
 }
 
 /*home.ejs*/
 .info-container{
-    grid-area:2/3/8/4
+ padding-left: 2%;
+ align-self: flex-end;
+}
+
+.info-container p{
+    font-size: .8rem;
+    word-spacing: 1;
+    color: #00091f;
+    margin: 1.5% 0;
+}
+
+.event-info-row{
+    grid-area: 2/1/8/4;
+    display: flex;
+    justify-content: center;
 }
 
 /*home.ejs*/
@@ -369,7 +437,7 @@ a{
     width: 100%;
     display: flex;
     flex-direction: column;
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
@@ -403,11 +471,22 @@ a{
     flex-direction: column;
     gap: 15px;
     height: 120vh;
-    border: 2px solid #d4d5d6;
+    border: 1px solid #e5e7eb;
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
 }
+
+.events-title{
+    padding: 0 2%;
+    margin: 2% 0 0 0;
+}
+
+.events-page-container .events-title{
+    padding: 0 2%;
+    margin: 2% 0 0 0;
+}
+
 
 /*events.js*/
 .events-page-row{
@@ -541,7 +620,7 @@ a{
 
 /*event.js*/
 .event-fight-history{
-    height: 100vh;
+    height: auto;
     display: flex;
     flex-direction: column;
     margin-top: 20px;
@@ -633,7 +712,92 @@ a{
 /*event.js*/
 .name{
     margin-top: 0%;
+    text-align: center;
 }
+
+.hide-text{
+    font-size: 0%;
+    margin: 0;
+
+}
+
+
+.hide-fights{
+    display: none;
+}
+.shown-fights{
+    display: grid;
+    background: linear-gradient(180deg, #ffffff, #a8a8a82d);
+
+}
+
+.hidden-fights-show-all{
+    align-self: flex-end;
+    margin: 10px;
+    cursor: pointer;
+    margin-bottom: 20%;
+    margin-right: 3%;
+    text-decoration:underline;
+}
+
+.slide-out-footer{
+    height: 20%;
+}
+
+.fighter-page-container{
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    padding: 0 3% 3% 3%;
+}
+.fighter-page-intro{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+}
+.fighter-page-row{
+    display: flex;
+}
+.fighter-page-heading{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fighter-page-heading > a,h2,h4{
+    margin: 0;
+}
+
+.fighter-page-heading > .nickname{
+    margin: 2px 0;
+}
+
+.fighter-page-info{
+
+    align-self: flex-start;
+    margin-bottom: 2%;
+}
+
+.fighter-page-info p{
+    
+    margin: 2% 0;
+    color: #00091f;
+}
+
+.fighter-page-comments{
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    padding-top: 1%;
+    margin-left: 1%;
+}
+
+.fighter-history-title{
+    margin-top: 1%;
+}
+
+
 
 /* all */
 .button-1 {
