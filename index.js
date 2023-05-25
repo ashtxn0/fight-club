@@ -1,3 +1,7 @@
+if(process.env.NODE_END !== "production"){
+  require("dotenv").config();
+}
+
 const mongoose = require('mongoose');
 const mma=require("mma-api");
 const express = require("express");
@@ -7,6 +11,37 @@ var _ = require("lodash");
 const multer  = require('multer');
 const upload = multer({dest: __dirname+'/public/data/uploads/'});
 const google=require(__dirname+"/googleSearch.js");
+const bcrypt = require("bcrypt");
+const passport = require("passport");
+const flash = require("express-flash");
+const session = require("express-session");
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, "Please enter a name"]
+  },
+  email: {
+    type: String,
+    required: [true, "Please enter an email"]
+  },
+  password: {
+    type: String,
+    required: [true, "Please enter an email"]
+  },
+  profImage_url: String
+})
+
+const User = mongoose.model("User", userSchema);
+
+const initializePassport=require(__dirname+"/passport-config.js");
+
+initializePassport(passport, username =>{
+  return User.find({})
+})
+
+
+
 
 // saveFighterOpponents("Irene Aldana");
 
@@ -16,6 +51,15 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(flash());
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb.net/fightclubDB?retryWrites=true&w=majority');
 
@@ -56,6 +100,9 @@ const fighterSchema = new mongoose.Schema({
     mainCard: [Object],
     prelims: [Object]
   });
+
+
+
 
   const Fighter = mongoose.model("Fighter", fighterSchema);
   const Event = mongoose.model("Event", eventSchema);
@@ -100,6 +147,46 @@ app.get("/fighter", function(req,res){
 app.get("/fighter-error", function(req,res){
   res.render("fighter");
 })
+
+app.get("/signup", function(req,res){
+  res.render("signup");
+});
+
+app.post("/signup",async function(req,res){
+  if (req.body.password===req.body.confirmPassword){
+    try{
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    let newUser = {
+      username: req.body.username,
+      email: req.body.email,
+      password: hashedPassword
+    }
+    const newuser = new User(newUser);
+    newuser.save();
+    res.redirect('/login');
+  } catch{
+    res.redirect("register");
+  }
+  User.find({}).then(function(usersFound){
+    console.log(usersFound);
+  })
+  } else{
+    res.redirect("/register");
+    alert("Passwords did not match. please try again")
+  }
+  
+});
+
+
+app.get("/login", function(req,res){
+  res.render("login");
+});
+
+app.post("/login", passport.authenticate("local", {
+  successRedirect: '/home',
+  failureRedirect: '/login',
+  failureFlash: true
+}));
 
   app.get("/fighter/:fighterName", function(req,res){
     Fighter.findOne({name: req.params.fighterName}).then(function(fighter){

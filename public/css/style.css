@@ -25,11 +25,16 @@ h1,h2,h3,h4,h5,h6,p{
     border: 1px solid #e5e7eb;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 80%;
     border-radius: 5px;
     margin-bottom: 15px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
     border-bottom: 4px solid #01255f;
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    position: absolute;
+    top:0;
     
   
 }
@@ -136,6 +141,7 @@ a{
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
+    margin-top: 95px;
 }
 
 /*event.ejs*/
@@ -374,7 +380,6 @@ a{
     border-radius: 5px;
     margin: 1% 0;
     padding: 1%;
-
 }
 
 /*home.ejs*/
@@ -391,6 +396,7 @@ a{
 .hero-containerr{
     grid-area: 1/1/4/-1;
     display: flex;
+    margin-top: 80px;
 }
 /*home.ejs*/
 .feature-containerr{
@@ -432,7 +438,7 @@ a{
 }
 /*compose-event.js*/
 .compose-page{
-    margin-top: 10px;
+    margin-top: 95px;
     height: 120vh;
     width: 100%;
     display: flex;
@@ -441,6 +447,8 @@ a{
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
+    
+
 }
 
 /*compose-event.js*/
@@ -475,6 +483,7 @@ a{
     background-color: white;
     border-radius: 5px;
     padding: 2% 0;
+    margin-top: 95px;
 }
 
 .events-title{
@@ -718,9 +727,144 @@ a{
 .hide-text{
     font-size: 0%;
     margin: 0;
-
 }
 
+.sign-up-container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    align-items: center;
+}
+
+.sign-up-row{
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    justify-content: center;
+}
+
+.credentials-container{
+    height: 80vh;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+    background-color:#191919af;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.sign-up-hero{
+    height: 80vh;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 100px;
+    padding: 0%;
+    background-color:#191919af;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.signup-form-container{
+    display: flex;
+    flex-direction: column;
+    padding: 10%;
+    width: 40%;
+    height: 50%;
+    align-content: center;
+    background-color: rgba(255, 255, 255, 0.445);
+}
+
+.signup-form-container h2{
+    color:#00091f;
+    margin-bottom: 10px;
+    
+}
+
+.signup-form-container button{
+    align-self: center;
+    margin-top: 20px;
+}
+
+.form-control{
+    border-radius: 5px;
+    border: 0;
+    height: 5%;
+    
+}
+
+input{
+    padding: 4%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box; 
+}
+
+input:focus{
+    outline-style: groove;
+    outline-width: 1px;
+    outline-color: #0031a4;
+}
+
+.form-label{
+    font-family: 'Rubik', sans-serif;
+    margin-top: 1%;
+    color: #000000dc;
+}
+.sign-up-row img{
+    object-fit: cover;
+    height: 80vh;
+    position: absolute;
+    margin-top: 100px;
+    right: 0;
+    margin-right: 10%;
+    z-index: -1;
+    width: 80%;
+    border-radius: 10px;
+  
+}
+
+.sign-up-hero h1{
+    padding: 10%;
+    color: rgba(255, 255, 255, 0.87);
+}
+
+.terms-checkbox{
+    display: flex;
+}
+
+.terms-checkbox .form-label{
+    font-size: .8rem;
+}
+
+.form-label a{
+    font-size: .8rem;
+    color: #001c48;
+    font-weight: 500;
+}
+
+.signup-form-container p{
+    font-size: .9rem;
+}
+.signup-form-container p  a{
+    font-size: .9rem;
+    color: #001c48;
+    font-weight: 500;
+}
+
+.sign-in-checkbox-container{
+    display: flex;
+    justify-content: space-between;
+}
+.sign-in-checkbox-container a{
+    font-size: .9rem;
+    color: #001c48;
+    font-weight: 500;
+}
 
 .hide-fights{
     display: none;
@@ -749,6 +893,7 @@ a{
     flex-direction: column;
     height: auto;
     padding: 0 3% 3% 3%;
+    margin-top: 95px;
 }
 .fighter-page-intro{
     display: flex;

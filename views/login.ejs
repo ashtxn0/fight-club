@@ -1,0 +1,38 @@
+<%- include("partials/header"); -%>
+
+<div class="sign-up-container">
+    
+    <div class="sign-up-row">
+        <img src="/image/inside-octagon.png" alt="">
+        <div class="credentials-container panel">
+            
+            <form class="signup-form-container" action="/login" method="post">
+                <h2>Sign in to your account: </h2>
+                <label for="username" class="form-label">Username: </label>
+                <input type="text" id="username" name="username" class="form-control">
+                <label for="password" class="form-label">Password: </label>
+                <input type="password" id="password" name="password" class="form-control">
+                <div class="sign-in-checkbox-container">
+                    <div class="terms-checkbox">
+                        <input type="checkbox" name="rememberMe" value=1>
+                        <input type="hidden" name="rememberMe" value=0>
+                        <label for="rememberMe" class="form-label">Remember me</label> 
+                    </div>
+                    <a href=>Forgot password?</a>
+                </div>
+                <button class="button-1">Sign in</button>
+                <p>Don't have an account? <a href="/signup">Sign up here</a></p>
+                <% if (messages.error) { %>
+                    <%= messages.error %>
+               <% } %>
+            </form>
+            
+        </div>
+        <div class="sign-up-hero panel">
+            <h1>Sign in to access features such as leaving comments, climbing the prediction rankings, and voting on best bets!</h1>
+        </div>
+    </div>
+
+</div>
+
+<%- include("partials/footer"); -%>
