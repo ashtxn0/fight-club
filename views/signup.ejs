@@ -25,7 +25,9 @@
                 </div>
                 <button class="button-1">Create an account</button>
                 <p>Already have an account? <a href="/login">Sign in here</a></p>
-
+                <% if (messages.error) { %>
+                    <%= messages.error %>
+               <% } %>
             </form>
             
         </div>

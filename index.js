@@ -2,43 +2,21 @@ if(process.env.NODE_END !== "production"){
   require("dotenv").config();
 }
 
-const mongoose = require('mongoose');
-const mma=require("mma-api");
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 var _ = require("lodash");
 const multer  = require('multer');
 const upload = multer({dest: __dirname+'/public/data/uploads/'});
-const google=require(__dirname+"/googleSearch.js");
+const db=require(__dirname+"/db.js");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
+const initializePassport = require(__dirname+"/passport-config.js");
+const methodOverride = require("method-override")
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: [true, "Please enter a name"]
-  },
-  email: {
-    type: String,
-    required: [true, "Please enter an email"]
-  },
-  password: {
-    type: String,
-    required: [true, "Please enter an email"]
-  },
-  profImage_url: String
-})
-
-const User = mongoose.model("User", userSchema);
-
-const initializePassport=require(__dirname+"/passport-config.js");
-
-initializePassport(passport, username =>{
-  return User.find({})
-})
+initializePassport(passport);
 
 
 
@@ -51,6 +29,7 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
 app.use(flash());
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -60,54 +39,9 @@ app.use(session({
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb.net/fightclubDB?retryWrites=true&w=majority');
-
-const fighterSchema = new mongoose.Schema({
-  url: String,
-  name: {
-      type: String,
-      required: [true, "Please check your data entry, no name specified!"]
-  },
-  nickname: String,
-  age: Number,
-  birthday: String,
-  locality: String,
-  nationality: String,
-  association: String,
-  height: String,
-  weight: String,
-  weight_class: String,
-  image_url: String,
-  wins: Object,
-  losses: Object,
-  no_contests: Number,
-  comments: [Object],
-  fights: [Object]});
-
-  const eventSchema = new mongoose.Schema({
-
-    name: {
-        type: String,
-        required: [true, "Please check your data entry, no name specified!"]
-    },
-    picture: String,
-    org: String,
-    location: String,
-    date: String,
-    posterURL: String,
-    comments: [Object],
-    mainCard: [Object],
-    prelims: [Object]
-  });
+app.use(methodOverride("_method"));
 
 
-
-
-  const Fighter = mongoose.model("Fighter", fighterSchema);
-  const Event = mongoose.model("Event", eventSchema);
-
-let events = [];
   // Event.deleteMany({name:"test"}).then(function(event){
   //   console.log("deleted tests");
   // })
@@ -121,18 +55,18 @@ app.get("/event", function(req,res){
 })
 
 app.get("/events", function(req,res){
-  Event.find({}).then(function(foundEvents){
+  db.findALLEvents().then(function(foundEvents){
     res.render("events", {newEvents: foundEvents});
   })
 })
 
 app.get("/event/:eventName", function(req,res){
-  Event.find({}).then(function(foundEvents){
+  db.findALLEvents().then(function(foundEvents){
     foundEvents.forEach(function(event){
       let lowEventID = _.lowerCase(req.params.eventName);
       let lowID=_.lowerCase(event._id);
       if (lowEventID===lowID){
-        Fighter.find({}).then(function(foundFighters){
+        db.findALLFighters().then(function(foundFighters){
           res.render("event", {event: event, Fighters: foundFighters});
         })     
       }
@@ -148,48 +82,40 @@ app.get("/fighter-error", function(req,res){
   res.render("fighter");
 })
 
-app.get("/signup", function(req,res){
+app.get("/signup",checkNotAuthenticated, function(req,res){
   res.render("signup");
 });
 
-app.post("/signup",async function(req,res){
+app.post("/signup",checkNotAuthenticated,async function(req,res){
   if (req.body.password===req.body.confirmPassword){
     try{
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    let newUser = {
-      username: req.body.username,
-      email: req.body.email,
-      password: hashedPassword
-    }
-    const newuser = new User(newUser);
-    newuser.save();
+    db.saveUser(req.body.username, req.body.password,req.body.email);
     res.redirect('/login');
   } catch{
-    res.redirect("register");
+    res.redirect("/signup");
   }
-  User.find({}).then(function(usersFound){
+  db.findALLUsers().then(function(usersFound){
     console.log(usersFound);
   })
   } else{
-    res.redirect("/register");
-    alert("Passwords did not match. please try again")
+    res.redirect('/signup');
   }
   
 });
 
 
-app.get("/login", function(req,res){
+app.get("/login",checkNotAuthenticated, function(req,res){
   res.render("login");
 });
 
-app.post("/login", passport.authenticate("local", {
-  successRedirect: '/home',
+app.post("/login", checkNotAuthenticated, passport.authenticate("local", {
+  successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true
 }));
 
   app.get("/fighter/:fighterName", function(req,res){
-    Fighter.findOne({name: req.params.fighterName}).then(function(fighter){
+    db.findFighterByName(req.params.fighterName).then(function(fighter){
       if (fighter ===null){
         res.render("fighter-error");
       } else{
@@ -228,8 +154,8 @@ app.post("/", upload.single('eventPicture'), function(req,res){
   }else{
     j++;
   }
-   saveFighter(req.body.mainFighter1Name[i]);
-   saveFighter(req.body.mainFighter2Name[i]);
+   db.saveFighterByName(req.body.mainFighter1Name[i]);
+   db.saveFighterByName(req.body.mainFighter2Name[i]);
   }
   j=0;
   for(let i=0;i<req.body.prelimFighter1Name.length;i++){
@@ -244,8 +170,8 @@ app.post("/", upload.single('eventPicture'), function(req,res){
   }else{
     j++;
   }
-   saveFighter(req.body.prelimFighter1Name[i]);
-   saveFighter(req.body.prelimFighter2Name[i]);
+  db.saveFighterByName(req.body.prelimFighter1Name[i]);
+  db.saveFighterByName(req.body.prelimFighter2Name[i]);
   }
 
   let event = {
@@ -258,13 +184,9 @@ app.post("/", upload.single('eventPicture'), function(req,res){
     posterURL: "",
     prelims: prelims
   }
-  const newEvent = new Event(event);
-  google.eventPosterSearch(event.name).then(function(images){
-    newEvent.posterURL=images[0].url;
-    newEvent.save();
-  })
+  db.saveEvent(event);
 
-  Event.find({}).then(function(foundEvents){
+  db.findALLEvents.then(function(foundEvents){
     res.render("events", {newEvents: foundEvents});
   })
 
@@ -295,88 +217,29 @@ app.post("/", upload.single('eventPicture'), function(req,res){
   //   })
   })
 
+app.delete("/logout", function(req,res){
+  req.logOut(function(err){
+    if (err){return next(err);}
+    res.redirect("/login");
+  });
+  
+})
+
+// //use to restrict anyone whos not signed in from going to a page by putting "checkAuthenticated ," after the get route
+// function checkAuthenticated(req,res,next){
+//   if(req.isAuthenticated()){
+//     return next();
+//   }
+//   res.redirect('/login');
+// }
+
+function checkNotAuthenticated(req,res,next){
+  if(req.isAuthenticated()){
+    return res.redirect("/")
+  }
+  next()
+}
 
 app.listen(3000, function () {
     console.log("Server started on port 3000.");
   });
-
-  
-
-
-async function saveFighter(FName){
-
-  Fighter.findOne({name: FName}).then(function(foundFighter){
-    if (foundFighter !=null){
-      console.log("Fighter already in database")
-    } else{
-      mma.api(FName, (data) =>{
-        const fighter = new Fighter(data);
-        if(fighter.fights[0].name.substring(0,3)==="UFC"){
-          google.ufcFighterImageSearch(fighter.nickname,fighter.name).then(images => {
-            fighter.image_url=images[0].url;
-            fighter.save();
-        });;
-    
-        } else{
-          google.regionalFighterImageSearch(fighter.nickname,fighter.name).then(images => {
-            fighter.image_url=images[0].url;
-            fighter.save();
-          })
-        };
-      });
-    }
-  })
-
-}   
-
-async function saveFighterOpponents(fighterName){
-  mma.api(fighterName, (data)=>{ //amanda nunes data
-    const fighter=new Fighter(data); //fighter = amanda
-    let opponentNames = [];
-    savedCount=0; //saved count =0
-    for (let i=0;i<data.fights.length;i++){
-        opponentNames[i]= fighter.fights[i].opponent;
-    } //array filled with opp names
-    let uniqueOpponents=[...new Set(opponentNames)];
-    uniqueOpponents.forEach(function(name){ //for each opponent do all this
-      
-      saveFighter(name);
-      
-    })
-  })
-}
-    
-//     opponentNames.forEach(function(name){
-//         mma.api(name, (newData) =>{
-//             const newFighter = new Fighter(newData);
-//             if(newFighter.fights[0].name.substring(0,3)==="UFC"){
-//               google.ufcFighterImageSearch(newFighter.nickname,newFighter.name).then(function(newURL){
-//                 newFighter.image_url=newURL;
-//                 newFighter.save();
-//               });
-//             } else{
-//               google.regionalFighterImageSearch(newFighter.nickname,newFighter.name).then(function(newURL){
-//                 newFighter.image_url=newURL;
-//                 newFighter.save();
-//               });
-//             }
-//   });     
-// }); 
-
-
-async function updateImage(){
-
-}
- 
-
-
-async function getFighterID(name){
-  try{
-    let id = await Fighter.findOne({name: name},_id);
-    return id;
-
-  }
-  catch(error){
-    console.log(error);
-  }
-}
