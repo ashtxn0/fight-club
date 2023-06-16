@@ -1,0 +1,168 @@
+<%- include("partials/header"); -%>
+<div class="fight-page-container panel">
+    <h1 class="title-text"><%=event.name%> fight:</h1>
+    <div class="fight-fighters-container">
+        <div class="fight-fighter panel">
+            <div class="fight-fighter-title">
+                <h3><%=fighter.name%></h3>
+                <h4>(<%=fighter.wins.total%>-<%=fighter.losses.total%>)</h4>
+            </div>
+            <img src="<%=fighter.image_url%>" alt="fighter 1 image">
+            <div class="fight-fighter-title">
+                <p><%= fighter.locality %> | <%= fighter.nationality %></p>
+                <p>Age: <%= fighter.age %> (Born: <%= fighter.birthday %>)</p>
+                <p>Height: <%= fighter.height %></p>
+                <p>Weight Class: <%= fighter.weight_class %> (<%= fighter.weight %>)</p>
+            </div>
+            
+        </div>
+        <h2>VS</h2>
+        <div class="fight-fighter panel">
+            <div class="fight-fighter-title">
+                <h3><%=opponent.name%></h3>
+                <h4>(<%=opponent.wins.total%>-<%=opponent.losses.total%>)</h4>
+            </div>
+            <img src="<%=opponent.image_url%>" alt="fighter 2 image">
+            <div class="fight-fighter-title">
+                <p><%= opponent.locality %> | <%= opponent.nationality %></p>
+                    <p>Age: <%= opponent.age %> (Born: <%= opponent.birthday %>)</p>
+                    <p>Height: <%= opponent.height %></p>
+                    <p>Weight Class: <%= opponent.weight_class %> (<%= opponent.weight %>)</p>
+            </div>
+            
+        </div>
+        <div class="fight-prediction-container panel">
+            <h2 class="title-text">Predictions:</h2>
+            <div class="prediction-percentages">
+                <% const fighterPercent= ((fighterCount/predictions.length)*100).toFixed(2) %>
+                <div class="prediction-percentages-fighter-cont prediction-percentages-fighter" style="height:100%; min-width: 15%; width: <%=fighterPercent%>%" >
+                    <h3><%= fighter.name %> </h3>
+                    <h3><%= fighterPercent %>%</h3>
+                </div>
+                <% const opponentPercent= ((opponentCount/predictions.length)*100).toFixed(2) %>
+                <div class="prediction-percentages-fighter-cont prediction-percentages-opponent" style="height:100%; min-width: 15%; width: <%=opponentPercent%>%">
+                    <h3><%= opponent.name %> </h3>
+                    <h3><%= opponentPercent%>%</h3>
+                </div>
+            </div>
+            <h3>Recent Predictions:</h3>
+            <div class="recent-predictions-container">
+            <% let recentPredictions= predictions.reverse().splice(0,4) %>
+            <% recentPredictions.forEach(function(predict){ %>
+                <% if (predict.fighterName===opponent.name){ %>
+                    <div class="fight-prediction-row"> <p class="prediction-username"><%= predict.username %></p><p>voted for</p>  <p class="fight-prediction-opponent-name"><%= predict.fighterName %></p></div>
+                <% } else{ %>
+                    <div class="fight-prediction-row"> <p class="prediction-username"><%= predict.username %></p> <p>voted for</p> <p class="fight-prediction-fighter-name"><%= predict.fighterName %></p></div>
+                <% } %>
+            <% }) %>
+            </div>
+            <% if(user){ %>
+                <div class="fight-prediction-container-col">
+                    <div class="vote-flash fight-vote-flash flash-<%= fight.id %>%>">
+                        <p></p>
+                    </div>
+                <div class="fight-prediction-predict">
+                <a id="<%=fighter.id%>" class="fight-page-predict-button <%= fight.id %> predict-btn" >Vote <%=fighter.name%></a>
+                <a id="<%=opponent.id%>" class="fight-page-predict-button <%= fight.id %> predict-btn" >Vote <%=opponent.name%></a>
+                </div>
+                
+                </div>
+            <% } else{ %>
+                <div class="fight-prediction-predict">
+                <a id="<%= event.id %>" class="fight-page-predict-button" href="/login">Login to make prediction</a>
+                </div>
+            <% } %>
+            
+        </div>
+
+    </div>
+    <div class="fight-tasks-container">
+        <div class="fight-comments-container panel">
+            <h2 class="title-text">Comments:</h2>
+            <form action="/predict" method="post">
+                <div class="compose-comment fight-comment-box">
+                    <% if(user){ %>
+                    <textarea class="input input<%= fight.id %> form-control" name="comment" cols="30" rows="5" placeholder="Leave a comment on the fight"></textarea>
+                    <button  class="comment-btn <%= fight.id %>" type="submit">comment</button>
+                    <% } else{ %>
+                        <textarea disabled class="input input<%= fight.id %> form-control" name="comment" cols="30" rows="5" placeholder="Sign in to leave a comment"></textarea>
+                    <% } %>
+                </div>
+                </form>
+            <% fight.comments.reverse().forEach(function(comment){ %>
+                
+                <% if(user){ %>
+                    <div class="comment-row">
+                        <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                    <div class="comment-col fight-comment">
+                        <div class="comment-col">
+                            <div class="comment-row">      
+                                <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                            </div>
+                            <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                        </div>
+                        <div class="comment-row">
+                            <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
+                            <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                            <% } else{ %>
+                            <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>" class="like-btn" src="/image/thumbs-up-blue.svg" height="20px" alt="">
+                            <% } %>
+                            <p class="comment-likes">  <%= comment.likes %> </p>
+                            <% if (comment.usersDisliked===undefined || !comment.usersDisliked.includes(user.username)){ %>
+                            <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                            <% } else{ %>
+                            <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-blue.svg" height="20px" alt="">
+                            <% } %>
+                            <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                        </div>
+                    </div>
+                </div>
+                <% } else{ %>
+                    <div class="comment-row">
+                    <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                    <div class="comment-col fight-comment">
+                        
+                        <div class="comment-col">
+                            <div class="comment-row">      
+                                <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                            </div>
+                        <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                        </div>
+                        <div class="comment-row">
+                            <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                            <p class="comment-likes">  <%= comment.likes %> </p>
+                            <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                            <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                        </div>
+                    </div>
+                </div>    
+                <% } %>
+                
+
+            <% }) %>
+        </div>
+        <div class="fight-best-bets-container panel">
+            <h2 class="title-text">Best Bets:</h2>
+        </div>
+    </div>
+
+
+</div>
+<% if(user){ %>
+   <script>
+    var username = "<%= user.username %>";
+    var eventID="<%= event.id %>";
+    var userID="<%= user.id %>";
+    </script>   
+<% } else{ %>
+    <script>
+        var eventID="<%= event.id %>";
+        </script>   
+<% } %>
+  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/fightComment.js"></script>
+<script type="text/javascript" src="/javascript/predict.js"></script>
+<%- include("partials/footer"); -%>

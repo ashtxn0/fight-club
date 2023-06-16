@@ -1,0 +1,168 @@
+<%- include("partials/header"); -%>
+
+
+
+<div class="predict-page-container">
+    <h1 class="title-text"><%=event.name %> predictions:</h1>
+    <h4 class="predict-tool-tip">(Hover on a fighter to vote)</h4>
+    <% for (let i=0; i<fighters.length ; i += 2 ){ %>
+        <div class="predict-fight-row-cont">
+    <div class="predict-fight-container">
+        <div class="predict-fighter-container">
+            <img class="fighter-image <%=fighters[i].id%>-image" src="<%=fighters[i].image_url%>" alt="">
+            <div class="predict-fighter-name-container">
+                <h2><%=fighters[i].name%></h2>
+            <p><%=fighters[i].record%></p>
+            <button class="predict-btn <%= fights[i].id %>" id="<%=fighters[i].id%>">vote</button>
+            </div>
+            <h2 class="predict-v">V</h2>
+        </div>
+        
+        <div class="predict-fighter-container">
+            <img class="fighter-image <%=opponents[i].id%>-image" src="<%=opponents[i].image_url%>" alt="">
+            <div class="predict-fighter-name-container">
+                <h2><%=opponents[i].name%></h2>
+                <p><%=opponents[i].record%></p>
+            <button class="predict-btn <%= fights[i].id %>" id="<%=opponents[i].id%>">vote</button>
+            </div>
+            <h2 class="predict-s">S</h2>
+        </div>
+        <div class="panel predict-comments-container">
+            <form action="/predict" method="post">
+                <div class="compose-comment">
+                    <% if(user){ %>
+                    <textarea class="input input<%= fights[i].id %> form-control" name="comment" cols="30" rows="5" placeholder="Leave a comment on the fight"></textarea>
+                    <button  class="comment-btn <%= fights[i].id %>" type="submit">comment</button>
+                    <% } else{ %>
+                        <textarea disabled class="input input<%= fights[i].id %> form-control" name="comment" cols="30" rows="5" placeholder="Sign in to leave a comment"></textarea>
+                        <% } %>
+
+                </div>
+                </form>
+            <h4 class="title-text">Top Comments:</h4>
+            <div class="comment-list <%= fights[i].id %>">
+                <% let j=0 %>
+                <% fights[i].comments.slice(0,3).forEach(function(comment){ %>
+
+                
+                        
+                            <div class="predict-comment-container comment<%=j%>">
+                                <div class="comment-col predict-comment-fill">
+                                    <div class="comment-col">
+                                <div class="comment-row">      
+                                    <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                <p class="predict-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                            </div>
+                                <p class="comment-content"><%= comment.content %></p>
+                                </div>
+                                <div class="comment-row">
+                                    <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
+                                        <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                                    <% } else{ %>
+                                        <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>" class="like-btn" src="/image/thumbs-up-blue.svg" height="20px" alt="">
+                                    <% } %>
+                                    <p class="comment-likes">  <%= comment.likes %> </p>
+                                    <% if (comment.usersDisliked===undefined || !comment.usersDisliked.includes(user.username)){ %>
+                                        <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                                    <% } else{ %>
+                                        <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-blue.svg" height="20px" alt="">
+                                        <% } %>
+                                    <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                                </div>
+                                </div>
+                            </div>
+                <% j++ }) %>        
+
+                    </div>
+            
+        </div>
+        <% if (i+1<fighters.length) { %>
+        <div class="predict-fighter-container">
+            <img class="fighter-image <%=fighters[i+1].id%>-image" src="<%=fighters[i+1].image_url%>" alt="">
+            <div class="predict-fighter-name-container">
+                <h2><%=fighters[i+1].name%></h2>
+            <p><%=fighters[i+1].record%></p>
+            <button class="predict-btn <%= fights[i+1].id %>" id="<%=fighters[i+1].id%>" >vote</button>
+            </div>
+            <h2 class="predict-v">V</h2>
+        </div>
+        <div class="predict-fighter-container">
+            <img class="fighter-image <%=opponents[i+1].id%>-image" src="<%=opponents[i+1].image_url%>" alt="">
+            <div class="predict-fighter-name-container">
+                <h2><%=opponents[i+1].name%></h2>
+                <p><%=opponents[i+1].record%></p>
+                <button class="predict-btn <%= fights[i+1].id %>" id="<%=opponents[i+1].id%>">vote</button>
+            </div>
+            <h2 class="predict-s">S</h2>
+        </div>
+        <div class="panel predict-comments-container">
+            <form action="/predict" method="post">
+                <div class="compose-comment">
+                    <% if(user){ %>
+                    <textarea class="input input<%= fights[i+1].id %> form-control" name="comment" cols="30" rows="5" placeholder="Leave a comment on the fight"></textarea>
+                    <button class="comment-btn <%= fights[i+1].id %>" type="submit">comment</button>
+                    <% } else{ %>
+                        <textarea disabled class="input input<%= fights[i+1].id %> form-control" name="comment" cols="30" rows="5" placeholder="Sign in to leave a comment"></textarea>
+                        <% } %>
+                </div>
+            
+            </form>
+            <h4 class="title-text ">Top Comments:</h4>
+                <div class="comment-list <%= fights[i+1].id %>">
+                    
+                    <% let j=0 %>
+                    <% fights[i+1].comments.slice(0,3).forEach(function(comment){ %>
+                    
+                        <div class="predict-comment-container comment<%=j%>">
+                            <div class="comment-col predict-comment-fill">
+                                <div class="comment-col">
+                            <div class="comment-row">      
+                                <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                <p class="predict-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                            </div>
+                            <p class="comment-content"><%= comment.content %></p>
+                            </div>
+                            <div class="comment-row">
+                                <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
+                                    <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                                <% } else{ %>
+                                    <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>" class="like-btn" src="/image/thumbs-up-blue.svg" height="20px" alt="">
+                                <% } %>
+                                
+                                <p class="comment-likes">  <%= comment.likes %> </p>
+                                <% if (comment.usersDisliked===undefined || !comment.usersDisliked.includes(user.username)){ %>
+                                    <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                                <% } else{ %>
+                                    <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-blue.svg" height="20px" alt="">
+                                    <% } %>
+                                <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+
+                            </div>
+                            </div>
+                        </div>
+                    
+                    <% j++ }) %>
+      
+                </div>
+        </div>
+        <% } %>
+    
+    </div>
+        <div class="vote-flash flash-<%= fights[i].id %> flash-<%= fights[i+1].id %>">
+            <p></p>
+        </div>
+    </div>
+<% } %>
+    
+  <a href="/event/<%=event.id%>"><button type="button" class="button-1">Submit all</button></a>  
+
+</div>
+<script>
+    var username = "<%= user.username %>";
+    var eventID="<%= event.id %>";
+    var userID="<%= user.id %>";
+    </script>    
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/comment.js"></script>
+<script type="text/javascript" src="/javascript/predict.js"></script>
+<%- include("partials/footer"); -%>

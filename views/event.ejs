@@ -8,15 +8,15 @@
     
 
     
-
+<% let allFighters = fighters.concat(opponents).concat(prelimFighters).concat(prelimOpponents); %>
 <div style="overflow-y:scroll;" class="fighter-page-slide-out panel fighter0">
-    <% Fighters.forEach(function(fighter){ %>
+    <% allFighters.forEach(function(fighter){ %>
         <% count=0 %>
     <div class="fighter-prof hidden <%= fighter.name %>" >
         <div class="event-fighter-heading">
         <img class="fighter-profile-image" src="<%=fighter.image_url %>" alt="fighter picture">
             <h3 class="nickname">"<%= fighter.nickname %>"</h3>
-            <a  href="/fighter/<%= fighter.name %>"><h2 class="name"><%= fighter.name %></h2></a>
+            <a  href="/fighter/<%= fighter.name.replace(/\s+/g, '-') %>"><h2 class="name"><%= fighter.name %></h2></a>
             <h4>(<%= fighter.wins.total %>-<%= fighter.losses.total %>)</h4>   
         </div>
         <div class="event-fighter-info">
@@ -39,7 +39,7 @@
         <% if (count<5){ %>            
         <div class="panel event-fight-history-row shown-fights">
             <div class="event-fight-history-col">
-                <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
+                <a href="/fighter/<%= fight.opponent.replace(/\s+/g, '-') %>"><%= fight.opponent %></a>
             </div>
             <div class="event-fight-history-col">
                 <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
@@ -61,7 +61,7 @@
         <% if (count>3){ %>            
             <div class="panel event-fight-history-row hidden-fights hide-fights">
                 <div class="event-fight-history-col">
-                    <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
+                    <a href="/fighter/<%= fight.opponent.replace(/\s+/g, '-') %>"><%= fight.opponent %></a>
                 </div>
                 <div class="event-fight-history-col">
                     <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
@@ -89,17 +89,19 @@
 <% }) %> 
 <div class="slide-out-footer"></div>
 </div>
-
+<div class="event-page-section">
     <div class="event-page-containerr">
+        <div class="event-maincard-row">
+            <div class="event-maincard-col">
         <h1 class="title-text eventName">UFC 291</h1>
-        <h2 class="title-text mainCard">Main Card</h2>
         <div class="event-info-row">
-        <img src="<%=event.posterURL %>" alt="UFC 291 poster" class="poster">
-        <div class="info-container">
-            <p>location: <%= event.location %></p></p>
-            <p>Promotion: <%= event.org %></p>
-            <p>Date: <%= event.date %></p>
-        </div>
+            <img src="<%=event.posterURL %>" alt="UFC 291 poster" class="poster">
+            <div class="info-container">
+                <a id="<%= event.id %>" class="button-1" href="/predict/<%= event.id %>">Make predictions</a>
+                <p>location: <%= event.location %></p></p>
+                <p>Promotion: <%= event.org %></p>
+                <p>Date: <%= event.date %></p>
+            </div>
         </div>
         <div class="best-bets-container panel">
             <h2 class="titles-text">Best Bets:</h2>
@@ -124,7 +126,7 @@
                 </div>
             </div>
             <h3>Editor Chosen:</h3>
-<!--Best bets chosen by the website admins generated here-->
+                <!--Best bets chosen by the website admins generated here-->
             <div class="best-bets-row best-bet-rank">
                 <div class="circle">1</div>
                 <div class="best-best-col">
@@ -144,57 +146,59 @@
                 </div>
             </div>   
         <div>
+
+            
             
         </div>
         </div>
+        </div>
+
+
+        <div class="event-maincard-col">
+        <h2 class="title-text mainCard">Main Card</h2>
         <div class="mainCard-container">
 <!--Main card fight panels generated here--> 
             
 
-            <% event.mainCard.forEach(function(fight){ %>
+            <% event.mainCard.forEach(function(fight,i){ %>
                 <div class="panel fight-listing main-card-0">
                     <div class="weightClass">
                         <p><%= fight.weightClass %> Bout</p>
                     </div>
                     <div class="fight-listing-row">
                         <div class="fight-listing-fighter">
-                            <% Fighters.forEach(function(fighter){ %>
-                                <% if (fighter.name == Object.values(fight)[0]){ %>
-                                    <a class="hide-text fighter-name"><%= Object.values(fight)[0] %> <img class="fighter-img" src="<%=fighter.image_url %>" height="150px" alt="fighter 1 picture"></a>
-                            <% }}) %>
-                            <a class="fighter-name"><%= Object.values(fight)[0] %></a>
+                                    <a class="hide-text fighter-name"><%= fighters[i].name %> <img class="fighter-img" src="<%=fighters[i].image_url %>" height="150px" alt="fighter 1 picture"></a>
+                            <a class="fighter-name"><%= fighters[i].name %></a>
                             
-                            <% Fighters.forEach(function(fighter){ %>
-                               <% if (fighter.name == Object.values(fight)[0]){ %>
-                                    <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                    <p class="fighter-info">Record: <span><%= fighters[i].wins.total %>-<%= fighters[i].losses.total %></span></p>
                                     <p class="fighter-info">Style: Boxer</p>
-                                    <p class="fighter-info">Height: <%= fighter.height %></p>
-                                    <p class="fighter-info">Weight: <%= fighter.weight %></p>
-                               <% }}) %>
+                                    <p class="fighter-info">Height: <%= fighters[i].height %></p>
+                                    <p class="fighter-info">Weight: <%= fighters[i].weight %></p>
                             
                         </div>
                         <% if (fight.isTitleFight){ %>
                             <div class="belt-container">
                                 <img class="belt-image" src="/image/<%= event.org %>-belt.png" %>.png alt="">
-                                <p class="vs">VS.</p>
+                                <div class="event-predict-container">
+                                    <p class="vs">VS.</p>
+                                    <a href="/fight/<%= fight.fightID %>" id="<%= fight.fightID %>" class="predict-button">Details</a>
+                                </div>
                             </div>
                         <% } else{ %>
-                            <p class="vs">VS.</p>
+                            
+                                <div class="event-predict-container">
+                                    <p class="vs">VS.</p>
+                                    <a href="/fight/<%= fight.fightID %>" id="<%= fight.fightID %>" class="predict-button">Details</a>
+                            </div>
                         <% } %>
                         
                         <div class="fight-listing-fighter">
-                            <% Fighters.forEach(function(fighter){ %>
-                                <% if (fighter.name == Object.values(fight)[1]){ %>
-                            <a class="hide-text fighter-name"><%= Object.values(fight)[1] %> <img class="fighter-img" src="<%=fighter.image_url %>" %> height="150px" alt="fighter 1 picture"></a>
-                            <% }}) %>
-                            <a class="fighter-name"><%= Object.values(fight)[1] %></a>
-                        <% Fighters.forEach(function(fighter){ %>
-                            <% if(Object.values(fight)[1]==fighter.name) { %>
-                                <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                            <a class="hide-text fighter-name"><%= opponents[i].name %> <img class="fighter-img" src="<%=opponents[i].image_url %>" %> height="150px" alt="fighter 1 picture"></a>
+                            <a class="fighter-name"><%= opponents[i].name %></a>
+                                <p class="fighter-info">Record: <span><%= opponents[i].wins.total %>-<%= opponents[i].losses.total %></span></p>
                                 <p class="fighter-info">Style: Boxer</p>
-                                <p class="fighter-info">Height: <%= fighter.height %></p>
-                                <p class="fighter-info">Weight: <%= fighter.weight %></p>
-                           <% }}) %>
+                                <p class="fighter-info">Height: <%= opponents[i].height %></p>
+                                <p class="fighter-info">Weight: <%= opponents[i].weight %></p>
                         </div>
                     </div>
                     
@@ -203,48 +207,40 @@
            <% }) %>
             
         </div>
-
+    </div>
+    </div>
     </div>
 
     <div class="secondary-page-container">
         <h2 class="title-text prelims-title">Prelims</h2>
         <div class="prelims-container">
-            <% event.prelims.forEach(function(fight){ %>
+            <% event.prelims.forEach(function(fight,i){ %>
                 <div class="panel fight-listing main-card-0">
                     <div class="weightClass">
                         <p><%= fight.weightClass %> Bout</p>
                     </div>
                     <div class="fight-listing-row">
                         <div class="fight-listing-fighter">
-                            <% Fighters.forEach(function(fighter){ %>
-                                <% if (fighter.name == Object.values(fight)[0]){ %>
-                                    <a class="hide-text fighter-name"><%= Object.values(fight)[0] %> <img class="fighter-img" src="<%=fighter.image_url %>" %> height="150px" alt="fighter 1 picture"></a>
-                            <% }}) %>
-                            <a class="fighter-name"><%= Object.values(fight)[0] %></a>
+                                    <a class="hide-text fighter-name"><%= prelimFighters[i].name %> <img class="fighter-img" src="<%=prelimFighters[i].image_url %>" %> height="150px" alt="fighter 1 picture"></a>
+                            <a class="fighter-name"><%= prelimFighters[i].name %></a>
                             
-                            <% Fighters.forEach(function(fighter){ %>
-                               <% if (fighter.name == Object.values(fight)[0]){ %>
-                                    <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                    <p class="fighter-info">Record: <span><%= prelimFighters[i].wins.total %>-<%= prelimFighters[i].losses.total %></span></p>
                                     <p class="fighter-info">Style: Boxer</p>
-                                    <p class="fighter-info">Height: <%= fighter.height %></p>
-                                    <p class="fighter-info">Weight: <%= fighter.weight %></p>
-                               <% }}) %>
+                                    <p class="fighter-info">Height: <%= prelimFighters[i].height %></p>
+                                    <p class="fighter-info">Weight: <%= prelimFighters[i].weight %></p>
                             
                         </div>
-                        <p class="vs">VS.</p>
+                        <div class="event-predict-container">
+                            <p class="vs">VS.</p>
+                            <a href="/fight/<%= fight.fightID %>" id="<%= fight.fightID %>" class="predict-button">Details</a>
+                    </div>
                         <div class="fight-listing-fighter">
-                            <% Fighters.forEach(function(fighter){ %>
-                                <% if (fighter.name == Object.values(fight)[1]){ %>
-                                    <a class="hide-text fighter-name"><%= Object.values(fight)[1] %> <img class="fighter-img" src="<%=fighter.image_url %>" height="150px" alt="fighter 1 picture"></a>
-                            <% }}) %>
-                            <a class="fighter-name" href="./event.html"><%= Object.values(fight)[1] %></a>
-                        <% Fighters.forEach(function(fighter){ %>
-                            <% if(Object.values(fight)[1]==fighter.name) { %>
-                                <p class="fighter-info">Record: <span><%= fighter.wins.total %>-<%= fighter.losses.total %></span></p>
+                                    <a class="hide-text fighter-name"><%= prelimOpponents[i].name %> <img class="fighter-img" src="<%=prelimOpponents[i].image_url %>" height="150px" alt="fighter 1 picture"></a>
+                            <a class="fighter-name" href="./event.html"><%= prelimOpponents[i].name %></a>
+                                <p class="fighter-info">Record: <span><%= prelimOpponents[i].wins.total %>-<%= prelimOpponents[i].losses.total %></span></p>
                                 <p class="fighter-info">Style: Boxer</p>
-                                <p class="fighter-info">Height: <%= fighter.height %></p>
-                                <p class="fighter-info">Weight: <%= fighter.weight %></p>
-                           <% }}) %>
+                                <p class="fighter-info">Height: <%= prelimOpponents[i].height %></p>
+                                <p class="fighter-info">Weight: <%= prelimOpponents[i].weight %></p>
                         </div>
                     </div>
                 </div>
@@ -266,6 +262,86 @@
 
 
     </div>
+
+    <div class="event-comments-container panel">
+
+        <h2 class="title-text">Comments:</h2>
+        <form action="/event" method="post">
+            <div class="compose-comment fight-comment-box">
+                <% if(user){ %>
+                    <textarea class="input input<%= event.id %> form-control" name="comment" cols="30" rows="5" placeholder="Leave a comment on the event"></textarea>
+                    <button  class="comment-btn <%= event.id %>" type="submit">comment</button>
+                    <% } else{ %>
+                        <textarea disabled class="input input<%= event.id %> form-control" name="comment" cols="30" rows="5" placeholder="Sign in to leave a comment"></textarea>
+                    <% } %>
+            </div>
+            </form>
+        <% event.comments.reverse().forEach(function(comment){ %>
+            
+            <% if(user){ %>
+                <div class="comment-row">
+                    <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                <div class="comment-col fight-comment">
+                    <div class="comment-col">
+                        <div class="comment-row">      
+                            <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                            <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                        </div>
+                        <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                    </div>
+                    <div class="comment-row">
+                        <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
+                        <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                        <% } else{ %>
+                        <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>" class="like-btn" src="/image/thumbs-up-blue.svg" height="20px" alt="">
+                        <% } %>
+                        <p class="comment-likes">  <%= comment.likes %> </p>
+                        <% if (comment.usersDisliked===undefined || !comment.usersDisliked.includes(user.username)){ %>
+                        <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                        <% } else{ %>
+                        <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-blue.svg" height="20px" alt="">
+                        <% } %>
+                        <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                    </div>
+                </div>
+            </div>
+            <% } else{ %>
+                <div class="comment-row">
+                    <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                <div class="comment-col fight-comment">
+                    <div class="comment-col">
+                        <div class="comment-row">      
+                            <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                            <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                        </div>
+                    <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                    </div>
+                    <div class="comment-row">
+                        <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                        <p class="comment-likes">  <%= comment.likes %> </p>
+                        <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                        <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            
+
+        <% }) %>
+    </div>
+</div>
+    <% if(user){ %>
+        <script>
+         var username = "<%= user.username %>";
+         var eventID="<%= event.id %>";
+         var userID="<%= user.id %>";
+         </script>   
+     <% } else{ %>
+         <script>
+             var eventID="<%= event.id %>";
+             </script>   
+     <% } %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/eventComment.js"></script>
 <script type="text/javascript" src="/javascript/slide.js"></script>
     <%- include("partials/footer"); -%>

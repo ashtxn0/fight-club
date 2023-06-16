@@ -23,7 +23,7 @@
                 <button class="button-1">Sign in</button>
                 <p>Don't have an account? <a href="/signup">Sign up here</a></p>
                 <% if (messages.error) { %>
-                    <%= messages.error %>
+                    <p class="error-login-redirect"><%= messages.error %></p>
                <% } %>
             </form>
             

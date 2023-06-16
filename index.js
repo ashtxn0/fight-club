@@ -14,10 +14,11 @@ const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 const initializePassport = require(__dirname+"/passport-config.js");
-const methodOverride = require("method-override")
+const methodOverride = require("method-override");
+const { findFightersByID, findUserByID } = require("./db");
+const Time = require("time-passed").default;
 
 initializePassport(passport);
-
 
 
 
@@ -41,17 +42,18 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(methodOverride("_method"));
 
+app.use((req,res,next)=>{
+  user=req.user;
+  next();
+})
 
-  // Event.deleteMany({name:"test"}).then(function(event){
-  //   console.log("deleted tests");
-  // })
 app.get("/", function(req,res){
   res.render("home");
     
   })
 
 app.get("/event", function(req,res){
-  res.render("event");
+  res.redirect('/events');
 })
 
 app.get("/events", function(req,res){
@@ -60,20 +62,39 @@ app.get("/events", function(req,res){
   })
 })
 
-app.get("/event/:eventName", function(req,res){
-  db.findALLEvents().then(function(foundEvents){
-    foundEvents.forEach(function(event){
-      let lowEventID = _.lowerCase(req.params.eventName);
-      let lowID=_.lowerCase(event._id);
-      if (lowEventID===lowID){
-        db.findALLFighters().then(function(foundFighters){
-          res.render("event", {event: event, Fighters: foundFighters});
-        })     
-      }
+app.get("/event/:eventID", function(req,res){
+  db.findEventByID(req.params.eventID).then(async function(event){
+    event.comments.forEach(async function (comment){
+      comment.picture= await db.findUserImage(comment.username);
     })
+        let mainCardFighters= await db.findFightersByName(event.mainCard.map(({fighterName})=> fighterName));
+        let mainCardOpponents= await db.findFightersByName(event.mainCard.map(({opponentName})=> opponentName));
+        let prelimFighters= await db.findFightersByName(event.prelims.map(({fighterName})=> fighterName));
+        let prelimOpponents= await db.findFightersByName(event.prelims.map(({opponentName})=> opponentName));
+
+        res.render("event", {event: event, fighters:mainCardFighters,opponents:mainCardOpponents,prelimFighters:prelimFighters,prelimOpponents:prelimOpponents,Time:Time.getRelativeTime});
+
+
+
   })
 })
-  
+
+
+app.get("/user", function(req,res){
+  res.redirect('/');
+})
+
+app.get("/user/:username", function(req,res){
+  db.findUserByUsername(req.params.username).then(function(foundUser){
+    db.findPredictionsByUserID(foundUser.id).then(function(userPredictions){
+      res.render("user", {profileUser:foundUser, predictions:userPredictions});
+    })
+    
+    
+  })
+})
+
+
 app.get("/fighter", function(req,res){
   res.render("fighter");
 })
@@ -87,19 +108,29 @@ app.get("/signup",checkNotAuthenticated, function(req,res){
 });
 
 app.post("/signup",checkNotAuthenticated,async function(req,res){
-  if (req.body.password===req.body.confirmPassword){
-    try{
-    db.saveUser(req.body.username, req.body.password,req.body.email);
-    res.redirect('/login');
-  } catch{
-    res.redirect("/signup");
-  }
-  db.findALLUsers().then(function(usersFound){
-    console.log(usersFound);
+  db.findUserByUsername(req.body.username).then(async function(userFoundByUsername){
+    db.findUserByEmail(req.body.email).then(function(userFoundByEmail){
+      if (userFoundByUsername != undefined){
+      req.flash("error","Username is taken.");
+      res.redirect("/signup");
+    } else if (userFoundByEmail!=undefined){
+      req.flash("error","An account with that email already exists.");
+      res.redirect("/signup");
+    } else if (req.body.password===req.body.confirmPassword){
+      try{
+        db.saveUser(req.body.username, req.body.password,req.body.email);
+        res.redirect('/login');
+      } catch{
+        res.redirect("/signup");
+      }
+  
+    } else{
+      res.redirect('/signup');
+    }
+    })
   })
-  } else{
-    res.redirect('/signup');
-  }
+  
+  
   
 });
 
@@ -109,13 +140,14 @@ app.get("/login",checkNotAuthenticated, function(req,res){
 });
 
 app.post("/login", checkNotAuthenticated, passport.authenticate("local", {
-  successRedirect: '/',
+  successReturnToOrRedirect: '/',
   failureRedirect: '/login',
-  failureFlash: true
+  failureFlash: true,
+  keepSessionInfo: true
 }));
 
   app.get("/fighter/:fighterName", function(req,res){
-    db.findFighterByName(req.params.fighterName).then(function(fighter){
+    db.findFighterByName(_.startCase((req.params.fighterName).replace(/-/g, ' ').replace(/_/g, ' '))).then(function(fighter){
       if (fighter ===null){
         res.render("fighter-error");
       } else{
@@ -138,12 +170,126 @@ app.get("/compose-event", function(req,res){
   
 })
 
+app.get("/predict",checkAuthenticated, function(req,res){
+  res.render("predict");
+  
+})
+
+app.get("/predict/:eventID",checkAuthenticated, function(req,res){
+  db.findEventByID(req.params.eventID).then(async function(event){
+    let fullCard=event.mainCard.concat(event.prelims);
+    db.findFightsByIDSortedComments(fullCard.map(({fightID})=>fightID)).then(async function(fights){
+      db.getFightersByID(fights.map(({fighterID})=>fighterID)).then(async function(fighters){
+        db.getFightersByID(fights.map(({opponentID})=>opponentID)).then(async function(opponents){
+          res.render("predict",{fighters:fighters,opponents:opponents,event:event,fights:fights,Time:Time.getRelativeTime});
+        })
+      })
+    })
+  })
+  
+  
+})
+
+app.get("/fight/:fightID", function(req,res){
+  db.findFightByID(req.params.fightID).then(async function(fight){
+    fight.comments.forEach(async function (comment){
+      comment.picture= await db.findUserImage(comment.username);
+    })
+    db.findFighterByid(fight.fighterID).then(async function(fighter){
+      db.findFighterByid(fight.opponentID).then(async function(opponent){
+        db.findEventByID(fight.eventID).then(async function(event){
+          db.findPredictionsByFight(fight.id).then(function(predictions){
+            let fighterCount=0;
+            let opponentCount=0;
+            predictions.forEach(async function(prediction){
+              if (prediction.fighterID===fight.fighterID){
+                fighterCount++;
+                prediction.fighterName = fighter.name;
+              } else{
+                opponentCount++;
+                prediction.fighterName = opponent.name;
+              }
+            })
+            res.render("fight", {predictions: predictions,fighterCount: fighterCount, opponentCount: opponentCount,fighter:fighter,opponent:opponent,fight:fight,event:event,Time:Time.getRelativeTime})
+          })
+          
+        })
+        
+      })
+    })
+  })
+})
+
+app.post("/predict", function(req,res){
+  res.redirect("/");
+  
+})
+
+app.post("/event", function(req,res){
+  res.redirect("/");
+  
+})
+
+app.post("/ajaxComment", async function(req,res){
+  if(req.body.contentType ==="fight"){
+    db.saveFightComment(req.body.fightID,req.body.comment).then(async function(comments){
+    res.json({comments});
+  });
+  } else if (req.body.contentType ==="event"){
+    db.saveEventComment(req.body.eventID,req.body.comment).then(async function(comments){
+      res.json({comments});
+    })
+  }
+  
+  
+  
+})
+
+app.post("/ajaxPredict", async function(req,res){
+  db.saveFightPrediction(req.body.fightID,req.body.prediction).then(async function(outcome){
+    await db.getFighterByID(req.body.prediction.fighterID).then(function(predictedFighter){
+      const fighterName=predictedFighter.name;
+      res.json({outcome,fighterName});
+    });
+    
+  });
+  
+  
+})
+
+app.post("/ajaxLikeOrDislike", async function(req,res){
+  if (req.body.action==="like"){
+    const outcome = await db.likeComment(req.body.commentUsername,req.body.timePosted,req.body.username,req.body.contentType);
+      res.json({outcome});
+    
+  } else{
+    const outcome = await db.dislikeComment(req.body.commentUsername,req.body.timePosted,req.body.username,req.body.contentType);
+      res.json({outcome});
+  }
+  
+  
+  
+})
+
+
+app.post("/ajaxEditProfile", async function(req,res){
+
+  db.updateProfileInfo(req.body.username,req.body.aboutMe,req.body.favFighter,req.body.favOrg,req.body.currentTheme).then(function(updated){
+    res.json(updated);
+  })
+
+  
+  
+})
+
+
 app.post("/", upload.single('eventPicture'), function(req,res){
   let mainCard = [];
   let prelims=[];
   let j=0;
   for(let i=0;i<req.body.mainFighter1Name.length;i++){    
     mainCard[i]={
+    fightID: "test",
     fighterName: req.body.mainFighter1Name[i],
     opponentName: req.body.mainFighter2Name[i],
     weightClass: req.body.mainWeightClass[i],
@@ -160,6 +306,7 @@ app.post("/", upload.single('eventPicture'), function(req,res){
   j=0;
   for(let i=0;i<req.body.prelimFighter1Name.length;i++){
     prelims[i]={
+    fightID: "test",
     fighterName: req.body.prelimFighter1Name[i],
     opponentName: req.body.prelimFighter2Name[i],
     weightClass: req.body.prelimWeightClass[i],
@@ -174,6 +321,11 @@ app.post("/", upload.single('eventPicture'), function(req,res){
   db.saveFighterByName(req.body.prelimFighter2Name[i]);
   }
 
+  
+// findFightersByID(mainCard[0].fighterName).then(function(ids){
+//   mainCard[0].fighterName=ids;
+// });
+
   let event = {
     name: req.body.eventName,
     picture: req.file.filename,
@@ -184,9 +336,11 @@ app.post("/", upload.single('eventPicture'), function(req,res){
     posterURL: "",
     prelims: prelims
   }
+
+
   db.saveEvent(event);
 
-  db.findALLEvents.then(function(foundEvents){
+  db.findALLEvents().then(function(foundEvents){
     res.render("events", {newEvents: foundEvents});
   })
 
@@ -220,18 +374,20 @@ app.post("/", upload.single('eventPicture'), function(req,res){
 app.delete("/logout", function(req,res){
   req.logOut(function(err){
     if (err){return next(err);}
-    res.redirect("/login");
+    res.redirect("back");
   });
   
 })
 
-// //use to restrict anyone whos not signed in from going to a page by putting "checkAuthenticated ," after the get route
-// function checkAuthenticated(req,res,next){
-//   if(req.isAuthenticated()){
-//     return next();
-//   }
-//   res.redirect('/login');
-// }
+//use to restrict anyone whos not signed in from going to a page by putting "checkAuthenticated ," after the get route
+function checkAuthenticated(req,res,next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  req.session.returnTo=req.url;
+  req.flash('error', 'Must login to see that page');
+  res.redirect('/login');
+}
 
 function checkNotAuthenticated(req,res,next){
   if(req.isAuthenticated()){

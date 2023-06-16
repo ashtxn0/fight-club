@@ -6,7 +6,7 @@
             <div class="fighter-page-heading">
                 <img class="fighter-profile-image" src="<%=fighter.image_url %>" alt="fighter picture">
                     <h3 class="nickname">"<%= fighter.nickname %>"</h3>
-                    <a  href="/fighter/<%= fighter.name %>"><h2><%= fighter.name %></h2></a>
+                    <a  href="/fighter/<%= fighter.name.replace(/\s+/g, '-') %>"><h2><%= fighter.name %></h2></a>
                     <h4>(<%= fighter.wins.total %>-<%= fighter.losses.total %>)</h4>   
                 </div>
                 <div class="fighter-page-info">
@@ -33,7 +33,7 @@
        
         <div class="panel event-fight-history-row shown-fights">
             <div class="event-fight-history-col">
-                <a href="/fighter/<%= fight.opponent %>"><%= fight.opponent %></a>
+                <a href="/fighter/<%= fight.opponent.replace(/\s+/g, '-') %>"><%= fight.opponent %></a>
             </div>
             <div class="event-fight-history-col">
                 <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>

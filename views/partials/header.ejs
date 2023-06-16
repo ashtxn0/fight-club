@@ -21,12 +21,27 @@
     <div class="taskbar-containerr">   
         <a href="/" class="logo"><img class="logo" src="/image/fightclublogo3d.png" alt="fight club logo"/></a>
         
-        <div class="task"><a href="/events">Events</a></div>
-        <div class="task"><a href="/event">Study Buddy</a></div>
-        <div class="task"><a href="/home">Best Bets</a></div>
-        <div class="task"><a href="/home">Prediction Rankings</a></div>
-        <div class="task"><a class="premium" href="/home">Premium</a></div>
-        <div class="task"><a href="/signup">Login/Signup</a></div>    
+        <a class="task events-task" href="/events">Events</a>
+        <a class="task" href="/event">Study Buddy</a>
+        <a class="task" href="/home">Best Bets</a>
+        <a class="task" href="/home">Prediction Rankings</a>
+        <a class="task" class="premium" href="/home">Premium</a>
+        <% if(user){ %>
+        <div class="user-drop-down">
+            <a onclick="userDropDown()" class="drop-down-btn"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/data/uploads/<%=user.profImage_url %>" alt="user profile image"></a>
+            <div id="userDropDown" class="user-drop-content">
+                <a href="/user/<%=user.username%>">View Profile</a>
+                <a href="">Edit Profile</a>
+                <form action="/logout?_method=DELETE" method="post">
+                    <button style="padding: 5px;" class="fight-page-predict-button" type="submit">logout</button>
+                </form>
+            </div>
+        </div>
+            
+        <% } else{ %>
+            <a class="task login-task" href="/signup">Login/Signup</a>
+        <% }%>
+           
         
         
 
