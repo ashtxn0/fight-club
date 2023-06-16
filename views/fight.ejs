@@ -50,9 +50,9 @@
             <% let recentPredictions= predictions.reverse().splice(0,4) %>
             <% recentPredictions.forEach(function(predict){ %>
                 <% if (predict.fighterName===opponent.name){ %>
-                    <div class="fight-prediction-row"> <p class="prediction-username"><%= predict.username %></p><p>voted for</p>  <p class="fight-prediction-opponent-name"><%= predict.fighterName %></p></div>
+                    <p class="prediction-username"><%= predict.username %><span> voted for</span>  <span class="fight-prediction-opponent-name"><%= predict.fighterName %></span></p>
                 <% } else{ %>
-                    <div class="fight-prediction-row"> <p class="prediction-username"><%= predict.username %></p> <p>voted for</p> <p class="fight-prediction-fighter-name"><%= predict.fighterName %></p></div>
+                    <p class="prediction-username"><%= predict.username %><span> voted for</span>  <span class="fight-prediction-fighter-name"><%= predict.fighterName %></span></p>
                 <% } %>
             <% }) %>
             </div>

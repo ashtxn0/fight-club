@@ -47,16 +47,27 @@ $(".profile-btn-small").on("click", function(event){
     console.log(event.currentTarget.id);
     let profileTheme=event.currentTarget.id;
 
-    if(currentTheme.length){
+    if(theme.length){
+        $(".title-text").removeClass(theme+"-theme-profile-title");
+    $(".username-text").removeClass(theme+"-theme-profile-title");
+    $(".profile-heading-container").removeClass(theme+"-theme-profile-heading-container");
+    $(".prediction-table td:not(.prediction-table-result)").removeClass(theme+"-theme-profile-heading-container");
+    $(".prediction-table th").removeClass(theme+"-theme-profile-table-heading");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3, .prediction-rankings-title p").removeClass(theme+"-theme-text");
+    $(".prediction-rankings-table-heading").removeClass(theme+"-theme-prediction-rankings-table-heading");
+    $(".profile-btn").removeClass(theme+"-theme-btn");
+    $(".profile-page-container").removeClass(theme+"-theme-profile-page-container");
+    theme="";
+    } else if(currentTheme.length){
         $(".title-text").removeClass(currentTheme+"-theme-profile-title");
-    $(".username-text").removeClass(currentTheme+"-theme-profile-title");
-    $(".profile-heading-container").removeClass(currentTheme+"-theme-profile-heading-container");
-    $(".prediction-table td").removeClass(currentTheme+"-theme-profile-heading-container");
-    $(".prediction-table th").removeClass(currentTheme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3").removeClass(currentTheme+"-theme-text");
-    $(".prediction-rankings-table-heading").removeClass(currentTheme+"-theme-prediction-rankings-table-heading");
-    $(".profile-btn").removeClass(currentTheme+"-theme-btn");
-    $(".profile-page-container").removeClass(currentTheme+"-theme-profile-page-container");
+        $(".username-text").removeClass(currentTheme+"-theme-profile-title");
+        $(".profile-heading-container").removeClass(currentTheme+"-theme-profile-heading-container");
+        $(".prediction-table td:not(.prediction-table-result)").removeClass(currentTheme+"-theme-profile-heading-container");
+        $(".prediction-table th").removeClass(currentTheme+"-theme-profile-table-heading");
+        $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *").removeClass(currentTheme+"-theme-text");
+        $(".prediction-rankings-table-heading").removeClass(currentTheme+"-theme-prediction-rankings-table-heading");
+        $(".profile-btn").removeClass(currentTheme+"-theme-btn");
+        $(".profile-page-container").removeClass(currentTheme+"-theme-profile-page-container");
     }
 
     $(".title-text").addClass(profileTheme+"-theme-profile-title");
@@ -66,8 +77,8 @@ $(".profile-btn-small").on("click", function(event){
     $(".prediction-rankings-table-heading").addClass(profileTheme+"-theme-prediction-rankings-table-heading");
     $(".profile-btn").addClass(profileTheme+"-theme-btn");
     $(".prediction-table th").addClass(profileTheme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3").addClass(profileTheme+"-theme-text");
-    $(".prediction-table td").addClass(profileTheme+"-theme-profile-heading-container");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *").addClass(profileTheme+"-theme-text");
+    $(".prediction-table td:not(.prediction-table-result)").addClass(profileTheme+"-theme-profile-heading-container");
     $(".profile-page-container").addClass(profileTheme+"-theme-profile-page-container");
     currentTheme=profileTheme;
 })

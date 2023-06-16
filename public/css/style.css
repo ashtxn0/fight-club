@@ -1,7 +1,26 @@
 
 :root{
-    --color-blue-primary: #001c48;
-    --color-blue-secondary: #0031a4;
+    --color-primary: #001c48;
+    --color-accent: #0031a4;
+    --color-background: #f9f9fb;
+    --color-text: #090c10;
+    --color-secondary:#ededed;
+    --color-grey-dim:#7d7d7d33;
+    --color-text-secondary:#495057;
+    --color-transparent-card: #ffffff61;  
+
+    --ff-base:'Roboto', sans-serif;
+    --ff-accent:'Rubik', sans-serif;
+
+    --fs-100: clamp(0.70rem, calc(0.81rem + -0.13vw), 0.78rem);
+    --fs-200: clamp(0.94rem, calc(0.94rem + 0.00vw), 0.94rem);
+    --fs-300: clamp(1.13rem, calc(1.08rem + 0.22vw), 1.25rem);
+    --fs-400: clamp(1.35rem, calc(1.24rem + 0.55vw), 1.67rem);
+    --fs-500: clamp(1.62rem, calc(1.41rem + 1.05vw), 2.22rem);
+    --fs-600: clamp(1.94rem, calc(1.59rem + 1.77vw), 2.96rem);
+    --fs-700: clamp(2.33rem, calc(1.77rem + 2.81vw), 3.95rem);
+    --fs-800: clamp(2.80rem, calc(1.94rem + 4.28vw), 5.26rem);
+
     --color-blue-400: #69b3e3;
     --color-blue-500: #055ca3;
     --color-blue-600: #093759;
@@ -29,7 +48,7 @@
     --color-blood-red-800: #490000;
     --color-blood-red-900: #380000;
     --color-blood-red-dark: #1600006d;
-
+    --color-blood-red-500-dark: #4b0202;
 
 
 
@@ -40,16 +59,21 @@
     --color-octagon-blue-light: #7f9eb33d;
     
 
-    --color-blood-red-500-dark: #4b0202;
+
     --color-do-bronx-yellow: #FEDD00;
     --color-do-bronx-yellow-light: #FEDD003d;
     --color-do-bronx-yellow-dark: #dbbe006d;
+
     --color-brazil-green: #009739;
     --color-brazil-green-light: #0097393d;
     --color-brazil-green-dark: #005c236d;
+
     --color-izzy-blue: #006be0;
     --color-izzy-blue-light: #006be03d;
     --color-izzy-blue-dark: #0041866d;
+    --color-izzy-blue-accent:#0CED9C;
+
+
     --color-irish-green: #01681d;
     --color-irish-green-light: #01681d3d;
     --color-irish-green-dark: #002c0c6d;
@@ -59,30 +83,51 @@
 
 }
 
+html{
+    color-scheme: light dark;
+}
+
+
+
+@media (prefers-color-scheme: dark){
+    :root{
+        --color-primary: #0031a4;
+        --color-accent: #001c48;
+        --color-background: #121212;
+        --color-text: #f6f3efe5;
+        --color-secondary: #060604;
+        --color-text-secondary:#b6afa8;
+        --color-transparent-card: #00000081;  
+    }
+
+}
 
 
 body{
-    background-color: white;
+    background-color: var(--color-secondary);
+    font-size: var(--fs-300);
 
 }
 /*all*/
-h1,h2,h3,h4,h5,h6,p{
-    font-family: 'Rubik', sans-serif;
+h1,h2,h3,h4,h5,h6{
+    font-family: var(--ff-accent);
 }
-
+p{
+    font-family: var(--ff-base);
+}
 
 /*all*/
 .taskbar-containerr{
-    background: linear-gradient(180deg, #ffffff, #a8a8a831);
+    background: linear-gradient(180deg, var(--color-background), var(--color-secondary));
     display: flex;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-secondary);
     gap: 2em;
     width: 98%;
     align-items: center;
     border-radius: 5px;
     margin-bottom: 15px;
     box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
-    border-bottom: 4px solid #01255f;
+    border-bottom: 4px solid var(--color-primary);
     border-top: 0;
     border-top-left-radius: 0;
     border-top-right-radius: 0;
@@ -102,8 +147,8 @@ h1,h2,h3,h4,h5,h6,p{
 
 /*all*/
 .title-text{
-    color: #001c48;
-    border-bottom: 1px dashed #d4d5d6;
+    color: var(--color-primary);
+    border-bottom: 1px dashed var(--color-secondary);
 }
 
 /*all*/
@@ -111,7 +156,7 @@ h1,h2,h3,h4,h5,h6,p{
     padding: .5% .5%;
     border-radius: 5px;
     font-weight: 500;
-    font-size: .9rem;
+    font-size: var(--fs-200);
     visibility: hidden;
 }
 
@@ -132,23 +177,24 @@ h1,h2,h3,h4,h5,h6,p{
     right: 0;
     display: none;
     position: absolute;
-    background-color: rgb(250, 250, 250);
+    background-color: var(--color-secondary);
     min-width: 100px;
     padding: 10px;
     height: 100px;
-    border: 1px solid #d4d5d6;
+    border: 1px solid var(--color-secondary);
     z-index: 2;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     border-radius: 5px;
 }
 
 .user-drop-content a{
-    color: #001c48;
+    color: var(--color-primary);
     font-weight: 500;
+    font-size: var(--fs-200);
 }
 
 .user-drop-content a:hover{
-    color:#0031a4;
+    color:var(--color-accent);
 }
 
 .user-drop-down-show{
@@ -217,13 +263,13 @@ h1,h2,h3,h4,h5,h6,p{
 
 .event-predict-container a{
     text-align: center;
-    font-size: .7rem;
+    font-size: var(--fs-100);
     cursor: pointer;
-    color:#495057;
+    color:var(--color-text);
 }
 
 .event-predict-container a:hover{
-    color:#0031a4;
+    color:var(--color-accent);
 
 }
 
@@ -282,12 +328,12 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .predict-fighter-name-container p{
-    color: white;
+    color: var(--color-background);
     opacity: 80%;
 }
 
 .predict-fighter-name-container h2{
-    color: white;
+    color: var(--color-background);
     opacity: 80%;
 }
 
@@ -315,7 +361,7 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .profile-theme-container{
-    background-color: #001c48;
+    background-color: var(--color-primary);
     width: 100%;
     height: 40vh;
     margin-top: 70px;
@@ -326,7 +372,7 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .comment-likes{
-    font-size: .8rem;
+    font-size: var(--fs-100);
     color: #4d4d4d;
 }
 
@@ -362,15 +408,15 @@ h1,h2,h3,h4,h5,h6,p{
 .profile-page-picture img{
     object-fit: cover;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 2px solid var(--color-background);
     height: 175px;
     width: 175px;
 }
 
 .profile-page-picture h1{
-    color: var(--color-blue-primary);
+    color: var(--color-primary);
     text-shadow: 0 1px 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-    font-size: 3rem;
+    font-size: var(--fs-600);
 }
 
 .vote-flash{
@@ -382,12 +428,12 @@ h1,h2,h3,h4,h5,h6,p{
     margin-bottom: 1%;
 }
 .vote-flash p{
-    color: white;
+    color: var(--color-background);
     padding: 5%;
     text-align: center;
-    font-size: 90%;
+    font-size: var(--fs-300);
     min-width: max-content;
-    background-color:#001c48ce;
+    background-color:var(--color-primary);
 }
 
 .fight-vote-flash{
@@ -395,7 +441,7 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .fight-vote-flash p{
-    background-color:#d4d5d6;
+    background-color:var(--color-secondary);
     border-radius: 5px;
     color: black;
 }
@@ -408,22 +454,23 @@ h1,h2,h3,h4,h5,h6,p{
     justify-content: flex-end;
 }
 .comment-dislikes{
-    font-size: .8rem;
+    font-size: var(--fs-100);
     color: #4d4d4d;
 }
 .comment-username{
-    color: #001c48;
-    font-size: .9rem;
+    color: var(--color-primary);
+    font-size: var(--fs-200);
     font-weight: 500;
     transform: skew(0deg);
+    font-family: var(--ff-accent);
 }
 
 .comment-content{
-    font-size: .9rem;
+    font-size: var(--fs-200);
     font-style: normal;
     transform: skew(4deg);
     white-space: pre-line;
-    color: #0e0e10;
+    color: var(--color-text);
 }
 
 .like-btn{
@@ -437,7 +484,7 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .predict-comment-container p{
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--ff-base);
 }
 .predict-comment-container {
     display: flex;
@@ -466,12 +513,12 @@ h1,h2,h3,h4,h5,h6,p{
     border: 2px solid rgba(255, 255, 255, 0.801);
     border-radius: 5px;
     color: rgba(255, 255, 255, 0.801);
-    font-size: 1.5rem;
+    font-size: var(--fs-500);
     cursor: pointer;
 }
 
 .predict-fighter-container button:hover{
-    border-color: #0031a4;
+    border-color: var(--color-accent);
     background-color:rgba(0, 0, 0, 0.377)
 }
 .predict-fighter-container{
@@ -486,8 +533,8 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .active{
-    box-shadow:0 0 10px .5px #4d68a783;
-    border: 1px solid #0031a4;
+    box-shadow:0 0 10px .5px var(--color-primary);
+    border: 1px solid var(--color-accent);
     filter: grayscale(0%) contrast(100%) !important;
 }
 
@@ -503,14 +550,14 @@ h1,h2,h3,h4,h5,h6,p{
 
 .fight-time-since{
     padding-left: .5em;
-    font-size: .7rem;
-    color: #495057;
+    font-size: var(--fs-100);
+    color: var(--color-text-secondary);
 }
 
 .predict-time-since{
     padding-left: 2%;
-    font-size: .7rem;
-    color: #495057;
+    font-size: var(--fs-100);
+    color: var(--color-text-secondary);
 }
 
 .predict-comment-fill{
@@ -555,7 +602,7 @@ h1,h2,h3,h4,h5,h6,p{
   .predict-comments-container .form-control{
     width: 100%;
     height: 60%;
-    background-color:white;
+    background-color:var(--color-background);
     color: #585858;
     resize: none;
     overflow: hidden;
@@ -570,8 +617,8 @@ h1,h2,h3,h4,h5,h6,p{
   .predict-v{
     position:absolute;
     align-self: flex-end;
-    color: white;
-    font-size: 2rem;
+    color: var(--color-background);
+    font-size: var(--fs-600);
     opacity: 80%;
     
   }
@@ -579,8 +626,8 @@ h1,h2,h3,h4,h5,h6,p{
   .predict-s{
     position:absolute;
     align-self: flex-start;
-    color: white;
-    font-size: 2rem;
+    color: var(--color-background);
+    font-size: var(--fs-600);
     opacity: 80%;
     
   }
@@ -610,13 +657,13 @@ h1,h2,h3,h4,h5,h6,p{
 .compose-comment:focus-within{
     outline-style:solid;
     outline-width: 1px;
-    outline-color: #0031a4;
+    outline-color: var(--color-accent);
 }
 
 .compose-comment{
     display: flex;
     flex-direction: column;
-    border: 1px solid #d4d5d6;
+    border: 1px solid var(--color-secondary);
     padding: 5% 5% 2% 5%; 
     margin: 1%;
     border-radius: 5px;
@@ -630,12 +677,12 @@ h1,h2,h3,h4,h5,h6,p{
 .compose-comment button{
    align-self: flex-end;
    margin-right: 1%;
-   background-color:white;
-   color:#001c48;
+   background-color:var(--color-background);
+   color:var(--color-primary);
    border-radius: 5px;
    align-items: center;
    padding: 1% 5%;
-   border: 1px solid #d4d5d6;
+   border: 1px solid var(--color-secondary);
    cursor: pointer;
 }
 
@@ -645,8 +692,8 @@ h1,h2,h3,h4,h5,h6,p{
 
 .compose-comment button:hover{
 
-    background-color:#001c48;
-    color:white;
+    background-color:var(--color-primary);
+    color:var(--color-background);
 
  }
 
@@ -670,7 +717,7 @@ h1,h2,h3,h4,h5,h6,p{
 .event-fight-history-col a{
     max-height: 30px;
     font-weight: 500;
-    color: #00091f;
+    color: var(--color-primary);
 }
 
 .belt-row{
@@ -704,9 +751,9 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .profile-favs > h3{
-    color: #0e0e10cc;
+    color: var(--color-text-secondary);
     margin: 0%;
-    font-size: .9rem;
+    font-size: var(--fs-200);
     font-weight: 500;
 }
 
@@ -742,7 +789,7 @@ h1,h2,h3,h4,h5,h6,p{
     align-items: center;
     gap: .9em;
     background-color: #adb5bd31;
-    border: 1px solid #001c48;
+    border: 1px solid var(--color-primary);
     border-radius: 5px;
     width: 50%;
     max-width: 200px;
@@ -753,7 +800,7 @@ h1,h2,h3,h4,h5,h6,p{
 }
 
 .profile-rank-container > h2{
-    color: white;
+    color: var(--color-background);
     background-color: #adb5bd;
     width: 100%;
     border-top-left-radius: 5px;
@@ -765,7 +812,7 @@ h1,h2,h3,h4,h5,h6,p{
 .profile-rank-container > h3{
     padding: 2% 1%;
     color: #868e96;
-    font-size: 1rem;
+    font-size: var(--fs-300);
 }
 
 .profile-rankings-section{
@@ -783,7 +830,7 @@ h1,h2,h3,h4,h5,h6,p{
     grid-auto-flow: column; 
     width: 89.8%; 
     min-width: 698px;
-    border:1px solid#001c48;
+    border:1px solid var(--color-primary);
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
 }
@@ -793,9 +840,9 @@ h1,h2,h3,h4,h5,h6,p{
     justify-content: center;
     align-items: center;
     gap: 1em;
-    background-color: #adb5bd;
+    background-color: var(--color-grey-dim);
     padding: 2%;
-    border-left: 1px solid #001c48;
+    border-left: 1px solid var(--color-primary);
     text-align: center;
     cursor: pointer;
     opacity: 30%;
@@ -803,8 +850,7 @@ h1,h2,h3,h4,h5,h6,p{
 
 .prediction-rankings-title p{
     margin: 0%;
-    font-size: .9rem;
-    color: #495057;
+    font-size: var(--fs-200);
 }
 
 .prediction-rankings-title:hover{
@@ -827,12 +873,12 @@ h1,h2,h3,h4,h5,h6,p{
     padding: 2%;
     min-width: fit-content;
     text-align: center;
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--ff-base);
 }
 
 .prediction-table th{
-    background-color:#001c48;
-    color: white;
+    background-color:var(--color-primary);
+    color: whitesmoke;
 }
 
 .prediction-table td{
@@ -870,10 +916,10 @@ table{
 /*all*/
 a{
  
-    color: black;
+    color: var(--color-text);
     font-weight: 400;
-    font-family: 'Rubik', sans-serif;
-    font-size: 1rem;
+    font-family: var(--ff-accent);
+    font-size: var(--fs-300);
     text-decoration: none;
     /*text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000*/
 }
@@ -884,7 +930,7 @@ a{
 
 /*all.ejs*/
 .premium{
-    color: #0031a4;
+    color: var(--color-primary);
     font-weight: 500;
 }
 
@@ -908,7 +954,7 @@ a{
     gap: 15px;
 
     border: 1px solid #e5e7eb;
-    background-color: white;
+    background-color: var(--color-background);
     border-radius: 5px;
     padding: 2% 0;
     margin-top: 95px;
@@ -916,7 +962,7 @@ a{
 
 /*event.ejs*/
 .fight-listing{
-    background: linear-gradient(180deg, #ffffff, #d3d3d331);
+    background: linear-gradient(180deg,var(--color-grey-dim), var(--color-background));
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -932,6 +978,7 @@ a{
     z-index: 5;
     border-radius: 5px;
     border: 1px solid #868e96;
+    background-color: var(--color-transparent-card);
 }
 
 .edit-profile-container{
@@ -950,7 +997,7 @@ a{
 /*event.ejs*/
 .weightClass{
     align-self: center;
-    background-color:#001c48;
+    background-color:var(--color-primary);
     background-size: 120% 120%;
     width: 110%;
     height: 7%;
@@ -966,9 +1013,10 @@ a{
 /*event.ejs*/
 .weightClass p{
     text-align: center;
-    color: white;
+    color: var(--color-text);
     margin: .5% 0;
     opacity: 100%;
+    font-size: var(--fs-200);
     
 }
 
@@ -988,7 +1036,7 @@ a{
 /*event.ejs*/
 .vs{
     align-self: center;
-    color:#0031a4;
+    color:var(--color-accent);
     font-weight: 600;
 }
 
@@ -999,11 +1047,11 @@ a{
     object-fit: cover;
     align-self: center;
     border-radius: 5px;
-    border: 2px solid #f5f5f5;
+    border: 2px solid var(--color-secondary);
 }
 
 .fighter-img:hover{
-    border: 2px solid #0031a4;
+    border: 2px solid var(--color-accent);
 
 }
 
@@ -1015,13 +1063,13 @@ a{
 }
 
 .fight-listing-fighter p{
-    color: #00091f;
+    color: var(--color-text);
 }
 
 /*event.ejs*/
 .fighter-name{
     align-self: center;
-    color:#0031a4;
+    color:var(--color-primary);
     text-decoration: none;
     font-weight: 500;
     margin-bottom: 5%;
@@ -1029,14 +1077,14 @@ a{
     
 }
 .fighter-name:hover{
-    -webkit-text-fill-color:#001c48;
+    -webkit-text-fill-color:var(--color-accent);
 
 }
 
 /*event.ejs*/
 .fighter-info{
     margin: 2px 0;
-    font-size: .9rem;
+    font-size: var(--fs-200);
 }
 
 /*event.ejs*/
@@ -1082,7 +1130,7 @@ a{
 
 /*event.ejs*/
 .circle{
-    background-color: #d4d5d6;
+    background-color: var(--color-secondary);
     border-radius: 50%;
     height: 45px;
     width: 45px;
@@ -1094,10 +1142,10 @@ a{
 
 /*all.ejs*/
 .panel{
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--color-secondary);
     border-radius: 10px;
     padding-left: 1%;
-    background-color: white;
+    background-color: var(--color-background);
     box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
     
 
@@ -1127,9 +1175,6 @@ a{
     width: 100%;
     display: flex;
     flex-direction: column;
-    border: 1px solid #e5e7eb;
-    background-color: white;
-    border-radius: 5px;
     padding: 2% 0;
 }
 
@@ -1163,9 +1208,8 @@ a{
 }
 
 .info-container p{
-    font-size: .8rem;
-    word-spacing: 1;
-    color: #00091f;
+    font-size: var(--fs-200);
+    color: var(--color-text-secondary);
     margin: 1.5% 0;
 }
 
@@ -1248,7 +1292,7 @@ a{
     display: flex;
     flex-direction: column;
     border: 1px solid #e5e7eb;
-    background-color: white;
+    background-color: var(--color-background);
     border-radius: 5px;
     padding: 2% 0;
     
@@ -1276,16 +1320,11 @@ a{
 
 /*events.js*/
 .events-page-container{
-    height: 30rem;
     width: 100%;
     border-top: 0px;
     display: flex;
     flex-direction: column;
     gap: 15px;
-    height: 120vh;
-    border: 1px solid #e5e7eb;
-    background-color: white;
-    border-radius: 5px;
     padding: 2% 0;
     margin-top: 95px;
 }
@@ -1376,7 +1415,7 @@ a{
 
 /*events.js*/
 .events-card{
-    background-color:#EEEEEE;
+    background-color:var(--color-grey-dim);
 
 }
 /*events.js*/
@@ -1466,6 +1505,7 @@ a{
     cursor: pointer;
     z-index: 2;
     visibility: hidden;
+    color: var(--color-primary);
 }
 
 /*event.js*/
@@ -1579,11 +1619,11 @@ a{
     width: 40%;
     height: 50%;
     align-content: center;
-    background-color: rgba(255, 255, 255, 0.445);
+    background-color: var(--color-transparent-card);
 }
 
 .signup-form-container h2{
-    color:#00091f;
+    color:var(--color-primary);
     margin-bottom: 10px;
     
 }
@@ -1608,18 +1648,19 @@ input{
 
 .input{
     resize: none;
+    background-color: var(--color-background);
 }
 
 input:focus{
     outline-style: groove;
     outline-width: 1px;
-    outline-color: #0031a4;
+    outline-color: var(--color-accent);
 }
 
 .form-label{
-    font-family: 'Rubik', sans-serif;
+    font-family: var(--ff-base);
     margin-top: 1%;
-    color: #000000dc;
+    color: var(--color-text);
 }
 .sign-up-row img{
     object-fit: cover;
@@ -1644,21 +1685,21 @@ input:focus{
 }
 
 .terms-checkbox .form-label{
-    font-size: .8rem;
+    font-size: var(--fs-200);
 }
 
 .form-label a{
-    font-size: .8rem;
-    color: #001c48;
+    font-size: var(--fs-200);
+    color: var(--color-primary);
     font-weight: 500;
 }
 
 .signup-form-container p{
-    font-size: .9rem;
+    font-size: var(--fs-200);
 }
 .signup-form-container p  a{
-    font-size: .9rem;
-    color: #001c48;
+    font-size: var(--fs-200);
+    color: var(--color-primary);
     font-weight: 500;
 }
 
@@ -1667,8 +1708,8 @@ input:focus{
     justify-content: space-between;
 }
 .sign-in-checkbox-container a{
-    font-size: .9rem;
-    color: #001c48;
+    font-size: var(--fs-200);
+    color: var(--color-primary);
     font-weight: 500;
 }
 
@@ -1677,7 +1718,7 @@ input:focus{
 }
 .shown-fights{
     display: grid;
-    background: linear-gradient(180deg, #ffffff, #a8a8a82d);
+    background: linear-gradient(180deg,var(--color-grey-dim), var(--color-background));
 
 }
 
@@ -1733,7 +1774,7 @@ input:focus{
 .fighter-page-info p{
     
     margin: 2% 0;
-    color: #00091f;
+    color: var(--color-text-secondary);
 }
 
 .fighter-page-comments{
@@ -1776,6 +1817,7 @@ input:focus{
 
 .fight-fighter-title p{
     align-self: flex-start;
+    font-size: var(--fs-200);
 }
 
 .fight-fighter-title h3,.fight-fighter-title h4,.fight-fighter-title p{
@@ -1818,9 +1860,9 @@ input:focus{
 }
 
 .recent-predictions-container{
-    display: flex;
-    flex-direction: column;
+    display: grid;
     margin-bottom: 4%;
+    
 }
 
 .prediction-percentages-fighter-cont{
@@ -1836,7 +1878,7 @@ input:focus{
 }
 
 .prediction-percentages-fighter{
-    background-color:#001c48;
+    background-color:var(--color-primary);
 }
 
 .prediction-percentages-opponent{
@@ -1846,33 +1888,42 @@ input:focus{
 
 
 .fight-prediction-row{
-    display: flex;
+    display: grid;
     align-items: center;
-    border-bottom: 1px solid #d4d5d6;
-    padding: 2%
+    border-bottom: 1px solid var(--color-secondary);
+    padding: 2%;
+    font-size: var(--fs-100);
+    width: max-content;
 }
 
-.fight-prediction-row p{
+.recent-predictions-container p{
     margin-top: 0%;
     margin-bottom: 0%;
-    padding: 1% 0%;
+    font-size: var(--fs-300);
+    border-bottom: 1px solid var(--color-secondary);
+    padding: 2%;
+}
+
+.recent-predictions-container span{
+    font-size: var(--fs-300);
+
 }
 
 .current-task{
-    background-color: #001c48;
-    color: white;
+    background-color: var(--color-primary);
+    color: var(--color-background);
 }
 
 .task:hover{
     background-color:#adb5bd;
-    color:white;
+    color:var(--color-background);
 }
 
 
 
 .prediction-username{
-    color: #191919e3;
-    font-size: 1rem;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-300);
     font-weight: 500;
     margin-right: 1%;
 }
@@ -1885,16 +1936,16 @@ input:focus{
 .fight-prediction-container > h3{
     margin-top: 8%;
     margin-bottom: 0%;
-    color: #191919e3;
+    color: var(--color-text-secondary);
     padding: 1% 3%;
-    border-bottom: 1px solid #d4d5d6;
+    border-bottom: 1px solid var(--color-secondary);
 }
 
 .fight-page-predict-button{
     padding: 2%;
     margin-top:1%;
     margin-bottom: 0%;
-    border: 1px solid #d4d5d6;
+    border: 1px solid var(--color-secondary);
     border-radius: 5px;
     width: fit-content;
     cursor: pointer;
@@ -1906,7 +1957,7 @@ input:focus{
 }
 
 .fight-page-predict-button:hover{
-    background-color: #d4d5d6;
+    background-color: var(--color-secondary);
 }
 
 
@@ -1917,22 +1968,22 @@ input:focus{
 }
 
 .fight-prediction-opponent-name{
-    font-size: 1rem;
+    font-size: var(--fs-300);
     font-weight: 500;
     color: #480000;
     margin-left: 1%;
 }
 
 .fight-prediction-fighter-name{
-    font-size: 1rem;
+    font-size: var(--fs-300);
     font-weight: 500;
-    color: #001c48;
+    color: var(--color-primary);
     margin-left: 1%;
 }
 
 .prediction-percentages h3{
-    color: white;
-    font-size: 80%;
+    color: rgb(240, 240, 240);
+    font-size: var(--fs-200);
     margin: 0%;
     text-align: center;
 }
@@ -1999,7 +2050,7 @@ input:focus{
 .button-1 {
   align-items: center;
   appearance: button;
-  background-color:#001c48;
+  background-color:var(--color-primary);
   border-radius: 8px;
   border-style: none;
   box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
@@ -2009,8 +2060,8 @@ input:focus{
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  font-family: "RM Neue",sans-serif;
-  font-size: 100%;
+  font-family: var(--ff-base);
+  font-size: var(--fs-300);
   line-height: 1.15;
   margin: 0;
   padding: 10px 21px;
@@ -2023,35 +2074,35 @@ input:focus{
 }
 
 .secondary-btn{
-    background-color:white;
-   color:#001c48;
+    background-color:var(--color-background);
+   color:var(--color-primary);
    border-radius: 5px;
    align-items: center;
    padding: .4em .8em;
-   border: 1px solid #d4d5d6;
+   border: 1px solid var(--color-secondary);
    cursor: pointer;
-   font-size: 1.1rem;
+   font-size: var(--fs-400);
 }
 
 .secondary-btn:hover{
-    background-color:#001c48;
-    color:white;
+    background-color:var(--color-primary);
+    color:var(--color-background);
 }
 
 .secondary-btn-invert{
-    background-color:#001c48;
-    color:white;
+    background-color:var(--color-primary);
+    color:var(--color-background);
    border-radius: 5px;
    align-items: center;
    padding: .4em .8em;
-   border: 1px solid #d4d5d6;
+   border: 1px solid var(--color-secondary);
    cursor: pointer;
-   font-size: 1.1rem;
+   font-size: var(--fs-400);
 }
 
 .secondary-btn-invert:hover{
-    background-color:white;
-   color:#001c48;
+    background-color:var(--color-background);
+   color:var(--color-primary);
 }
 
 
@@ -2072,7 +2123,7 @@ input:focus{
 
 .footer-text{
     text-align: center;
-    color: white;
+    color: var(--color-background);
 }
 
 .color-theme-picker-container{
@@ -2086,33 +2137,34 @@ input:focus{
     border-radius: 5px;
     align-items: center;
     padding: .4em .8em;
-    border: 1px solid #d4d5d6;
+    border: 1px solid var(--color-secondary);
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: var(--fs-300);
  }
 
  .profile-btn-small{
     border-radius: 5px;
     align-items: center;
     padding: 2%;
-    border: 1px solid #d4d5d6;
+    border: 1px solid var(--color-secondary);
     cursor: pointer;
-    font-size: 1rem;
+    font-size: var(--fs-200);
     width: auto !important;
  }
  
  .default-theme-btn{
-     background-color:white;
-     color:#001c48;
+     background-color:var(--color-background);
+     color:var(--color-primary);
  }
  
  .default-theme-btn:hover{
-     background-color: #001c48;
-     color: white;
+     background-color: var(--color-primary);
+     color: var(--color-background);
  }
 
  .octagon-blue-theme-profile-title{
     color: var(--color-octagon-blue) !important;
+  mix-blend-mode: difference;
  }
 
  .octagon-blue-theme-profile-heading-container{
@@ -2136,17 +2188,18 @@ input:focus{
 
 
 .octagon-blue-theme-btn{
-    background-color:white;
-    color:var(--color-octagon-blue);
+    background-color:var(--color-octagon-blue-light);
+    color: var(--color-background);
 }
 
 .octagon-blue-theme-btn:hover{
     background-color: var(--color-octagon-blue);
-    color: white;
+    color: var(--color-background);
 }
 
 .brasil-green-theme-profile-title{
     color: var(--color-brazil-green) !important;
+    mix-blend-mode: difference;
  }
 
  .brasil-green-theme-profile-heading-container{
@@ -2170,13 +2223,13 @@ input:focus{
 
 
 .brasil-green-theme-btn{
-    background-color:white;
-    color:var(--color-brazil-green);
+    background-color:var(--color-background-light);
+    color: var(--color-background);
 }
 
 .brasil-green-theme-btn:hover{
     background-color: var(--color-brazil-green);
-    color: white;
+    color: var(--color-background);
 }
 
 /* blood red */
@@ -2221,11 +2274,7 @@ input:focus{
 }
 
 .izzy-blue-theme-profile-page-container{
-    /* background: linear-gradient(-45deg, #ce4958, #4c6c6d, #5c5d50, #ec6474); */
-    /* background: linear-gradient(-45deg, #570807, #300505, #930d1b, #d18454); */
-    /* background: linear-gradient(-45deg, #2a7c49,#fadc05,#049b3b, #71d898); */
-    /* background: linear-gradient(-45deg, #44a374,#fb7b04,#049b4c, #fb7b04); */
-    background: linear-gradient(-45deg, #D4AF37,#014c8b,#0e2657, #014c8b);
+    background: linear-gradient(-45deg, #D4AF37,var(--color-izzy-blue-accent),#014c8b,#0e2657);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
 }
@@ -2245,6 +2294,7 @@ input:focus{
 }
 .blood-red-theme-profile-title{
     color: #f32728 !important;
+    mix-blend-mode: difference;
  }
 
  .blood-red-theme-profile-heading-container{
@@ -2268,17 +2318,18 @@ input:focus{
 
 
 .blood-red-theme-btn{
-    background-color:white;
-    color:var(--color-blood-red-500);
+    background-color:var(--color-background-light);
+    color: var(--color-background);
 }
 
 .blood-red-theme-btn:hover{
     background-color: var(--color-blood-red-500);
-    color: white;
+    color: var(--color-background);
 }
 
 .do-bronx-yellow-theme-profile-title{
     color: var(--color-do-bronx-yellow) !important;
+    mix-blend-mode: difference;
  }
 
  .do-bronx-yellow-theme-profile-heading-container{
@@ -2302,17 +2353,18 @@ input:focus{
 
 
 .do-bronx-yellow-theme-btn{
-    background-color:white;
-    color:var(--color-do-bronx-yellow);
+    background-color:var(--color-background-light);
+    color: var(--color-background);
 }
 
 .do-bronx-yellow-theme-btn:hover{
     background-color: var(--color-do-bronx-yellow);
-    color: white;
+    color: var(--color-background);
 }
 
 .irish-green-theme-profile-title{
     color: var(--color-irish-green) !important;
+    mix-blend-mode: difference;
  }
 
  .irish-green-theme-profile-heading-container{
@@ -2339,21 +2391,22 @@ input:focus{
 }
 
 .default-theme-text{
-    color: var(--color-grey-900);
+    color: var(--color-text);
 } 
 
 .irish-green-theme-btn{
-    background-color:white;
-    color:var(--color-irish-green);
+    background-color:var(--color-background-light);
+    color: var(--color-background);
 }
 
 .irish-green-theme-btn:hover{
     background-color: var(--color-irish-green);
-    color: white;
+    color: var(--color-background);
 }
 
 .izzy-blue-theme-profile-title{
-    color: var(--color-izzy-blue) !important;
+    color: var(--color-izzy-blue-accent) !important;
+    mix-blend-mode: difference;
  }
 
  .izzy-blue-theme-profile-heading-container{
@@ -2377,78 +2430,78 @@ input:focus{
 
 
 .izzy-blue-theme-btn{
-    background-color:white;
-    color:var(--color-izzy-blue);
+    background-color:var(--color-background-light);
+    color: var(--color-background);
 }
 
 .izzy-blue-theme-btn:hover{
     background-color: var(--color-izzy-blue);
-    color: white;
+    color: var(--color-background);
 }
 
 .octagon-blue-theme-btn-inverted{
     background-color: var(--color-octagon-blue);
-    color: white;
+    color: var(--color-background);
 }
 
 .octagon-blue-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-octagon-blue);
     border: 1px solid var(--color-octagon-blue);
 }
 
 .brasil-green-theme-btn-inverted{
     background-color: var(--color-brazil-green);
-    color: white;
+    color: var(--color-background);
 }
 
 .brasil-green-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-brazil-green);
     border: 1px solid var(--color-brazil-green);
 }
 
 .blood-red-theme-btn-inverted{
     background-color: var(--color-blood-red-500);
-    color: white;
+    color: var(--color-background);
 }
 
 .blood-red-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-blood-red-500);
     border: 1px solid var(--color-blood-red-500);
 }
 
 .do-bronx-yellow-theme-btn-inverted{
     background-color: var(--color-do-bronx-yellow);
-    color: white;
+    color: var(--color-background);
     border: 1px solid var(--color-do-bronx-yellow);
 }
 
 .do-bronx-yellow-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-do-bronx-yellow);
 }
 
 .irish-green-theme-btn-inverted{
     background-color: var(--color-irish-green);
-    color: white;
+    color: var(--color-background);
     border: 1px solid var(--color-irish-green);
 }
 
 .irish-green-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-irish-green);
 }
 
 .izzy-blue-theme-btn-inverted{
     background-color: var(--color-izzy-blue);
-    color: white;
+    color: var(--color-background);
     border: 1px solid var(--color-izzy-blue);
 }
 
 .izzy-blue-theme-btn-inverted:hover{
-    background-color:white;
+    background-color:var(--color-background);
     color:var(--color-izzy-blue);
 }
 
@@ -2553,11 +2606,11 @@ input:focus{
     }
 
     .prediction-table-event, .prediction-table-fight{
-        color: black;
+        color: var(--color-text-secondary);
     }
 
     tr:nth-of-type(odd){
-        background-color: #ced4da;
+        background-color: var(--color-transparent-card);
     }
 
     .prediction-table td:before{

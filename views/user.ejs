@@ -76,15 +76,15 @@
                 <div class="profile-rankings">
 
                     <div class="prediction-rankings-table-heading <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
-                        <div class="active-prediction-rankings-title prediction-rankings-title">
+                        <div class="active-prediction-rankings-title prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>UFC </h2>
                             <p>Record: 23-0</p>
                         </div>
-                        <div class="prediction-rankings-title">
+                        <div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>PFL </h2>
                             <p></p>
                         </div>
-                        <div class="prediction-rankings-title">
+                        <div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>Regional </h2>
                             <p></p>
                         </div>
@@ -149,6 +149,7 @@
 <% if(user){ %>
     <script>
         var username= "<%= user.username %>";
+        var theme= "<%= user.profileTheme %>";
     </script>
 <% } %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
