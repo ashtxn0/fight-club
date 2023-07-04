@@ -6,9 +6,10 @@ var _ = require("lodash");
 const { name } = require('ejs');
 const { ObjectId } = require('mongodb');
 const fs = require('fs-extra');
+const uri = process.env.MONGODB_URI;
 
 
-mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb.net/fightclubDB?retryWrites=true&w=majority');
+mongoose.connect(uri);
 
 
     const userSchema = new mongoose.Schema({
