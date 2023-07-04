@@ -21,6 +21,7 @@ const { image } = require("googlethis");
 const Time = require("time-passed").default;
 const fs = require('fs-extra');
 const path = require("path");
+const PORT=process.env.PORT || 3000;
 
 initializePassport(passport);
 
@@ -482,6 +483,6 @@ function checkNotAuthenticated(req,res,next){
   next()
 }
 
-app.listen(3000, function () {
-    console.log("Server started on port 3000.");
+app.listen(PORT, function () {
+    console.log(`server started on port ${PORT}`);
   });
