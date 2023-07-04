@@ -13,7 +13,7 @@
             <div class="predict-fighter-name-container">
                 <h2><%=fighters[i].name%></h2>
             <p><%=fighters[i].record%></p>
-            <button class="predict-btn <%= fights[i].id %>" id="<%=fighters[i].id%>">vote</button>
+            <button class="predict-btn <%= fights[i].id %> <%=fighters[i].name%>" id="<%=fighters[i].id%>">vote</button>
             </div>
             <h2 class="predict-v">V</h2>
         </div>
@@ -23,7 +23,7 @@
             <div class="predict-fighter-name-container">
                 <h2><%=opponents[i].name%></h2>
                 <p><%=opponents[i].record%></p>
-            <button class="predict-btn <%= fights[i].id %>" id="<%=opponents[i].id%>">vote</button>
+            <button class="predict-btn <%= fights[i].id %> <%=opponents[i].name%>" id="<%=opponents[i].id%>">vote</button>
             </div>
             <h2 class="predict-s">S</h2>
         </div>
@@ -82,7 +82,7 @@
             <div class="predict-fighter-name-container">
                 <h2><%=fighters[i+1].name%></h2>
             <p><%=fighters[i+1].record%></p>
-            <button class="predict-btn <%= fights[i+1].id %>" id="<%=fighters[i+1].id%>" >vote</button>
+            <button class="predict-btn <%= fights[i+1].id %> <%=fighters[i+1].name%>" id="<%=fighters[i+1].id%>" >vote</button>
             </div>
             <h2 class="predict-v">V</h2>
         </div>
@@ -91,7 +91,7 @@
             <div class="predict-fighter-name-container">
                 <h2><%=opponents[i+1].name%></h2>
                 <p><%=opponents[i+1].record%></p>
-                <button class="predict-btn <%= fights[i+1].id %>" id="<%=opponents[i+1].id%>">vote</button>
+                <button class="predict-btn <%= fights[i+1].id %> <%=opponents[i+1].name%>" id="<%=opponents[i+1].id%>">vote</button>
             </div>
             <h2 class="predict-s">S</h2>
         </div>
@@ -148,9 +148,7 @@
         <% } %>
     
     </div>
-        <div class="vote-flash flash-<%= fights[i].id %> flash-<%= fights[i+1].id %>">
-            <p></p>
-        </div>
+
     </div>
 <% } %>
     
@@ -160,6 +158,7 @@
 <script>
     var username = "<%= user.username %>";
     var eventID="<%= event.id %>";
+    var orgName="<%= event.org %>";
     var userID="<%= user.id %>";
     </script>    
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>

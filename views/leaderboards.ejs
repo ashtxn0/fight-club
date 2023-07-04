@@ -1,0 +1,266 @@
+<%- include("partials/header"); -%>
+
+<div class="leaderboards-page-container">
+    <div class="title-text-row">
+        <div class="rect"></div>
+        <h1 class="title-text events-title">Leaderboards</h1>
+        <div class="rect"></div>
+    </div>   
+<div class="leaderboards-rankings-container">
+    <div class="leaderboards-rankings">
+        <div class="rankings-header-image">
+            <img src="/image/p4p-ranking-header.jpg"  alt="">
+            <h2>Pound-For-Pound Rankings</h2>
+        </div>
+        <table class="ranking-table">
+            <tr>
+                <th class="ranking-table-header-rank">Rank</th>
+                <th class="ranking-table-header-username">Username</th>
+                <th class="ranking-table-header-record">Record</th>
+                <th class="ranking-table-header-percentage">%</th>
+                <th class="ranking-table-header-points">Points</th>
+                <th class="expand-btn-header">+</th>
+            </tr>
+            <tr class="rank-1-tr">
+                
+                    <td class="ranking-table-ranking">1</td>
+                    <td class="ranking-table-username">
+                        
+                            <div class="ranking-user-row">
+                                <img class="prof-image-comment rank-1-img" src="/data/uploads/<%=p4pTop25[0].profImage_url%>" alt="">
+                                <div class="ranking-user-col">
+                                    <a class="ranking-table-username" href="/user/<%=p4pTop25[0].username%>"><%=p4pTop25[0].username%></a>
+                                <img src="/image/ufc-belt.png" height="50px" alt="">
+                            </div>
+                            
+                        </div>
+                    </td>
+                
+                
+                <td><span class="win"><%=p4pTop25[0].predictionWins%></span> - <span class="loss"><%=p4pTop25[0].predictionLosses%></span></td>
+                <td><%= Math.floor((p4pTop25[0].predictionWins/(p4pTop25[0].predictionWins+p4pTop25[0].predictionLosses))*100) %>%</td>
+                <td><%=p4pTop25[0].mmr%> </td>
+                <td id="<%=p4pTop25[0].id%>-p4p" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+                
+            </tr>
+
+            <% p4pTop25.forEach(function(rankUser,i){ if(i===0)return;%>
+            <tr>
+                <td class="ranking-table-ranking"><%=i+1%></td>
+                <td class="ranking-table-username">
+                    <div class="ranking-user-row">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=rankUser.profImage_url%>" alt="">
+
+                        <a class="ranking-table-username" href="/user/<%= rankUser.username %>"><%= rankUser.username %></a>
+
+                    </div>
+                </td>
+                <td><span class="win"><%= rankUser.predictionWins %></span> - <span class="loss"><%= rankUser.predictionLosses %></span></td>
+                <td><%= Math.floor((rankUser.predictionWins/(rankUser.predictionWins+rankUser.predictionLosses))*100) || 0%>%</td>
+                <td><%= rankUser.mmr %></td>
+                <td id="<%= rankUser.id %>-p4p" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+            </tr>
+            <tr id="<%= rankUser.id %>-heading" class="sub-table-rankings-event">
+                
+            </tr>
+            
+            <% }) %>
+            
+            
+        </table>
+    </div>
+    <div class="leaderboards-rankings">
+        <div class="rankings-header-image">
+            <img src="/image/ufc-ranking-header.jpg"  alt="">
+            <h2>UFC Rankings</h2>
+        </div>
+        <table class="ranking-table">
+            <tr>
+                <th class="ranking-table-header-rank">Rank</th>
+                <th class="ranking-table-header-username">Username</th>
+                <th class="ranking-table-header-record">Record</th>
+                <th class="ranking-table-header-percentage">%</th>
+                <th class="ranking-table-header-points">Points</th>
+                <th class="expand-btn-header">+</th>
+            </tr>
+            <tr class="rank-1-tr">
+                
+                    <td class="ranking-table-ranking">1</td>
+                    <td class="ranking-table-username">
+                        
+                            <div class="ranking-user-row">
+                                <img class="prof-image-comment rank-1-img" src="/data/uploads/<%=ufcTop25[0].profImage_url%>" alt="">
+                                <div class="ranking-user-col">
+                                    <a class="ranking-table-username" href="/user/<%=ufcTop25[0].username%>"><%=ufcTop25[0].username%></a>
+                                <img src="/image/ufc-belt.png" height="50px" alt="">
+                            </div>
+                            
+                        </div>
+                    </td>
+                
+                
+                <td><span class="win"><%=ufcTop25[0].ufcPredictionWins%></span> - <span class="loss"><%=ufcTop25[0].ufcPredictionLosses%></span></td>
+                <td><%= Math.floor((ufcTop25[0].ufcPredictionWins/(ufcTop25[0].ufcPredictionWins+ufcTop25[0].ufcPredictionLosses))*100) %>%</td>
+                <td><%=ufcTop25[0].ufcMmr%> </td>
+                <td id="<%=ufcTop25[0].id%>-UFC" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+                
+            </tr>
+
+            <% ufcTop25.forEach(function(rankUser,i){ if(i===0)return;%>
+            <tr>
+                <td class="ranking-table-ranking"><%=i+1%></td>
+                <td class="ranking-table-username">
+                    <div class="ranking-user-row">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=rankUser.profImage_url%>" alt="">
+
+                        <a class="ranking-table-username" href="/user/<%= rankUser.username %>"><%= rankUser.username %></a>
+
+                    </div>
+                </td>
+                <td><span class="win"><%= rankUser.ufcPredictionWins %></span> - <span class="loss"><%= rankUser.ufcPredictionLosses %></span></td>
+                <td><%= Math.floor((rankUser.ufcPredictionWins/(rankUser.ufcPredictionWins+rankUser.ufcPredictionLosses))*100) || 0%>%</td>
+                <td><%= rankUser.ufcMmr %></td>
+                <td id="<%= rankUser.id %>-UFC" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+            </tr>
+            <tr id="<%= rankUser.id %>-heading" class="sub-table-rankings-event">
+                
+            </tr>
+            
+            <% }) %>
+            
+            
+        </table>
+    </div>
+    <div class="leaderboards-rankings">
+        <div class="rankings-header-image PFL-header-image">
+            <img src="/image/pfl-ranking-header.jpg"  alt="">
+            <h2>PFL Rankings</h2>
+        </div>
+        <table class="ranking-table">
+            <tr>
+                <th class="ranking-table-header-rank">Rank</th>
+                <th class="ranking-table-header-username">Username</th>
+                <th class="ranking-table-header-record">Record</th>
+                <th class="ranking-table-header-percentage">%</th>
+                <th class="ranking-table-header-points">Points</th>
+                <th class="expand-btn-header">+</th>
+            </tr>
+            <tr class="rank-1-tr">
+                
+                    <td class="ranking-table-ranking">1</td>
+                    <td class="ranking-table-username">
+                        
+                            <div class="ranking-user-row">
+                                <img class="prof-image-comment rank-1-img" src="/data/uploads/<%=pflTop25[0].profImage_url%>" alt="">
+                                <div class="ranking-user-col">
+                                    <a class="ranking-table-username" href="/user/<%=pflTop25[0].username%>"><%=pflTop25[0].username%></a>
+                                <img src="/image/ufc-belt.png" height="50px" alt="">
+                            </div>
+                            
+                        </div>
+                    </td>
+                
+                
+                <td><span class="win"><%=pflTop25[0].pflPredictionWins%></span> - <span class="loss"><%=pflTop25[0].pflPredictionLosses%></span></td>
+                <td><%= Math.floor((pflTop25[0].pflPredictionWins/(pflTop25[0].pflPredictionWins+pflTop25[0].pflPredictionLosses))*100) || 0%>%</td>
+                <td><%=pflTop25[0].pflMmr%> </td>
+                <td id="<%=pflTop25[0].id%>-PFL" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+                
+            </tr>
+
+            <% pflTop25.forEach(function(rankUser,i){ if(i===0)return;%>
+            <tr>
+                <td class="ranking-table-ranking"><%=i+1%></td>
+                <td class="ranking-table-username">
+                    <div class="ranking-user-row">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=rankUser.profImage_url%>" alt="">
+
+                        <a class="ranking-table-username" href="/user/<%= rankUser.username %>"><%= rankUser.username %></a>
+
+                    </div>
+                </td>
+                <td><span class="win"><%= rankUser.pflPredictionWins %></span> - <span class="loss"><%= rankUser.pflPredictionLosses %></span></td>
+                <td><%= Math.floor((rankUser.pflPredictionWins/(rankUser.pflPredictionWins+rankUser.pflPredictionLosses))*100) || 0%>%</td>
+                <td><%= rankUser.pflMmr %></td>
+                <td id="<%= rankUser.id %>-PFL" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+            </tr>
+            <tr id="<%= rankUser.id %>-heading" class="sub-table-rankings-event">
+                
+            </tr>
+            
+            <% }) %>
+            
+            
+        </table>
+    </div>
+    <div class="leaderboards-rankings">
+        <div class="rankings-header-image bellator-header-image">
+            <img src="/image/bellator-ranking-header.jpg"  alt="">
+            <h2>Bellator Rankings</h2>
+        </div>
+        <table class="ranking-table">
+            <tr>
+                <th class="ranking-table-header-rank">Rank</th>
+                <th class="ranking-table-header-username">Username</th>
+                <th class="ranking-table-header-record">Record</th>
+                <th class="ranking-table-header-percentage">%</th>
+                <th class="ranking-table-header-points">Points</th>
+                <th class="expand-btn-header">+</th>
+            </tr>
+            <tr class="rank-1-tr">
+                
+                    <td class="ranking-table-ranking">1</td>
+                    <td class="ranking-table-username">
+                        
+                            <div class="ranking-user-row">
+                                <img class="prof-image-comment rank-1-img" src="/data/uploads/<%=pflTop25[0].profImage_url%>" alt="">
+                                <div class="ranking-user-col">
+                                    <a class="ranking-table-username" href="/user/<%=bellatorTop25[0].username%>"><%=bellatorTop25[0].username%></a>
+                                <img src="/image/bellator-belt.png" height="50px" alt="">
+                            </div>
+                            
+                        </div>
+                    </td>
+                
+                
+                <td><span class="win"><%=bellatorTop25[0].bellatorPredictionWins%></span> - <span class="loss"><%=bellatorTop25[0].bellatorPredictionLosses%></span></td>
+                <td><%= Math.floor((bellatorTop25[0].bellatorPredictionWins/(bellatorTop25[0].bellatorPredictionWins+bellatorTop25[0].bellatorPredictionLosses))*100) || 0%>%</td>
+                <td><%=bellatorTop25[0].bellatorMmr%> </td>
+                <td id="<%=bellatorTop25[0].id%>-PFL" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+                
+            </tr>
+
+            <% bellatorTop25.forEach(function(rankUser,i){ if(i===0)return;%>
+            <tr>
+                <td class="ranking-table-ranking"><%=i+1%></td>
+                <td class="ranking-table-username">
+                    <div class="ranking-user-row">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=rankUser.profImage_url%>" alt="">
+
+                        <a class="ranking-table-username" href="/user/<%= rankUser.username %>"><%= rankUser.username %></a>
+
+                    </div>
+                </td>
+                <td><span class="win"><%= rankUser.bellatorPredictionWins %></span> - <span class="loss"><%= rankUser.bellatorPredictionLosses %></span></td>
+                <td><%= Math.floor((rankUser.bellatorPredictionWins/(rankUser.bellatorPredictionWins+rankUser.bellatorPredictionLosses))*100) || 0%>%</td>
+                <td><%= rankUser.bellatorMmr %></td>
+                <td id="<%= rankUser.id %>-Bellator" class="expand-btn"><img class="plus-btn" src="/image/plus.svg" height="20px" alt=""><img class="minus-btn minus-hidden" src="/image/minus.svg" height="20px" alt=""></td>
+            </tr>
+            <tr id="<%= rankUser.id %>-heading" class="sub-table-rankings-event">
+                
+            </tr>
+            
+            <% }) %>
+            
+            
+        </table>
+    </div>
+</div>
+
+
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/leaderboards.js"></script> 
+<%- include("partials/footer"); -%>

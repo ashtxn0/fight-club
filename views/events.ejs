@@ -8,9 +8,12 @@
 
 
 
-<div class="events-page-container panel">
-    
-    <h1 class="title-text events-title">Upcoming Events: </h1>
+<div class="events-page-container">
+  <div class="title-text-row">
+    <div class="rect"></div>
+    <h1 class="title-text events-title">Events</h1>
+    <div class="rect"></div>
+</div>   
     <h3 class="events-title">UFC</h3>            
          <div class="swiper-container swiper1">
             <div class="swiper-wrapper">
@@ -19,18 +22,21 @@
                     <div class="swiper-slide">
                         <div class="events-card">
                         <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
-                        <p><%= event.name %></p>
-                        <p><%= event.date %></p>
-                        <p><%= event.location %></p>
+                        <div class="events-info-container">
+                          <h3><%= event.name %></h3>
+                          <p><%= event.date.toDateString().split(" ").slice(0,4).join(" ") %></p>
+                          <p><%= event.location %></p>
+                        </div>
+                        
                         </div>
                     </div>
                    <% } %>
                <% }) %>
             </div>
-            <div class="swiper-button-prev swiper-button-prev1 swipe"></div>
-            <div class="swiper-button-next swiper-button-next1 swipe"></div>
+            <div class="swiper-button-prev swiper-button-prev1 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/left-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/left-arrow-btn-black.svg" alt=""></div>
+            <div class="swiper-button-next swiper-button-next1 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/right-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/right-arrow-btn-black.svg" alt=""></div>
          </div>       
-        
+        <div class="divider"></div>
          <h3 class="events-title">LFA</h3>            
          <div class="swiper-container swiper2">
             <div class="swiper-wrapper">
@@ -39,17 +45,20 @@
                     <div class="swiper-slide">
                         <div class="events-card">
                         <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
-                        <p><%= event.name %></p>
-                        <p><%= event.location %></p>
+                        <div class="events-info-container">
+                          <h3><%= event.name %></h3>
+                          <p><%= event.date %></p>
+                          <p><%= event.location %></p>
+                        </div>
                     </div>
                     </div>
                    <% } %>
                <% }) %>
             </div>
-            <div class="swiper-button-prev swiper-button-prev2 swipe"></div>
-            <div class="swiper-button-next swiper-button-next2 swipe"></div>
+            <div class="swiper-button-prev swiper-button-prev2 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/left-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/left-arrow-btn-black.svg" alt=""></div>
+            <div class="swiper-button-next swiper-button-next2 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/right-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/right-arrow-btn-black.svg" alt=""></div>
          </div>
-         
+         <div class="divider"></div>
          <h3 class="events-title">PFL</h3>  
          <div class="swiper-container swiper3">
           <div class="swiper-wrapper">
@@ -58,15 +67,18 @@
                   <div class="swiper-slide">
                       <div class="events-card">
                       <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
-                      <p><%= event.name %></p>
-                      <p><%= event.location %></p>
+                      <div class="events-info-container">
+                        <h3><%= event.name %></h3>
+                        <p><%= event.date %></p>
+                        <p><%= event.location %></p>
+                      </div>
                   </div>
                   </div>
                  <% } %>
              <% }) %>
           </div>
-          <div class="swiper-button-prev swiper-button-prev3 swipe"></div>
-          <div class="swiper-button-next swiper-button-next3 swipe"></div>
+          <div class="swiper-button-prev swiper-button-prev3 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/left-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/left-arrow-btn-black.svg" alt=""></div>
+          <div class="swiper-button-next swiper-button-next3 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/right-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/right-arrow-btn-black.svg" alt=""></div>
        </div>
            
 
@@ -80,8 +92,13 @@
 <script>
     const swiper1 = new Swiper('.swiper1', {
   // Optional parameters
+  keyboard: {
+    enabled: true,
+    onlyInViewport: false,
+  },
+  rewind:true,
+  speed: 500,
   centeredSlides:false,
-  loop: true,
   breakpoints:{
     1000:{
       slidesPerView:4,
@@ -121,7 +138,8 @@ const swiper2 = new Swiper('.swiper2', {
   slidesPerGroup:4,
   spaceBetween:5,
   centeredSlides:false,
-  loop: true,
+  rewind:true,
+  speed: 500,
   breakpoints:{
     1000:{
       slidesPerView:4,
@@ -161,7 +179,8 @@ const swiper3 = new Swiper('.swiper3', {
   slidesPerGroup:4,
   spaceBetween:5,
   centeredSlides:false,
-  loop: true,
+  rewind:true,
+  speed: 500,
   breakpoints:{
     1000:{
       slidesPerView:4,

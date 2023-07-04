@@ -24,11 +24,11 @@
         <a class="task events-task" href="/events">Events</a>
         <a class="task" href="/event">Study Buddy</a>
         <a class="task" href="/home">Best Bets</a>
-        <a class="task" href="/home">Prediction Rankings</a>
+        <a class="task" href="/leaderboards">Prediction Rankings</a>
         <a class="task" class="premium" href="/home">Premium</a>
         <% if(user){ %>
         <div class="user-drop-down">
-            <a onclick="userDropDown()" class="drop-down-btn"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/data/uploads/<%=user.profImage_url %>" alt="user profile image"></a>
+            <a onclick="userDropDown()" class="drop-down-btn"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/data/uploads/profilePictures/<%=user.profImage_url %>" alt="user profile image"></a>
             <div id="userDropDown" class="user-drop-content">
                 <a href="/user/<%=user.username%>">View Profile</a>
                 <a href="">Edit Profile</a>

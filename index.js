@@ -8,6 +8,7 @@ const ejs = require("ejs");
 var _ = require("lodash");
 const multer  = require('multer');
 const upload = multer({dest: __dirname+'/public/data/uploads/'});
+const uploadProf = multer({dest: __dirname+'/public/data/uploads/profilePictures/'});
 const db=require(__dirname+"/db.js");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
@@ -16,7 +17,10 @@ const session = require("express-session");
 const initializePassport = require(__dirname+"/passport-config.js");
 const methodOverride = require("method-override");
 const { findFightersByID, findUserByID } = require("./db");
+const { image } = require("googlethis");
 const Time = require("time-passed").default;
+const fs = require('fs-extra');
+const path = require("path");
 
 initializePassport(passport);
 
@@ -71,10 +75,9 @@ app.get("/event/:eventID", function(req,res){
         let mainCardOpponents= await db.findFightersByName(event.mainCard.map(({opponentName})=> opponentName));
         let prelimFighters= await db.findFightersByName(event.prelims.map(({fighterName})=> fighterName));
         let prelimOpponents= await db.findFightersByName(event.prelims.map(({opponentName})=> opponentName));
-
-        res.render("event", {event: event, fighters:mainCardFighters,opponents:mainCardOpponents,prelimFighters:prelimFighters,prelimOpponents:prelimOpponents,Time:Time.getRelativeTime});
-
-
+        let prelimResults= await db.findFightResults(event.prelims.map(({fightID})=> fightID));
+        let mainResults= await db.findFightResults(event.mainCard.map(({fightID})=> fightID));
+        res.render("event", {mainResults:mainResults,prelimResults:prelimResults,event: event, fighters:mainCardFighters,opponents:mainCardOpponents,prelimFighters:prelimFighters,prelimOpponents:prelimOpponents,Time:Time.getRelativeTime});
 
   })
 })
@@ -84,10 +87,11 @@ app.get("/user", function(req,res){
   res.redirect('/');
 })
 
-app.get("/user/:username", function(req,res){
-  db.findUserByUsername(req.params.username).then(function(foundUser){
-    db.findPredictionsByUserID(foundUser.id).then(function(userPredictions){
-      res.render("user", {profileUser:foundUser, predictions:userPredictions});
+app.get("/user/:username", async function(req,res){
+  db.findUserByUsername(req.params.username).then(async function(foundUser){
+    db.findPredictionsByUserID(foundUser.id).then(async function(userPredictions){
+      let rank = await db.findRanking(foundUser.id,"ALL");
+      res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank});
     })
     
     
@@ -147,7 +151,7 @@ app.post("/login", checkNotAuthenticated, passport.authenticate("local", {
 }));
 
   app.get("/fighter/:fighterName", function(req,res){
-    db.findFighterByName(_.startCase((req.params.fighterName).replace(/-/g, ' ').replace(/_/g, ' '))).then(function(fighter){
+    db.findFighterByName(_.upperFirst((req.params.fighterName).replace(/-/g, ' ').replace(/_/g, ' '))).then(function(fighter){
       if (fighter ===null){
         res.render("fighter-error");
       } else{
@@ -185,6 +189,15 @@ app.get("/predict/:eventID",checkAuthenticated, function(req,res){
         })
       })
     })
+  })
+  
+  
+})
+
+app.get("/leaderboards", function(req,res){
+  //get top 25 ranked -including username,user image, wins/losses  
+  db.getTop25Rankings("all").then(function(rankings){
+    res.render("leaderboards",{p4pTop25:rankings[0],ufcTop25:rankings[1],bellatorTop25:rankings[2],pflTop25:rankings[3]});
   })
   
   
@@ -272,59 +285,128 @@ app.post("/ajaxLikeOrDislike", async function(req,res){
 })
 
 
-app.post("/ajaxEditProfile", async function(req,res){
-
-  db.updateProfileInfo(req.body.username,req.body.aboutMe,req.body.favFighter,req.body.favOrg,req.body.currentTheme).then(function(updated){
-    res.json(updated);
+app.post("/ajaxEditProfile",uploadProf.single('file'), async function(req,res){
+  if (req.body.action==="update profile"){
+    db.updateProfileInfo(req.body.username,req.body.aboutMe,req.body.favFighter,req.body.favOrg,req.body.currentTheme).then( async function(updated){
+    if(req.file){
+      const userID= await db.findUserIdByUsername(req.body.username);
+      await db.updateProfileImage(userID,req.file.filename);
+    }
+      res.json(updated);
   })
+  } else if (req.body.action==="update profile image"){
 
-  
-  
+    db.updateProfileImage(req.body.userID,req.file.filename).then(function(updated){
+      res.json(updated);
+    })
+
+  } else if (req.body.action==="update cover image"){
+
+    db.updateProfileCoverImage(req.body.userID,req.file.filename).then(function(updated){
+      res.json(updated);
+    })
+
+  }
+
+})
+app.get("/ajaxFetchProfilePredictions", async function(req,res){
+db.getUserPredictionInfo(req.query.userID,req.query.orgName).then(function(outcome){
+  res.json(outcome);
+})
 })
 
+app.get("/ajaxFetchLeaderboardData", async function(req,res){
+  if(req.query.function==="getSubTable"){
+    db.getLeaderboardSubTable(req.query.userID,req.query.leaderboardType).then(function(outcome){
+    res.json(outcome);
+  })
+  }
+  
+  })
 
-app.post("/", upload.single('eventPicture'), function(req,res){
+app.post("/ajaxAdminFightActions", async function(req,res){
+  let user= await db.findUserProfileType(req.body.userID);
+  if(user.profileType==="admin"){
+    if(req.body.action==="submitFightOutcome"){
+    db.updateFightOutcome(req.body.fightID,req.body.winner,req.body.method,req.body.round,req.body.time).then(function(outcome){
+    db.resolvePredictions(req.body.fightID,req.body.winner).then(function(resolved){
+      res.json(outcome);
+    })
+  })
+  } else if (req.body.action==="closeFightPredictions"){
+    db.closeFightPredictions(req.body.fightID).then(function(outcome){
+      res.json(outcome);
+    })
+  } else if (req.body.action==="openFightPredictions"){
+    db.openFightPredictions(req.body.fightID).then(function(outcome){
+      res.json(outcome);
+    })
+  }
+  } else{
+    outcome={
+      error:"user is not an admin"
+    }
+    res.json(outcome);
+  }
+  
+
+})
+
+app.post("/", upload.single('eventPicture'), async function(req,res){
   let mainCard = [];
   let prelims=[];
   let j=0;
+
+
+  async function saveFighters(){
   for(let i=0;i<req.body.mainFighter1Name.length;i++){    
     mainCard[i]={
-    fightID: "test",
     fighterName: req.body.mainFighter1Name[i],
     opponentName: req.body.mainFighter2Name[i],
     weightClass: req.body.mainWeightClass[i],
     isTitleFight: parseInt(req.body.isTitleFight[j])
   }
-  if (req.body.isTitleFight[j]==="1"){
+  //  db.saveFighterByNameAndAddFight(req.body.mainFighter1Name[i],req.body.eventName,req.body.date,req.body.mainFighter2Name[i],parseInt(req.body.isTitleFight[j]));
+  //  db.saveFighterByNameAndAddFight(req.body.mainFighter2Name[i],req.body.eventName,req.body.date,req.body.mainFighter1Name[i],parseInt(req.body.isTitleFight[j]));
+await db.saveFighterByName(req.body.mainFighter1Name[i]);
+await db.saveFighterByName(req.body.mainFighter2Name[i]);
+   if (req.body.isTitleFight[j]==="1"){
     j+=2;
   }else{
     j++;
   }
-   db.saveFighterByName(req.body.mainFighter1Name[i]);
-   db.saveFighterByName(req.body.mainFighter2Name[i]);
   }
   j=0;
   for(let i=0;i<req.body.prelimFighter1Name.length;i++){
     prelims[i]={
-    fightID: "test",
     fighterName: req.body.prelimFighter1Name[i],
     opponentName: req.body.prelimFighter2Name[i],
     weightClass: req.body.prelimWeightClass[i],
     prelimisTitleFight: parseInt(req.body.prelimisTitleFight[j])
   }
+  // db.saveFighterByNameAndAddFight(req.body.prelimFighter1Name[i],req.body.eventName,req.body.date,req.body.prelimFighter2Name[i],parseInt(req.body.isTitleFight[j]));
+  // db.saveFighterByNameAndAddFight(req.body.prelimFighter2Name[i],req.body.eventName,req.body.date,req.body.prelimFighter1Name[i],parseInt(req.body.isTitleFight[j]));
+await db.saveFighterByName(req.body.prelimFighter1Name[i]);
+await db.saveFighterByName(req.body.prelimFighter2Name[i]);
   if (req.body.isTitleFight[j]==="1"){
     j+=2;
   }else{
     j++;
   }
-  db.saveFighterByName(req.body.prelimFighter1Name[i]);
-  db.saveFighterByName(req.body.prelimFighter2Name[i]);
   }
 
+
+
+}
   
 // findFightersByID(mainCard[0].fighterName).then(function(ids){
 //   mainCard[0].fighterName=ids;
 // });
+
+  
+
+
+  await saveFighters();
 
   let event = {
     name: req.body.eventName,
@@ -336,9 +418,13 @@ app.post("/", upload.single('eventPicture'), function(req,res){
     posterURL: "",
     prelims: prelims
   }
+  setTimeout(()=>{
+    db.saveExistingEvent(event);
+  },"5000")
+   
+    
 
-
-  db.saveEvent(event);
+  // await db.saveEvent(event);
 
   db.findALLEvents().then(function(foundEvents){
     res.render("events", {newEvents: foundEvents});

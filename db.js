@@ -4,6 +4,9 @@ const mma=require("mma-api");
 const google=require(__dirname+"/googleSearch.js");
 var _ = require("lodash");
 const { name } = require('ejs');
+const { ObjectId } = require('mongodb');
+const fs = require('fs-extra');
+
 
 mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb.net/fightclubDB?retryWrites=true&w=majority');
 
@@ -21,17 +24,30 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         type: String,
         required: [true, "Please enter an email"]
       },
-        profImage_url: String,
-        predictionWins: Number,
-        PredictionLosses: Number,
-        mmr: Number,
-        rank: Number,
         followers:[String],
         following:[String],
         favFighter: String,
         favPromo: String,
         aboutMe: String,
-        profileTheme: String
+        profileTheme: String,
+        profileType: String,
+        profImage_url: String,
+        coverImage_url: String,
+        predictionWins: Number,
+        predictionLosses: Number,
+        ufcPredictionWins: Number,
+        ufcPredictionLosses: Number,
+        ufcMmr: Number,
+        pflPredictionWins: Number,
+        pflPredictionLosses: Number,
+        pflMmr: Number,
+        bellatorPredictionWins: Number,
+        bellatorPredictionLosses: Number,
+        bellatorMmr: Number,
+        regionalPredictionWins: Number,
+        regionalPredictionLosses: Number,
+        regionalMmr: Number,
+        mmr: Number
       })
 
   const predictionSchema = new mongoose.Schema({
@@ -56,8 +72,9 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
     fighterName: String,
     opponentName: String,
     eventName: String,
-    orgName: String
-
+    orgName: String,
+    mmrChange:Number,
+    orgMmrChange: Number
   })
 
   const fighterSchema = new mongoose.Schema({
@@ -85,14 +102,14 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
     const fightSchema = new mongoose.Schema({
     eventID: String,
     name: String,
-    date: String,
+    date: Date,
     fighterID: String,
     opponentID: String,
     result: String,
     method: String,
     round: String,
     comments: [Object],
-    predictions: [Object],
+    predictionClosed: Boolean,
     time: String});
 
     const eventSchema = new mongoose.Schema({
@@ -104,7 +121,7 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         picture: String,
         org: String,
         location: String,
-        date: String,
+        date: Date,
         posterURL: String,
         comments: [Object],
         mainCard: [Object],
@@ -117,7 +134,6 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
       const Prediction = mongoose.model("Prediction",predictionSchema);
       const User = mongoose.model("User", userSchema);
       
-
       exports.findALLEvents = async function(){
         var events= await Event.find({});
         return events;
@@ -138,6 +154,11 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         return foundUser;
       }
 
+      exports.findUserProfileType = async function(userID){
+        let foundUser=await User.findOne({_id:userID},"profileType");
+        return foundUser;
+      }
+
       exports.findUserByEmail = async function(email){
         let user= await User.findOne({email:email});
         return user;
@@ -154,7 +175,11 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
             username: username,
             email: email,
             password: hashedPassword,
-            profImage_url:"default-prof-image.png"
+            profImage_url:"default-prof-image.png",
+            coverImage_url: "default-cover-image.png",
+            PredictionLosses:0,
+            PredictionWins:0,
+            mmr:0
         }
         const newuser = new User(newUser);
         newuser.save();
@@ -163,6 +188,13 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
       exports.findFighterByName = async function (name){
         let fighter=Fighter.findOne({name:name});
         return fighter;
+      }
+
+      exports.findFightResults = async function(fightID){
+     
+        let results= await Fight.find({_id:fightID},"result");
+   
+        return sortArray(results,"_id",fightID);
       }
 
       exports.findFightersByName = async function (names){
@@ -198,6 +230,58 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         return fighter;
       }
 
+      exports.getTop25Rankings= async function(leaderboardType){
+        if (leaderboardType==="all"){
+          let p4pTop25= await User.find({},"username predictionWins predictionLosses mmr profImage_url").sort({mmr:-1}).limit(25);
+          let ufcTop25= await User.find({},"username ufcPredictionWins ufcPredictionLosses ufcMmr profImage_url").sort({ufcMmr:-1}).limit(25);
+          let bellatorTop25= await User.find({},"username bellatorPredictionWins bellatorPredictionLosses bellatorMmr profImage_url").sort({bellatorMmr:-1}).limit(25);
+          let pflTop25= await User.find({},"username pflPredictionWins pflPredictionLosses pflMmr profImage_url").sort({ufcMmr:-1}).limit(25);
+          return([p4pTop25,ufcTop25,bellatorTop25,pflTop25]);
+        }
+      }
+
+      var getUserPredictionInfo = exports.getUserPredictionInfo=async function(userID,orgName){
+        let predictions=[];
+        if (orgName==="ALL"){
+          mmr="mmr";
+          wins="predictionWins";
+          losses="predictionLosses";
+          predictions= (await Prediction.find({userID:userID})).reverse();
+        } else{
+          wins=_.lowerCase(orgName)+"PredictionWins";
+          losses=_.lowerCase(orgName)+"PredictionLosses";
+          mmr=_.lowerCase(orgName)+"Mmr";
+          predictions= (await Prediction.find({userID:userID,orgName:orgName})).reverse();
+        }
+        let stats = await User.find({_id:userID},[wins, losses, mmr]);
+        let rank = await findRanking(userID,orgName);
+
+        let data={
+          predictions:predictions,
+          wins:stats[0][wins],
+          losses:stats[0][losses],
+          mmr:stats[0][mmr],
+          rank:rank
+        }
+
+        return data;
+      }
+
+      var findRanking = exports.findRanking = async function(userID,orgName){
+        if(orgName==="ALL"){
+          let users = await User.find({},"mmr").sort({mmr:-1});
+            rank=users.map(({_id})=> _id.toString()).indexOf(userID)+1;
+            return rank;
+
+        } else{
+          mmr=_.lowerCase(orgName)+"Mmr";
+          let users = await User.find({},[mmr]).sort({[mmr]:-1});
+            rank=users.map(({_id})=> _id.toString()).indexOf(userID)+1;
+            return rank;
+
+      }
+    }
+
       exports.findPredictionsByUserID = async function(userID){
         
         let predictions=await Prediction.find({userID:userID});
@@ -214,7 +298,6 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         
         let eventNames=events.map(({name})=>name);
         let eventOrgs=events.map(({org})=>org);
-        console.log(eventNames);
 
         let fightsSortingArray=predictions.map(({fightID})=>fightID);
         let fightNames = await Fight.find({_id:{$in:fightsSortingArray}},"fighterID opponentID");
@@ -234,12 +317,7 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
           predictions[i].fighterName=fighterNames1[i].name;
           predictions[i].opponentName=opponentNames[i].name;
         }
-        console.log(predictions.reverse());
-
-  
         return predictions.reverse();
-
-
       }
 
 
@@ -296,6 +374,7 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
             if (foundFighter !=null){
               console.log("Fighter already in database")
             } else{
+              console.log(Fname+" being saved to the db");
               mma.api(Fname, (data) =>{
                 const fighter = new Fighter(data);
                 if(fighter.fights[0].name.substring(0,3)==="UFC"){
@@ -314,16 +393,63 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
             }
           })
       }
+      
+      exports.saveFighterByNameAndAddFight = async function(Fname,eventName,eventDate,opponentName,isTitleFight){
+        let fight={
+          name:eventName,
+          date:eventDate,
+          opponent:opponentName,
+          result:"-",
+          method:"",
+          round:"",
+          time:"",
+          isTitleFight:isTitleFight
+        }  
+        Fighter.findOneAndUpdate({name: Fname},{
+          $push:{
+          fights:{
+            $each: [fight],
+            $position: 0
+          }
+        }
+      }).then(function(foundFighter){
+          if (foundFighter !=null){
+              console.log("Fighter already in database");
+            } else{
+              mma.api(Fname, (data) =>{
+                data.fights.insert(fight);
+                const fighter = new Fighter(data);
+                if(fighter.fights[0].name.substring(0,3)==="UFC"){
+                  google.ufcFighterImageSearch(fighter.nickname,fighter.name).then(images => {
+                    fighter.image_url=images[0].url;
+                    fighter.save();
+                });;
+            
+                } else{
+                  google.regionalFighterImageSearch(fighter.nickname,fighter.name).then(images => {
+                    fighter.image_url=images[0].url;
+                    fighter.save();
+                  })
+                };
+              });
+            }
+          })
+      }
+
+      exports.findUserIdByUsername = async function(username){
+        const userID= await User.findOne({username:username},"_id");
+        return userID;
+      }
 
       exports.saveFighterByURL = async function(Fname,URL){
-        Fighter.findOne({name: Fname}).then(function(foundFighter){
+        Fighter.findOne({name: Fname,url:URL}).then(function(foundFighter){
             if (foundFighter !=null){
               console.log("Fighter already in database")
             } else{
               mma.url(URL, (data) =>{
                 const fighter = new Fighter(data);
                 if(fighter.fights[0].name.substring(0,3)==="UFC"){
-                  google.ufcFighterImageSearch(fighter.nickname,fighter.name).then(images => {
+                  google.ufcFighterImageSearch(fighter.name).then(images => {
                     fighter.image_url=images[0].url;
                     fighter.save();
                 });;
@@ -523,10 +649,12 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
             fighterID:fighterID.id,
             opponentID: opponentID.id,
             weightClass: mainFight.weightClass,
-            result:"-"
+            result:"-",
+            predictionClosed:false
           }
           const newfight = new Fight(fight);
-          newfight.save();     
+          newfight.save();
+             
         });
         event.prelims.forEach(async function(prelim){
           let fighterID = await Fighter.findOne({name: prelim.fighterName},"_id");
@@ -539,7 +667,8 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
             fighterID:fighterID.id,
             opponentID: opponentID.id,
             weightClass: prelim.weightClass,
-            result:"-"
+            result:"-",
+            predictionClosed:false
           }
           const newprelim = new Fight(newPrelim);
           newprelim.save();
@@ -563,6 +692,105 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         })
         
       }
+// Fight.deleteMany({name:"UFC on ESPN 46 - Kara-France vs. Albazi"}).then(function(e){
+//   console.log("deleted")
+// });
+      exports.saveExistingEvent = async function(event){
+        const newEvent = new Event(event);
+
+        async function saveFights(){
+        for(let i=0;i<event.mainCard.length;i++){
+          let fighterID = await Fighter.findOne({name: event.mainCard[i].fighterName},"_id");
+          let opponentID = await Fighter.findOne({name: event.mainCard[i].opponentName}, "_id");
+          let fight={
+            name: event.name,
+            date: event.date,
+            fighterID:fighterID.id,
+            opponentID: opponentID.id,
+            weightClass: event.mainCard[i].weightClass,
+            result:"-",
+            predictionClosed:false
+          }
+          const newfight = new Fight(fight);
+          await newfight.save().then(async function(savedFight){
+            let existingFight=await Fighter.findOne({_id:fighterID},{_id:0,fights:{$elemMatch:{name:event.name}}});
+            if(existingFight.fights[0].result==="win"){
+              await Fight.updateMany({_id:savedFight.id},{result:event.mainCard[i].fighterName+" won",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else if (existingFight.fights[0].result==="loss"){
+              await Fight.updateMany({_id:savedFight.id},{result:event.mainCard[i].opponentName+" won",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else if (existingFight.fights[0].result==="NC"){
+              await Fight.updateMany({_id:savedFight.id},{result:"no contest",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else{
+              await Fight.updateMany({_id:savedFight.id},{result:existingFight.fights[0].result,method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            }
+          })
+             
+ }
+        for(let i=0;i<event.prelims.length;i++){
+          let fighterID = await Fighter.findOne({name: event.prelims[i].fighterName},"_id");
+          let opponentID = await Fighter.findOne({name: event.prelims[i].opponentName}, "_id");
+
+          let newPrelim={
+            name: event.name,
+            date: event.date,
+            fighterID:fighterID.id,
+            opponentID: opponentID.id,
+            weightClass: event.prelims[i].weightClass,
+            result:"-",
+            predictionClosed:false
+          }
+          const newprelim = new Fight(newPrelim);
+          await newprelim.save().then(async function(savedFight){
+            let existingFight=await Fighter.findOne({_id:fighterID},{_id:0,fights:{$elemMatch:{name:event.name}}});
+            if(existingFight.fights[0].result==="win"){
+              await Fight.updateOne({_id:savedFight.id},{result:event.prelims[i].fighterName+" won",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else if (existingFight.fights[0].result==="loss"){
+              await Fight.updateOne({_id:savedFight.id},{result:event.prelims[i].opponentName+" won",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else if (existingFight.fights[0].result==="NC"){
+              await Fight.updateOne({_id:savedFight.id},{result:"no contest",method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            } else{
+              await Fight.updateOne({_id:savedFight.id},{result:existingFight.fights[0].result,method:existingFight.fights[0].method,round:existingFight.fights[0].round,time:existingFight.fights[0].time});
+            }
+          })
+        }
+      }
+      await saveFights();
+        google.eventPosterSearch(event.name).then(async function(images){
+            newEvent.posterURL=images[0].url;
+            await newEvent.save().then(async function(savedEvent){
+              await Fight.updateMany({name: savedEvent.name}, { eventID: savedEvent.id } );
+              await Fight.find({eventID:savedEvent.id}).then(async function(fights){
+                fights.forEach(async function(fight){
+                  await Fighter.findOne({_id: fight.fighterID}).then(async function(fighter){
+                    await Fighter.findOne({_id:fight.opponentID}).then(async function(opponent){
+                      await Event.updateOne({_id: savedEvent.id, "mainCard.fighterName":fighter.name,"mainCard.opponentName":opponent.name},{"mainCard.$.fightID":fight.id.toString()});
+                      await Event.updateOne({_id: savedEvent.id, "prelims.fighterName":fighter.name,"prelims.opponentName":opponent.name},{"prelims.$.fightID":fight.id.toString()});
+                    })
+                  })
+                })
+              })
+            });
+        })
+        
+      }
+
+      exports.getLeaderboardSubTable = async function(userID,leaderboardType){
+        let predictions=[];
+        async function getSubTable(){
+          if(leaderboardType==="p4p"){
+          predictions=await Prediction.aggregate([{$match:{"userID":userID}},{$sort:{"eventID":-1}},{$group:{"_id":{"eventID":"$eventID"},"mmr_change":{$sum:"$mmrChange"},"correct_count":{$sum:{$cond: {if:{ $eq: [ "$outcome", "Correct" ] },then:1,else:0}}},"incorrect_count":{$sum:{$cond: {if:{ $eq: [ "$outcome", "Incorrect" ] },then:1,else:0}}}}}]);
+        } else{
+          predictions=await Prediction.aggregate([{$match:{"userID":userID,orgName:leaderboardType}},{$sort:{"eventID":-1}},{$group:{"_id":{"eventID":"$eventID"},"mmr_change":{$sum:"$orgMmrChange"},"correct_count":{$sum:{$cond: {if:{ $eq: [ "$outcome", "Correct" ] },then:1,else:0}}},"incorrect_count":{$sum:{$cond: {if:{ $eq: [ "$outcome", "Incorrect" ] },then:1,else:0}}}}}]);
+        }
+          for (let i=0;i<predictions.length;i++){
+            let tempName = await Event.findOne({_id:predictions[i]._id.eventID},"name");
+            predictions[i].eventName= tempName.name;
+          }
+          return predictions;
+        }
+        
+        return getSubTable();
+      }
 
       exports.findFightersByID = async function(name){
           let fighterid= await Fighter.find({name: name},"_id");
@@ -574,6 +802,117 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         return fighter;
 
     }
+
+    var updateFightOutcome= exports.updateFightOutcome = async function(fightID,winnerName,method,round,time){
+      let result="";
+
+        if(winnerName==="draw"){
+        result="draw";
+        } else if (winnerName==="no contest"){
+        result="no contest";
+        } else{
+        result=winnerName+" won";
+        }
+
+
+      Fight.findOneAndUpdate({_id:fightID},{result:result,method:method,round:round,time:time},{new: true}).then(function(fight){
+
+        if(result==="draw" || result==="no contest"){
+          Fighter.updateOne({_id:fight.fighterID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":fight.result,"fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
+          Fighter.updateOne({_id:fight.opponentID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":fight.result,"fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
+
+        } else{ 
+          Fighter.findOneAndUpdate({name:winnerName,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"win","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time}).then(function(fighter){
+
+            if(fighter.id.toString()===fight.fighterID){
+              Fighter.updateOne({_id:fight.opponentID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"loss","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
+            } else{
+              Fighter.updateOne({_id:fight.fighterID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"loss","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
+            }
+          })
+        }
+        })
+        return("fight and fighter records updated");
+    }
+    
+
+    exports.closeFightPredictions=async function(fightID){
+      Fight.findOneAndUpdate({_id:fightID},{predictionClosed:true}).then(function(e){
+        return"Predictions Closed";
+      })
+    }
+
+    exports.openFightPredictions=async function(fightID){
+      Fight.findOneAndUpdate({_id:fightID},{predictionClosed:false}).then(function(e){
+        return"Predictions Opened";
+      })
+    }
+      exports.resolvePredictions= async function(fightID,winnerName){
+        if(winnerName==="draw"||winnerName==="no contest"){
+          await Prediction.updateMany({fightID:fightID},{outcome:"Push"});
+        } else{
+            await Prediction.updateMany({fightID:fightID,predictionName:winnerName},{outcome:"Correct"});
+            await Prediction.updateMany({fightID:fightID,predictionName:{$ne:winnerName}},{outcome:"Incorrect"});
+            Prediction.find({fightID:fightID,outcome:"Correct"},"userID orgName").then(function(predictions){
+              predictions.forEach(async function(prediction){
+                const countPredictions = await Prediction.countDocuments({userID:prediction.userID,orgName:prediction.orgName});
+                let gainedPoints=Number;
+                if (countPredictions<=60){
+                  gainedPoints=100;
+                } else if (countPredictions<=120){
+                  gainedPoints=70;
+                } else if (countPredictions<=200){
+                  gainedPoints=50;
+                } else if (countPredictions<=300){
+                  gainedPoints=30;
+                } else{
+                  gainedPoints=20;
+                }
+                if(_.lowerCase(prediction.orgName)==="ufc"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{ufcMmr:gainedPoints,ufcPredictionWins:1,mmr:gainedPoints,predictionWins:1}});
+                } else if (_.lowerCase(prediction.orgName)==="bellator"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{bellatorMmr:gainedPoints,bellatorPredictionWins:1,mmr:gainedPoints,predictionWins:1}});
+                } else if (_.lowerCase(prediction.orgName)==="pfl"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{pflMmr:gainedPoints,pflPredictionWins:1,mmr:gainedPoints,predictionWins:1}});
+                } else{
+                  await User.updateOne({_id:prediction.userID},{$inc:{regionalMmr:gainedPoints,regionalPredictionWins:1,mmr:gainedPoints,predictionWins:1}});
+                }
+                await Prediction.updateOne({_id:prediction._id},{mmrChange:gainedPoints,orgMmrChange:gainedPoints});
+              })
+              
+            })
+            Prediction.find({fightID:fightID,outcome:"Incorrect"},"userID orgName").then(function(predictions){
+              predictions.forEach(async function(prediction){
+                const countPredictions = await Prediction.countDocuments({userID:prediction.userID,orgName:prediction.orgName});
+                let lossedPoints=Number;
+                if (countPredictions<=60){
+                  lossedPoints=-20;
+                } else if (countPredictions<=120){
+                  lossedPoints=-30;
+                } else if (countPredictions<=200){
+                  lossedPoints=-40;
+                } else if (countPredictions<=300){
+                  lossedPoints=-50;
+                } else{
+                  lossedPoints=-60;
+                }
+                if(_.lowerCase(prediction.orgName)==="ufc"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{ufcMmr:lossedPoints,ufcPredictionLosses:1,mmr:lossedPoints,predictionLosses:1}});
+                } else if (_.lowerCase(prediction.orgName)==="bellator"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{bellatorMmr:lossedPoints,bellatorPredictionLosses:1,mmr:lossedPoints,predictionLosses:1}});
+                } else if (_.lowerCase(prediction.orgName)==="pfl"){
+                  await User.updateOne({_id:prediction.userID},{$inc:{pflMmr:lossedPoints,pflPredictionLosses:1,mmr:lossedPoints,predictionLosses:1}});
+                } else{
+                  await User.updateOne({_id:prediction.userID},{$inc:{regionalMmr:lossedPoints,regionalPredictionLosses:1,mmr:lossedPoints,predictionLosses:1}});
+                }
+                await Prediction.updateOne({_id:prediction._id},{mmrChange:lossedPoints,orgMmrChange:lossedPoints});
+              })
+              
+            })
+        }
+        return("updated");
+        
+      }
 
       exports.getFightersByID = async function(fighterID){
         let fighters= await Fighter.find({_id: fighterID});
@@ -608,9 +947,13 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
       }
 
       exports.saveFightPrediction = async function(fightID, userPrediction){
+        let predictionClosed = await Fight.findOne({_id:fightID},"predictionClosed");
         let existingPrediction = await Prediction.findOne({fightID:fightID,userID:userPrediction.userID});
         async function predict(){
-          if(existingPrediction != undefined){
+          if(predictionClosed.predictionClosed){
+            const outcome = "predictions for this fight are closed";
+            return outcome;
+          } else if(existingPrediction != undefined){
             if(existingPrediction.fighterID === userPrediction.fighterID){
               const outcome = "prediction already made";
               return outcome;
@@ -632,6 +975,28 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         return await predict();
       }
 
+      var findProfileImage = exports.findProfileImage = async function(userID){
+        const imagePath=await User.findOne({_id:userID},"profImage_url");
+        return imagePath.profImage_url;
+      }
+
+      var findCoverImage = exports.findCoverImage = async function(userID){
+        const imagePath=await User.findOne({_id:userID},"coverImage_url");
+        return imagePath.coverImage_url;
+      }
+
+      exports.updateProfileImage = async function(userID,filename){
+        await deleteImageIfExists(userID,"profile");
+        await User.updateOne({_id:userID},{profImage_url:filename});
+        return "image changed";
+      }
+
+      exports.updateProfileCoverImage = async function(userID,filename){
+        await deleteImageIfExists(userID,"cover");
+        await User.updateOne({_id:userID},{coverImage_url:filename});
+        return "image changed";
+      }
+      
       exports.updateProfileInfo = async function(username,about,favFighter,favOrg,theme){
         let updated={};
         async function update(){
@@ -668,3 +1033,46 @@ mongoose.connect('mongodb+srv://ashtxn:7jYYZ4UbLSm72OPY@cluster0.c9ryrrx.mongodb
         })
         return sortedArray;
       }
+
+      var deleteImageIfExists = async function deleteImageIfExists(userID,imageType){
+        let imagePath="";
+        if(imageType==="profile"){
+          imagePath= await findProfileImage(userID);
+        } else if (imageType==="cover"){
+          imagePath= await findCoverImage(userID);
+        } else{
+          console.error("no image type selected", error);
+        }
+        
+        if (imagePath==="default-prof-image.png"||imagePath==="default-cover-image.png"){
+          return;
+        } else{
+          let resultHandler = function (err) {
+            if (err) {
+                console.log("unlink failed", err);
+            } else {
+                console.log("file deleted");
+            }
+          }
+          fs.unlink(__dirname+'/public/data/uploads/profilePictures/'+imagePath,resultHandler);
+        }
+      }
+    //   let fight={
+    //     name:"UFC 289 - Nunes vs. Aldana",
+    //     date:"Jun/10/2023",
+    //     opponent:"Irene Aldana",
+    //     result:"win",
+    //     method:"Unanimous Decision",
+    //     round:"",
+    //     time:""
+    //   }  
+    //   Fighter.findOneAndUpdate({name: "Amanda Nunes"},{
+    //     $push:{
+    //     fights:{
+    //       $each: [fight],
+    //       $position: 0
+    //     }
+    //   }
+    // }).then(function(e){
+    //   console.log("updated")
+    // })

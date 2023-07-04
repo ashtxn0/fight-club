@@ -93,7 +93,7 @@
                 
                 <% if(user){ %>
                     <div class="comment-row">
-                        <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=comment.picture %>" alt="user profile image">
                     <div class="comment-col fight-comment">
                         <div class="comment-col">
                             <div class="comment-row">      
@@ -120,7 +120,7 @@
                 </div>
                 <% } else{ %>
                     <div class="comment-row">
-                    <img class="prof-image-comment" src="/data/uploads/<%=comment.picture %>" alt="user profile image">
+                    <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=comment.picture %>" alt="user profile image">
                     <div class="comment-col fight-comment">
                         
                         <div class="comment-col">
@@ -155,6 +155,7 @@
     var username = "<%= user.username %>";
     var eventID="<%= event.id %>";
     var userID="<%= user.id %>";
+    var orgName="<%= event.org %>";
     </script>   
 <% } else{ %>
     <script>

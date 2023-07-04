@@ -4,7 +4,8 @@
 
 $(document).click(function(event){
     if(!event.target.matches(".fighter-img") && !event.target.matches(".fighter-name") && !event.target.matches(".fighter-page-slide-out") && !event.target.matches(".fighter-page-slide-out *")){
-        if(isOpen){                $('.fighter-page-slide-out').slideToggle();
+        if(isOpen){         
+       $('.fighter-page-slide-out').slideToggle();
             setTimeout(function(){
                 $('.fighter-prof').removeClass('shown');
                 $('.fighter-prof').addClass('hidden');
@@ -19,8 +20,9 @@ $(document).click(function(event){
   })
 
 $('.fighter-name').click(function(event){
-    let LName= (this.innerHTML).split(" ")[1];
-    let FName= (this.innerHTML).split(" ")[0];
+    event.stopPropagation();
+    let LName= (this.innerHTML).split('.').join("").split(" ")[1];
+    let FName= (this.innerHTML).split('.').join("").split(" ")[0];
     
     $('.fighter-page-slide-out').css('visibility', 'visible');
     if (isOpen===0){
@@ -75,8 +77,5 @@ $('.hidden-fights-show-all').click(function(event){
         $(".hidden-fights").addClass("hide-fights");
         isShown=0;
     }
-
-
-
 })
 

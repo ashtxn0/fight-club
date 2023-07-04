@@ -1,15 +1,31 @@
 <%- include("partials/header"); -%>
 
 <div class="user-page">
-
-    <div class="profile-theme-container">
-     
-    </div>
-    <div class="profile-content-container panel">
-        <div class="profile-page-container panel <%=profileUser.profileTheme%>-theme-profile-page-container">
+    
+    <img src="/data/uploads/profilePictures/<%=profileUser.coverImage_url %>" class="profile-theme-container"/>
+    <% if (user && user.username===profileUser.username){ %>
+        <div id="upload-cover-img" >
+            <label for="cover-img-upload">
+                <img id="cover-img-btn" src="/image/upload-img.svg" alt="cover image upload button">
+            </label>
+            <input class="<%=profileUser.id%>" id="cover-img-upload" type="file" accept="image/">
+        </div>
+    <!-- <img id="upload-cover-img" src="/image/upload-img.svg" alt="image icon"> -->
+    <% } %>
+    <div class="profile-content-container">
+        <div class="profile-page-container <%=profileUser.profileTheme%>-theme-profile-page-container">
             <div class="profile-interaction-container" style="display: flex; justify-content: space-between;">
             <div class="profile-page-picture">
-                <img src="/data/uploads/<%=profileUser.profImage_url %>" alt="">
+                
+                <img class="profile-img" src="/data/uploads/profilePictures/<%=profileUser.profImage_url %>" alt="">
+                <% if (user && user.username===profileUser.username){ %>
+                <div class="image-upload">
+                    <label for="file-input">
+                        <img class="upload-img-button" src="/image/upload-img.svg" alt="">
+                    </label>
+                    <input class="<%=profileUser.id%>" id="file-input" type="file" accept="image/"/>
+                </div>
+                <% } %>
                     <h1 class="username-text <%=profileUser.profileTheme%>-theme-profile-title"><%=profileUser.username%></h1>
                     
 
@@ -40,7 +56,12 @@
                             <input class="fav-fighter" type="text">
                             <label for="fav-fighter">Favourite mma org:</label>
                             <input class="fav-org" type="text">
-
+                            <div class="mobile-upload">
+                                <label for="file-input">
+                                    Profile picture:
+                                </label>
+                                <input class="<%=profileUser.id%>" id="mobile-file-input" type="file" accept="image/"/>
+                            </div>
                         </div>
                         <div class="edit-profile-row">
                             <button class="submit-profile-changes secondary-btn">Submit</button>
@@ -68,7 +89,7 @@
 
             <h2 class="title-text profile-title <%=profileUser.profileTheme%>-theme-profile-title">Prediction rankings:</h2>
             
-            <div class="profile-rankings-section">
+
                 
             <div class="profile-rankings-container">
                 
@@ -76,24 +97,33 @@
                 <div class="profile-rankings">
 
                     <div class="prediction-rankings-table-heading <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
-                        <div class="active-prediction-rankings-title prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
+                        <button id="ALL" class="profile-rankings-btn"><div class="active-prediction-rankings-title prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
+                            <h2>ALL </h2>
+                        </div></button>
+                        <button id="UFC" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>UFC </h2>
-                            <p>Record: 23-0</p>
-                        </div>
-                        <div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
+                        </div></button>
+                        <button id="PFL" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>PFL </h2>
-                            <p></p>
-                        </div>
-                        <div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
+                        </div></button>
+                        <button id="Bellator" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
+                            <h2>Bellator </h2>
+                        </div></button>
+                        <button id="Regional" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
                             <h2>Regional </h2>
-                            <p></p>
-                        </div>
+                        </div></button>
+                    </div>
+                    <div class="prediction-rankings-subtext-heading <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
+                            <p id="prediction-rankings-rank" class="prediction-rankings-subtext <%=profileUser.profileTheme%>-theme-text">Rank: <%= rank%></p>
+                            <p class="prediction-rankings-subtext <%=profileUser.profileTheme%>-theme-text">Record: <span id="prediction-rankings-wins"><%=profileUser.predictionWins%></span>-<span id="prediction-rankings-losses"><%=profileUser.predictionLosses%></span></p>
+                            <p id="prediction-rankings-mmr" class="prediction-rankings-subtext <%=profileUser.profileTheme%>-theme-text">Points: <%=profileUser.mmr%></p>
                     </div>
                     <table class="prediction-table">
 
-                        <tr>
+                        <tr class="headings">
                             <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading">Prediction</th>
                             <th class="prediction-table-title-result <%=profileUser.profileTheme%>-theme-profile-table-heading">Result</th>
+                            <th class="prediction-table-title-result <%=profileUser.profileTheme%>-theme-profile-table-heading">Points</th>
                             <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading">Fight</th>
                             <th class="prediction-table-event <%=profileUser.profileTheme%>-theme-profile-table-heading">Event</th>
                         </tr>
@@ -101,11 +131,17 @@
                         <tr>
                                 <td class="prediction-table-predict <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text"><%= prediction.predictionName %> to win</td>
                             <% if (prediction.outcome==="Correct") { %>
-                                <td class="prediction-table-result correct">Correct</td>
+                                <td class="prediction-table-result correct <%=profileUser.profileTheme%>-theme-text">Correct</td>
+                                <td class="prediction-table-result correct <%=profileUser.profileTheme%>-theme-text">+<%=prediction.mmrChange%></td>
                             <% } else if ((prediction.outcome==="Incorrect")){ %>
-                                <td class="prediction-table-result incorrect">Incorrect</td>
+                                <td class="prediction-table-result incorrect <%=profileUser.profileTheme%>-theme-text">Incorrect</td>
+                                <td class="prediction-table-result incorrect <%=profileUser.profileTheme%>-theme-text"><%=prediction.mmrChange%></td>
+                            <% } else if ((prediction.outcome==="Push")){ %>
+                                <td class="prediction-table-result push <%=profileUser.profileTheme%>-theme-text">Push</td>
+                                <td class="prediction-table-result push <%=profileUser.profileTheme%>-theme-text">0</td>
                             <% } else{ %>
-                                <td class="prediction-table-result scheduled">-</td>
+                                <td class="prediction-table-result scheduled <%=profileUser.profileTheme%>-theme-text">-</td>
+                                <td class="prediction-table-result scheduled <%=profileUser.profileTheme%>-theme-text">-</td>
                             <% } %>
                             <td class="prediction-table-fight <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text"><%= prediction.fighterName %> vs. <%= prediction.opponentName %></td>
                             <td class="prediction-table-event <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text"><%= prediction.eventName %></td>
@@ -114,6 +150,7 @@
                         <% if (!predictions.length){ %>
                             <tr>
                                 <td class="prediction-table-predict <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text">No predictions yet to show</td>
+                                <td class="prediction-table-result scheduled <%=profileUser.profileTheme%>-theme-text">-</td>
                                 <td class="prediction-table-result scheduled <%=profileUser.profileTheme%>-theme-text">-</td>
                                 <td class="prediction-table-fight <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text">-</td>
                                 <td class="prediction-table-event <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text">-</td>
@@ -124,12 +161,7 @@
                 </div>
             </div>
 
-            <div class="profile-rank-container">
-                <h2>Rank: 1</h2>
-                <h3>Record: (28-0)</h3>
-                <h3>2800 Points</h3>
-            </div>
-        </div>
+
         
         <div class="profile-comment-section">
             <h2 class="title-text <%=profileUser.profileTheme%>-theme-profile-title">Comments:</h2>
@@ -145,13 +177,19 @@
 
 
 </div>
-
+<script>
+    var profileUserID="<%= profileUser.id %>"
+    var profileTheme="<%= profileUser.profileTheme %>"
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <% if(user){ %>
     <script>
         var username= "<%= user.username %>";
         var theme= "<%= user.profileTheme %>";
     </script>
+    <%if(user.username===profileUser.username){ %>
+        <script type="text/javascript" src="/javascript/edit-profile.js"></script>    
+        <%}%>
 <% } %>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<script type="text/javascript" src="/javascript/edit-profile.js"></script>
+<script type="text/javascript" src="/javascript/prediction-table.js"></script>   
 <%- include("partials/footer"); -%>
