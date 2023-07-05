@@ -33,7 +33,11 @@
             <a onclick="userDropDown()" class="drop-down-btn"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/data/uploads/profilePictures/<%=user.profImage_url %>" alt="user profile image"></a>
             <div id="userDropDown" class="user-drop-content">
                 <a href="/user/<%=user.username%>">View Profile</a>
-                <a href="">Edit Profile</a>
+                <a class="task events-task mobile-task" href="/events">Events</a>
+                <a class="task mobile-task" href="/event">Study Buddy</a>
+                <a class="task mobile-task" href="/home">Best Bets</a>
+                <a class="task mobile-task" href="/leaderboards">Prediction Rankings</a>
+                <a class="task mobile-task" class="premium" href="/home">Premium</a>
                 <form action="/logout?_method=DELETE" method="post">
                     <button style="padding: 5px;" class="fight-page-predict-button" type="submit">logout</button>
                 </form>
@@ -41,7 +45,19 @@
         </div>
             
         <% } else{ %>
-            <a class="task login-task" href="/signup">Login/Signup</a>
+            <a class="task login-task" href="/login">Login/Signup</a>
+            <div class="user-drop-down">
+                <a onclick="userDropDown()" class="drop-down-btn menu-light"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/image/hamburger-ui-light.svg" alt="ui menu icon"></a>
+                <a onclick="userDropDown()" class="drop-down-btn menu-dark"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/image/hamburger-ui-dark.svg" alt="ui menu icon"></a>
+                <div id="userDropDown" class="user-drop-content">
+                    <a class="task events-task mobile-task" href="/events">Events</a>
+                    <a class="task mobile-task" href="/event">Study Buddy</a>
+                    <a class="task mobile-task" href="/home">Best Bets</a>
+                    <a class="task mobile-task" href="/leaderboards">Prediction Rankings</a>
+                    <a class="task mobile-task" class="premium" href="/home">Premium</a>
+                    <a class="task login-task mobile-task" href="/login">Login/Signup</a>
+                </div>
+            </div>
         <% }%>
            
         

@@ -8,7 +8,7 @@
     --color-secondary:#f3f3f3;
     --color-grey-dim:#79797938;
     --color-text-secondary:#495057;
-    --color-transparent-card: #ffffff61;   
+    --color-transparent-card: #ffffff5e;   
 
     --ff-base:'Roboto', sans-serif;
     --ff-accent:'Rubik', sans-serif;
@@ -95,6 +95,13 @@ html{
     display: block;
 }
 
+.menu-dark{
+    display: none;
+}
+.menu-light{
+    display: block;
+}
+
 @media (prefers-color-scheme: dark){
     :root{
         --color-primary: #0031a4;
@@ -103,8 +110,14 @@ html{
         --color-text: #f6f3efe5;
         --color-secondary: #121212;
         --color-text-secondary:#b6afa8;
-        --color-transparent-card: #06060461;  
+        --color-transparent-card: #0606049a;  
         
+    }
+    .menu-dark{
+        display: block;
+    }
+    .menu-light{
+        display: none;
     }
     .nav-dark{
         display: block;
@@ -170,6 +183,10 @@ p{
     display: none;
 }
 
+.mobile-task{
+    display: block;
+}
+
 .drop-down-btn{
     cursor: pointer;
 }
@@ -190,7 +207,6 @@ p{
     background-color: var(--color-secondary);
     min-width: 100px;
     padding: 10px;
-    height: 100px;
     border: 1px solid var(--color-secondary);
     z-index: 2;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -1325,8 +1341,7 @@ a{
 /*all.ejs*/
 .panel{
     border: 1px solid var(--color-secondary);
-    border-radius: 10px;
-    padding-left: 1%;
+
     background-color: var(--color-background);
     box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
     
@@ -1935,8 +1950,7 @@ h3.events-title{
     display: flex;
     flex-direction: column;
     padding: 10%;
-    width: 40%;
-    height: 50%;
+
     align-content: center;
     background-color: var(--color-transparent-card);
 }
@@ -3027,6 +3041,15 @@ input:focus{
 }
 
 @media (min-width:1000px){
+    .menu-dark{
+        display: none;
+    }
+    .menu-light{
+    display: none;
+    }
+    .mobile-task{
+        display: none !important;
+    }
     .task{
         display: block;
     }
@@ -3090,6 +3113,33 @@ input:focus{
 }
 
 @media (max-width:800px){
+    .sign-up-row img{
+        opacity: 50%;
+        border-radius: 0%;
+        width: 100%;
+    }
+
+    .sign-up-row{
+        margin-top: 100px;
+        flex-direction: column-reverse;
+        align-items: center;
+        justify-content: unset;
+    }
+    .sign-up-hero{
+        display: none;
+    }
+    .credentials-container{
+        background-color: unset;
+        border: none;
+        width: 98%;
+    }
+
+    html, body {
+        overflow-x: hidden;
+    }
+    body {
+        position: relative;
+    }
     .profile-page-container{
         width: 100%;
     }
