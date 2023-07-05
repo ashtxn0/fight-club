@@ -1,8 +1,9 @@
 <%- include("partials/header"); -%>
-<div class="fight-page-container panel">
+<div class="fight-page-container">
     <h1 class="title-text"><%=event.name%> fight:</h1>
     <div class="fight-fighters-container">
-        <div class="fight-fighter panel">
+        <div class="fight-fighters-row">
+        <div class="fight-fighter">
             <div class="fight-fighter-title">
                 <h3><%=fighter.name%></h3>
                 <h4>(<%=fighter.wins.total%>-<%=fighter.losses.total%>)</h4>
@@ -17,7 +18,7 @@
             
         </div>
         <h2>VS</h2>
-        <div class="fight-fighter panel">
+        <div class="fight-fighter">
             <div class="fight-fighter-title">
                 <h3><%=opponent.name%></h3>
                 <h4>(<%=opponent.wins.total%>-<%=opponent.losses.total%>)</h4>
@@ -31,7 +32,8 @@
             </div>
             
         </div>
-        <div class="fight-prediction-container panel">
+    </div>
+        <div class="fight-prediction-container">
             <h2 class="title-text">Predictions:</h2>
             <div class="prediction-percentages">
                 <% const fighterPercent= ((fighterCount/predictions.length)*100).toFixed(2) %>
@@ -77,7 +79,7 @@
 
     </div>
     <div class="fight-tasks-container">
-        <div class="fight-comments-container panel">
+        <div class="fight-comments-container">
             <h2 class="title-text">Comments:</h2>
             <form action="/predict" method="post">
                 <div class="compose-comment fight-comment-box">
@@ -143,7 +145,7 @@
 
             <% }) %>
         </div>
-        <div class="fight-best-bets-container panel">
+        <div class="fight-best-bets-container">
             <h2 class="title-text">Best Bets:</h2>
         </div>
     </div>

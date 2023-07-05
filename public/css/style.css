@@ -134,6 +134,7 @@ html{
 body{
     background-color: var(--color-background);
     font-size: var(--fs-300);
+    margin: 0%;
 
 }
 /*all*/
@@ -145,25 +146,7 @@ p{
 }
 
 /*all*/
-.taskbar-containerr{
-    background: linear-gradient(180deg, var(--color-background), var(--color-secondary));
-    display: flex;
-    border: 1px solid var(--color-secondary);
-    gap: 2em;
-    width: 98%;
-    align-items: center;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
-    border-bottom: 4px solid var(--color-primary);
-    border-top: 0;
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    position: absolute;
-    top:0;
-    
-  
-}
+
 
 /*all*/
 .logo{
@@ -184,7 +167,7 @@ p{
     border-radius: 5px;
     font-weight: 500;
     font-size: var(--fs-200);
-    visibility: hidden;
+    display: none;
 }
 
 .drop-down-btn{
@@ -1141,6 +1124,22 @@ a{
     padding: 1%;
 }
 
+.result,.cropped{
+    margin-bottom: .5em;
+}
+#image{
+    display: block;
+    max-width: 80%;
+}
+
+.hide {
+	display: none;
+}
+
+.crop-row{
+    display: flex;
+}
+
 .edit-profile-row{
     display: flex;
     justify-content: center;
@@ -1656,7 +1655,7 @@ h3.events-title{
     position: fixed;
     left: 0;
     height: 100%;
-    width: 55%;
+    width: 80%;
     z-index: 4;
     overflow-y: scroll;
     visibility: hidden;
@@ -1702,6 +1701,8 @@ h3.events-title{
     flex-direction: column;
     margin-top: 20px;
     margin-bottom: 40px;
+    border: 1px solid var(--color-grey-dim);
+    padding: .5em;
 }
 
 /*event.js*/
@@ -1711,6 +1712,7 @@ h3.events-title{
     margin: 0 20px;
     align-items: center;
     padding: 0% 2%;
+    gap: 1em;
 }
 
 /*event.js*/
@@ -1728,7 +1730,7 @@ h3.events-title{
 /*event.js*/
 .close{
     position: fixed;
-    left: 52%;
+    left: 74%;
     cursor: pointer;
     z-index: 5;
     visibility: hidden;
@@ -2059,12 +2061,15 @@ input:focus{
     height: auto;
     padding: 0 3% 3% 3%;
     margin-top: 95px;
+    border: 1px solid var(--color-grey-dim);
 }
 .fighter-page-intro{
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 60%;
+    border: 1px solid var(--color-grey-dim);
+    padding: 0 .5em;
 }
 .fighter-page-row{
     display: flex;
@@ -2100,6 +2105,8 @@ input:focus{
     width: 40%;
     padding-top: 1%;
     margin-left: 1%;
+    border: 1px solid var(--color-grey-dim);
+    padding: .5em;
 }
 
 .fighter-history-title{
@@ -2112,11 +2119,18 @@ input:focus{
     height: auto;
     padding: 0% 3% 3% 3%;
     margin-top: 95px;
+    border: 1px solid var(--color-grey-dim);
 }
 
 .fight-fighters-container{
     display: flex;
     padding: 1%;
+}
+.fight-fighters-row{
+    display: flex;
+    align-items: center;
+    gap: .3em;
+    width: 90%;
 }
 
 .fight-fighters-container > h2{
@@ -2155,6 +2169,7 @@ input:focus{
     padding-left: 0%;
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--color-grey-dim);
 }
 
 
@@ -2164,6 +2179,7 @@ input:focus{
     margin-left: 1%; 
     display: flex;
     flex-direction: column;
+    border: 1px solid var(--color-grey-dim);
 }
 
 .fight-prediction-container >h2{
@@ -2343,6 +2359,7 @@ input:focus{
     margin-top: 2%;
     padding: 1%;
     width: 60%;
+    border: 1px solid var(--color-grey-dim);
 }
 
 .fight-best-bets-container{
@@ -2352,6 +2369,7 @@ input:focus{
     padding: 1%;
     width: 35%;
     margin-left: 1%;
+    border: 1px solid var(--color-grey-dim);
 }
 
 .fight-tasks-container{
@@ -2404,6 +2422,25 @@ input:focus{
 .secondary-btn:hover{
     background-color:var(--color-primary);
     color:var(--color-background);
+}
+
+.taskbar-containerr{
+    display: flex;
+    gap: 2em;
+    align-items: center;
+    background: linear-gradient(180deg, var(--color-background), var(--color-secondary));
+    border: 1px solid var(--color-secondary);
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    box-shadow: rgba(0, 0, 0, 0.04) 0px 1px 1px, rgba(0, 0, 0, 0.04) 0px 2px 2px, rgba(0, 0, 0, 0.04) 0px 4px 4px, rgba(0, 0, 0, 0.04) 0px 8px 8px, rgba(0, 0, 0, 0.04) 0px 16px 16px;
+    border-bottom: 4px solid var(--color-primary);
+    border-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    position: absolute;
+    top:0;
+
 }
 
 .secondary-btn-invert{
@@ -2484,6 +2521,13 @@ input:focus{
     font-family: var(--ff-base);
     
 }
+
+#cover-img-crop{
+    background-color: var(--color-background);
+    padding: 1em;
+    max-width: 900px;
+    outline: none;
+    border: 1px solid var(--color-grey-dim);}
 
 .ranking-table th{
     padding: 1em;
@@ -2983,6 +3027,9 @@ input:focus{
 }
 
 @media (min-width:1000px){
+    .task{
+        display: block;
+    }
     
     .profile-rankings-section{
         display: grid;
@@ -2996,6 +3043,12 @@ input:focus{
     .profile-heading-container{
         display: flex;
         justify-content: space-between;
+    }
+    .fighter-page-slide-out{
+        width: 65%;
+    }
+    .close{
+        left: 60%;
     }
     
 }
@@ -3026,11 +3079,76 @@ input:focus{
     #upload-cover-img{
         margin-right: 10%;
     }
+    .fighter-page-slide-out{
+        width: 55%;
+    }
+
+    .close{
+        left: 52%;
+    }
 
 }
 
 @media (max-width:800px){
-    .prediction-table,th,td,tr{
+    .profile-page-container{
+        width: 100%;
+    }
+    .profile-content-container{
+        padding-left: 0%;
+    }
+    .fighter-page-row{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .fighter-page-intro{
+        width: auto;
+    }
+
+    .event-fight-history{
+        gap: .5em;
+    }
+
+    .fighter-page-container{
+        padding: 0%;
+        border: none;
+    }
+    .event-fight-history-row{
+        margin: 0%;
+    }
+    .fight-fighters-container{
+        flex-direction: column;
+        align-items: center;
+        gap: .5em;
+    }
+    .fight-prediction-container,.fight-fighters-row{
+        width: auto;
+    }
+
+    .event-fight-history-row a,.event-fight-history-row p{
+        font-size: var(--fs-200);
+    }
+    .event-fight-history-row h3{
+        font-size: var(--fs-300);
+        margin: 0;
+    }
+    .close{
+        left: 92%;
+    }
+
+    .fighter-page-slide-out{
+        width: 100%;
+    }
+
+    .leaderboards-rankings{
+        overflow-x: scroll;
+    }
+
+    .ranking-table td{
+        padding: .7em 0%;
+    }
+
+    .prediction-table,.prediction-table th,.prediction-table td,.prediction-table tr{
         display: block;
     }
     .prediction-table{
@@ -3078,7 +3196,7 @@ input:focus{
         color: var(--color-text-secondary);
     }
 
-    tr:nth-of-type(odd){
+    .prediction-table tr:nth-of-type(odd){
         background-color: var(--color-accent);
     }
 
@@ -3110,12 +3228,22 @@ input:focus{
         min-width: 0%;
     }
 
-    td:nth-of-type(1):before{ content:"Prediction: "}
-    td:nth-of-type(2):before{ content:"Outcome: ";font-size: var(--fs-200);}
-    td:nth-of-type(3):before{ content:"Points: ";font-size: var(--fs-200);}
-    td:nth-of-type(4):before{ content:"Fight: "}
-    td:nth-of-type(5):before{ content:"Event: "}
+    .prediction-table td:nth-of-type(1):before{ content:"Prediction: "}
+    .prediction-table td:nth-of-type(2):before{ content:"Outcome: ";font-size: var(--fs-200);}
+    .prediction-table td:nth-of-type(3):before{ content:"Points: ";font-size: var(--fs-200);}
+    .prediction-table td:nth-of-type(4):before{ content:"Fight: "}
+    .prediction-table td:nth-of-type(5):before{ content:"Event: "}
 
 
     
+}
+
+@media (max-width:550px){
+    .event-fight-history-row{
+        gap: .5em;
+    }
+
+    .event-fight-history-row a,.event-fight-history-row p{
+        font-size: var(--fs-100);
+    }
 }

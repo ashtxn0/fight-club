@@ -1,8 +1,8 @@
 <%- include("partials/header"); -%>
-<div class="fighter-page-container panel">
+<div class="fighter-page-container">
     <h1 class="title-text">Fighter Info: </h1>
     <div class="fighter-page-row">
-        <div class="fighter-page-intro panel">
+        <div class="fighter-page-intro">
             <div class="fighter-page-heading">
                 <img class="fighter-profile-image" src="<%=fighter.image_url %>" alt="fighter picture">
                     <h3 class="nickname">"<%= fighter.nickname %>"</h3>
@@ -16,12 +16,12 @@
                     <p>Weight Class: <%= fighter.weight_class %> (<%= fighter.weight %>)</p>
                 </div>
         </div>
-        <div class="fighter-page-comments panel">
+        <div class="fighter-page-comments">
             <h2 class="title-text">Comments: </h2>
 
         </div>
     </div>
-    <div class="event-fight-history panel">
+    <div class="event-fight-history">
             <h2 class="fighter-history-title title-text">Fight History</h2>
             <div class="event-fight-history-row">
                 <h3>Opponent</h3>
@@ -31,7 +31,7 @@
             </div>
             <% fighter.fights.forEach(function(fight){ %>
        
-        <div class="panel event-fight-history-row shown-fights">
+        <div class="event-fight-history-row shown-fights">
             <div class="event-fight-history-col">
                 <a href="/fighter/<%= fight.opponent.replace(/\s+/g, '-') %>"><%= fight.opponent %></a>
             </div>

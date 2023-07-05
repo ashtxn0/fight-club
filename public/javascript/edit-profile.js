@@ -3,7 +3,12 @@ const closeButton = document.querySelector("[data-close-modal");
 const modal = document.querySelector("[data-modal]");
 const pofileImageInput = document.getElementById("file-input");
 const coverImageInput = document.getElementById("cover-img-upload");
-let currentTheme="";
+const cropModal = document.querySelector("[cover-modal]");
+const cropModalCloseButton = document.querySelector("[cover-close-modal");
+let result = document.querySelector('.result'),
+cropped = document.querySelector('.cropped');
+const submitCrop= document.querySelector('.submit-crop');
+const saveCrop= document.querySelector('.crop-save');
 
 openButton.addEventListener("click",()=>{
     modal.showModal();
@@ -14,6 +19,10 @@ closeButton.addEventListener("click",()=>{
 })
 
 
+cropModalCloseButton.addEventListener("click",()=>{
+    cropModal.close();
+})
+
 $(".profile-page-picture").on("mouseover", function(e){
     $(".image-upload").css("display","block");
 })
@@ -23,33 +32,77 @@ $(".profile-page-picture").on("mouseout", function(e){
 })
 
 $("#cover-img-upload").on("change", function(event){
-    const file = event.target.files[0];
     const userID=event.target.classList[0];
     const formData = new FormData();
-    formData.append("file",file);
     formData.append("userID",userID);
     formData.append("action","update cover image");
-    if(!file){
-        return; 
-    }
-    $.ajax({
-        url: "/ajaxEditProfile",
-        method:"post",
-        data:formData,
-        contentType:false,
-        processData: false,
-        success: function(res){
-            console.log("File uploaded successfully",res);
-            location.reload();
-        },
-        error: function(error){
-            console.error("Error uploading file:", error);
-        }
+    if (event.target.files.length) {
+        cropModal.showModal();
+        const reader = new FileReader();
+        reader.onload = (e)=> {
+            if(e.target.result){
+                let img = document.createElement('img');
+                img.id = 'image';
+                img.src = e.target.result;
+                result.innerHTML = '';
+                result.appendChild(img);
+                cropper = new Cropper(img,{
+                    aspectRatio: 3 / 1,
+                    viewMode: 2
+                });
+            }
+        };
+        reader.readAsDataURL(event.target.files[0]);
+  }
+
+
+    submitCrop.addEventListener('click',(e)=>{
+    e.preventDefault();
+    let imgSrc = cropper.getCroppedCanvas({
+
+      }).toDataURL();
+    result.classList.add("hide");
+    submitCrop.classList.add("hide");
+    cropped.classList.remove('hide');
+    saveCrop.classList.remove("hide");
+    cropped.src = imgSrc;
+
+    saveCrop.addEventListener("click", (event)=>{
+        cropper.getCroppedCanvas().toBlob(function (blob) {
+            formData.append('file', blob);
+            $.ajax({
+                url: "/ajaxEditProfile",
+                method:"post",
+                data:formData,
+                contentType:false,
+                processData: false,
+                success: function(res){
+                    console.log("File uploaded successfully",res);
+                    location.reload();
+                },
+                error: function(error){
+                    console.error("Error uploading file:", error);
+                }
+            })
+        })
     })
+
+  });
 
 })
 
+
+
+
+function srcToFile(src, fileName, mimeType){
+    return (fetch(src)
+        .then(function(res){return res.arrayBuffer();})
+        .then(function(buf){return new File([buf], fileName, {type:mimeType});})
+    );
+}
+
 $("#file-input").on("change", function(event){
+
     const file = event.target.files[0];
     const userID=event.target.classList[0];
     const formData = new FormData();

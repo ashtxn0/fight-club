@@ -9,6 +9,7 @@
                 <img id="cover-img-btn" src="/image/upload-img.svg" alt="cover image upload button">
             </label>
             <input class="<%=profileUser.id%>" id="cover-img-upload" type="file" accept="image/">
+            <input type="hidden" id="cropped-profile-image-cover" name="croppedProfileImage-cover" value="">
         </div>
     <!-- <img id="upload-cover-img" src="/image/upload-img.svg" alt="image icon"> -->
     <% } %>
@@ -68,6 +69,22 @@
                             <button data-close-modal class="secondary-btn">Close</button>
                         </div>
                         
+                    </dialog>
+                    <dialog cover-modal id="cover-img-crop">
+                        
+      
+                           <div>
+                                <div class="result"></div>
+                            </div>
+                        
+                            <div>
+                                <img class="cropped hide" id="image" src="">
+                            </div> 
+
+                        
+                        <button class="profile-btn submit-crop">Crop</button>
+                        <button class="profile-btn crop-save hide">Submit</button>
+                        <button cover-close-modal class="btn save profile-btn">Cancel</button>
                     </dialog>
                 <% } %>
             </div>
@@ -188,6 +205,8 @@
         var theme= "<%= user.profileTheme %>";
     </script>
     <%if(user.username===profileUser.username){ %>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" integrity="sha512-6lplKUSl86rUVprDIjiW8DuOniNX8UDoRATqZSds/7t6zCQZfaCe3e5zcGaQwxa8Kpn5RTM9Fvl3X2lLV4grPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.js" integrity="sha512-LjPH94gotDTvKhoxqvR5xR2Nur8vO5RKelQmG52jlZo7SwI5WLYwDInPn1n8H9tR0zYqTqfNxWszUEy93cHHwg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script type="text/javascript" src="/javascript/edit-profile.js"></script>    
         <%}%>
 <% } %>
