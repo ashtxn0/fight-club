@@ -79,3 +79,14 @@ $('.hidden-fights-show-all').click(function(event){
     }
 })
 
+$(document).click(function(event){
+    if(!event.target.matches(".fighter-page-slide-out *")){
+        if(isOpen){         
+       $('.fighter-page-slide-out').slideToggle();
+            setTimeout(function(){
+                $('.close').css('visibility', 'hidden');
+            }, 390);
+        isOpen=0;
+        }
+    }
+  })

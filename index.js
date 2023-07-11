@@ -195,6 +195,14 @@ app.get("/predict/:eventID",checkAuthenticated, function(req,res){
   
 })
 
+app.get("/tape-index", function(req,res){
+  db.getUpcomingEvents().then(function(events){
+    res.render("tape-index",{events:events});
+  })
+  
+  
+})
+
 app.get("/leaderboards", function(req,res){
   //get top 25 ranked -including username,user image, wins/losses  
   db.getTop25Rankings("all").then(function(rankings){
@@ -315,6 +323,22 @@ db.getUserPredictionInfo(req.query.userID,req.query.orgName).then(function(outco
   res.json(outcome);
 })
 })
+
+app.get("/ajaxFetchEventInfo", async function(req,res){
+  if(req.query.action==="get event fights"){
+    let event = await db.findEventByID(req.query.eventID);
+    let mainCardFighters= await db.findFightersByName(event.mainCard.map(({fighterName})=> fighterName));
+    let mainCardOpponents= await db.findFightersByName(event.mainCard.map(({opponentName})=> opponentName));
+    let prelimFighters= await db.findFightersByName(event.prelims.map(({fighterName})=> fighterName));
+    let prelimOpponents= await db.findFightersByName(event.prelims.map(({opponentName})=> opponentName));
+    let outcome = {
+      eventName:event.name,
+      fighters:mainCardFighters.concat(prelimFighters),
+      opponents:mainCardOpponents.concat(prelimOpponents)
+    }
+    res.json(outcome);
+  }
+  })
 
 app.get("/ajaxFetchLeaderboardData", async function(req,res){
   if(req.query.function==="getSubTable"){

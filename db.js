@@ -442,6 +442,15 @@ mongoose.connect(uri);
         return userID;
       }
 
+      exports.getUpcomingEvents = async function(){
+        let yesterday = new Date();
+        yesterday.setDate(yesterday.getDate()-1);
+        // const events = await Event.find({date:{$gte: yesterday }});
+        const events = await Event.find({}).limit(5);
+
+        return events;
+      }
+
       exports.saveFighterByURL = async function(Fname,URL){
         Fighter.findOne({name: Fname,url:URL}).then(function(foundFighter){
             if (foundFighter !=null){
