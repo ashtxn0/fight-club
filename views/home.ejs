@@ -1,45 +1,44 @@
+<img class="home-hero-image" src="/image/fight-club-hero.jpg" alt="hero section">
 <%- include("partials/header"); -%>
+<div class="home-page-container">
 
-    <div class="main-page-containerr">
-        <div class="hero-containerr panel">
-            <div class="hero-sub-containerr">
-                <h1 class="title-text">Welcome to the fight club. An mma hub for fight fans.</h1>
-                <h2>Whether you’re looking for somewhere to aid your betting, or just a chill place to watch MMA, we’ve got you covered.</h2>
-                <p>Checkout some of our features below:</p>
-            </div>
-            <img class="octagon" src="/image/590703 (1).jpg" alt="Fight club octagon">           
 
-        </div>
-        <div class="feature-containerr feature-1 panel">
-            <div class="feature-sub-containerr">
-            <h2 class="title-text">Study Buddy</h2>
-            <p>Equipped with a tape index and some editor notes on the match ups to help you make your picks.</p>
-        </div>
-        <p>feature image</p>
-        </div>
-            <div class="feature-containerr feature-2 panel">
-                <div class="feature-sub-containerr">
-                <h2 class="title-text">Best Bets</h2>
-                <p>Vote on the best bets from each event and browse the currently highest voted bets.</p>
+    <div class="home-hero-container">
+
+        <h1>Welcome to the Fightclub, an MMA hub for fight fans</h1>
+        
+    </div>
+    <div class="feautures-intro">
+        <h2>Whether you're looking for a chill place to watch MMA, or somewhere to enhance your bets, we've got you covered.</h2>
+        <h3>Some features include:</h3>
+        <div class="features-intro-container">
+            <div class="intro-feature">
+                <img class="feature-icon icon-light" src="/image/mma-fight-light.svg" alt="two stick figures wrestling">
+                <img class="feature-icon icon-dark" src="/image/mma-fight-dark.svg" alt="two stick figures wrestling">
+                <p>Browse the tape index and watch past fights.</p>
+                <a href="/tape-index" class="feature-btn">Premium Feature</a>
             </div>
-            <p>feature image</p>
-        </div>
-        <div class="feature-containerr long panel">
-            <div class="feature-sub-containerr">
-                <h2 class="title-text">Become a champ</h2>
-                <p>Make predictions on events and climb the fight club rankings to become the undisputed champ.</p>
-                <p>Browse the profiles of the top predictors & see their predictions for upcoming events.</p>
-                <div class="button-containerr">
-                    <button type="button" class="button-1">Sign up</button>
-                    <p>to get started</p>
-                </div>
+            <div class="intro-feature">
+                <img class="feature-icon icon-light" src="/image/mma-octagon-light.svg" alt="octagon cage">
+                <img class="feature-icon icon-dark" src="/image/mma-octagon-dark.svg" alt="octagon cage">
+                <p>Browse and comment on past and upcoming events, fights and fighter profiles.</p>
+                <a href="/events" class="feature-btn">Browse Events</a>
             </div>
-            <p>feature image</p>
+            <div class="intro-feature">
+                <img class="feature-icon icon-light" src="/image/leaderboards-light.svg" alt="leaderboard placing">
+                <img class="feature-icon icon-dark" src="/image/leaderboards-dark.svg" alt="leaderboard placing">
+                <p>Make predictions and climb the prediction rankings.</p>
+                <a href="/leaderboards" class="feature-btn">View rankings</a>
+            </div>
+            <div class="intro-feature">
+                <img class="feature-icon icon-light" src="/image/fighter-light.svg" alt="boxer with their fists up">
+                <img class="feature-icon icon-dark" src="/image/fighter-dark.svg" alt="boxer with their fists up">
+                <p>Sign up and customize your profile to make it your own.</p>
+                <a href="/signup" class="feature-btn">Signup</a>
+            </div>
         </div>
     </div>
-    <div class="secondary-page"></div>
 
-
-
+</div>
 
 <%- include("partials/footer"); -%>

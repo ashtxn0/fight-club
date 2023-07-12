@@ -175,6 +175,28 @@ app.get("/compose-event", function(req,res){
   
 })
 
+app.get("/approve-photos", function(req,res){
+  db.getUnapprovedPhoto().then(function(document){
+    res.render("approve-photos",{document:document});
+  })
+})
+
+app.post("/approve-photos",function(req,res){
+  const documentId = req.body.documentId;
+  if (req.body.submitButton ==="approve") {
+    db.approvePhoto(documentId).then(function(){
+      res.redirect("/approve-photos")
+    })
+  } else if (req.body.submitButton ==="changeImage") {
+    db.changePhoto(documentId,req.body.newImageURL).then(function(){
+      res.redirect("/approve-photos")
+    })
+  } else {
+    console.log("error, no button recognized by server")
+    res.redirect("/approve-photos")
+  }
+})
+
 app.get("/predict",checkAuthenticated, function(req,res){
   res.render("predict");
   

@@ -98,7 +98,12 @@
                         <div class="profile-favs">
                             <h3 class="<%=profileUser.profileTheme%>-theme-text">Favourite Fighter: <span class="fav-fighter-content <%=profileUser.profileTheme%>-theme-text"><%=profileUser.favFighter%></span></h3>
                             <h3 class="<%=profileUser.profileTheme%>-theme-text">Favourite Promotion: <span class="fav-org-content <%=profileUser.profileTheme%>-theme-text"><%=profileUser.favPromo%></span></h3>
-                            <h3 class="<%=profileUser.profileTheme%>-theme-text">Member Since: Forever</h3>
+                            <% if (profileUser.createdAt){ %>
+                                <h3 class="<%=profileUser.profileTheme%>-theme-text">Member Since: <%= profileUser.createdAt.toString().split(" ").slice(0,4).join(" ") %></h3>
+                            <% } else{ %>
+                                <h3 class="<%=profileUser.profileTheme%>-theme-text">Member Since: Forever</h3>
+                            <% } %>
+                            
                         </div>
                         
                     </div>

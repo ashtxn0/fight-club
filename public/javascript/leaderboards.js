@@ -15,10 +15,10 @@ $(".expand-btn").on("click",function(event){
             },
             success: function(res){
 
-                $(event.currentTarget.parentElement).after("<tr class='sub-table-header sub-table-rankings-event'> <th colspan='3'>event</th> <th>record</th> <th>%</th> <th>+/-</th> </tr> ");
+                $(event.currentTarget.parentElement).after("<tr class='sub-table-header sub-table-rankings-event'> <th colspan='3'>event</th> <th>record</th> <th>%</th> <th>Points</th> </tr> ");
                 res.forEach(function(event){
                     const percentage=Math.floor(event.correct_count/(event.correct_count+event.incorrect_count)*100)||0;
-                    $(".sub-table-header").after("<tr class='sub-table-rankings-event'> <td colspan='3'>"+event.eventName+"</td> <td><span class='win'>"+event.correct_count+"</span> - <span class='loss'>"+event.incorrect_count+"</span></td> <td>"+percentage+"</td> <td>"+event.mmr_change+"</td> </tr>");
+                    $(".sub-table-header").after("<tr class='sub-table-rankings-event'> <td colspan='3'>"+event.eventName+"</td> <td><span class='win'>"+event.correct_count+"</span> - <span class='loss'>"+event.incorrect_count+"</span></td> <td>"+percentage+"%</td> <td>"+event.mmr_change+"</td> </tr>");
                 })
                 $(event.currentTarget.children[0]).addClass("minus-hidden");
                 $(event.currentTarget.children[1]).removeClass("minus-hidden");
@@ -45,11 +45,11 @@ $(".expand-btn").on("click",function(event){
                 $("#"+isOpen+" .minus-btn").addClass("minus-hidden");
                 $(".sub-table-rankings-event").remove();
 
-                $(event.currentTarget.parentElement).after("<tr class='sub-table-header sub-table-rankings-event'>  <th colspan='3' >event</th> <th>record</th> <th>%</th> <th>+/-</th> </tr> ");
+                $(event.currentTarget.parentElement).after("<tr class='sub-table-header sub-table-rankings-event'>  <th colspan='3' >event</th> <th>record</th> <th>%</th> <th>Points</th> </tr> ");
                 res.forEach(function(event){
                     const percentage=Math.floor(event.correct_count/(event.correct_count+event.incorrect_count)*100);
                     console.log(percentage)
-                    $(".sub-table-header").after("<tr class='sub-table-rankings-event'>  <td colspan='3'>"+event.eventName+"</td> <td><span class='win'>"+event.correct_count+"</span> - <span class='loss'>"+event.incorrect_count+"</span></td> <td>"+percentage+"</td> <td>"+event.mmr_change+"</td> </tr>");
+                    $(".sub-table-header").after("<tr class='sub-table-rankings-event'>  <td colspan='3'>"+event.eventName+"</td> <td><span class='win'>"+event.correct_count+"</span> - <span class='loss'>"+event.incorrect_count+"</span></td> <td>"+percentage+"%</td> <td>"+event.mmr_change+"</td> </tr>");
                 })
                 
                 $(event.currentTarget.children[0]).addClass("minus-hidden");

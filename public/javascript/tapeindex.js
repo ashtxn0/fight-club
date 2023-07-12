@@ -50,12 +50,12 @@ function showTape(i){
 
         fighters[i].fights.forEach(function(fight){
             if(fight.tape_url){
-                $(".slide-out-fighter-fights").append("<div onclick=\"openTapeUrl('"+fight.tape_url+"')\" class=\"tape-index-fight-row\"> <div class=\"tape-index-fight-outcome fight-"+fight.result+"\"> <h3>"+fight.result+"</h3> </div> <div class=\"tape-index-fight-info\"><h3>"+fighters[i].name+"</h3> <a onclick=\"event.stopPropagation();\" target=\"_blank\" href=\"/fighter/"+fight.opponent+"\"><h3>vs. "+fight.opponent+"</h3></a> <p>"+fight.method+"</p> </div> </div>");
+                $(".slide-out-fighter-fights").append("<div onclick=\"openTapeUrl('"+fight.tape_url+"')\" class=\"tape-index-fight-row\"> <div class=\"tape-index-fight-outcome fight-"+fight.result+"\"> <h3>"+fight.result+"</h3> </div> <div class=\"tape-index-fight-info\"><h3>"+fighters[i].name+"</h3> <a onclick=\"event.stopPropagation();\" target=\"_blank\" href=\"/fighter/"+fight.opponent+"\">vs. "+fight.opponent+"</a> <p>"+fight.method+"</p> </div> </div>");
             }
         })
         opponents[i].fights.forEach(function(fight){
             if(fight.tape_url){
-                $(".slide-out-opponent-fights").append('<div onclick="openTapeUrl(\''+fight.tape_url+'\')" class="tape-index-fight-row"> <div class="tape-index-fight-outcome fight-'+fight.result+'"> <h3>'+fight.result+'</h3> </div> <div class="tape-index-fight-info"><h3>'+opponents[i].name+'</h3> <a onclick="event.stopPropagation();" target="_blank" href="/fighter/'+fight.opponent+'"><h3>vs. '+fight.opponent+'</h3></a> <p>'+fight.method+'</p> </div> </div>');
+                $(".slide-out-opponent-fights").append('<div onclick="openTapeUrl(\''+fight.tape_url+'\')" class="tape-index-fight-row"> <div class="tape-index-fight-outcome fight-'+fight.result+'"> <h3>'+fight.result+'</h3> </div> <div class="tape-index-fight-info"><h3>'+opponents[i].name+'</h3> <a onclick="event.stopPropagation();" target="_blank" href="/fighter/'+fight.opponent+'">vs. '+fight.opponent+'</a> <p>'+fight.method+'</p> </div> </div>');
             }
         })
 

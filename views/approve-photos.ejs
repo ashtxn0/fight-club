@@ -1,0 +1,31 @@
+<%- include("partials/header"); -%>
+
+
+<div class="approve-photos-page">
+    
+    <% if(document){ %>
+        <img src="<%= document.image_url %>" alt="">
+        <h1><%= document.name %></h1>
+   <% } else{ %>
+        <h1>All caught up!</h1>
+   <% } %>
+    
+    <form action="/approve-photos" method="post">
+        <% if(document){ %>
+        <input type="hidden" name="documentId" value="<%= document.id %>">
+        <% } %>
+        <div style="display: grid;">
+            <label for="newImageURL" class="form-label">New image:</label>
+            <input type="text" name="newImageURL" class="form-control" placeholder="Enter new URL if neccessary">
+        </div>
+        
+        <div class="approve-photos-btn-container">
+            <button type="submit" class="button-1" name="submitButton" value="approve">approve</button>
+            <button type="submit" class="secondary-btn" name="submitButton" value="changeImage">Change image</button>
+        </div>
+        
+
+    </form>
+</div>
+
+<%- include("partials/footer"); -%>

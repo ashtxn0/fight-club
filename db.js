@@ -49,7 +49,7 @@ mongoose.connect(uri);
         regionalPredictionLosses: Number,
         regionalMmr: Number,
         mmr: Number
-      })
+      },{timestamps: true})
 
   const predictionSchema = new mongoose.Schema({
     eventID: {
@@ -97,6 +97,7 @@ mongoose.connect(uri);
     wins: Object,
     losses: Object,
     no_contests: Number,
+    approvedPhoto:{type: Boolean, default: false},
     comments: [Object],
     fights: [Object]});
 
@@ -168,6 +169,25 @@ mongoose.connect(uri);
       var findUserByID= exports.findUserByID = async function(ID){
         let user= await User.findOne({_id: ID});
         return user;
+      }
+
+      exports.getUnapprovedPhoto = async function(){
+        let fighter = await Fighter.findOne({approvedPhoto:false});
+        // const count = await Fighter.countDocuments({ approvedPhoto: false });
+        // console.log(count+"unapproved photos");
+        return fighter;
+      }
+      
+
+
+      exports.approvePhoto = async function(documentId){
+        await Fighter.updateOne({_id:documentId},{approvedPhoto:true});
+        return "approved"
+      }
+
+      exports.changePhoto = async function(documentId,newURL){
+        await Fighter.updateOne({_id:documentId},{image_url:newURL,approvedPhoto:true});
+        return "photo changed"
       }
 
       exports.saveUser = async function(username, password, email){
