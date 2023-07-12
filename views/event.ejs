@@ -51,7 +51,15 @@
                     <p class="event-fight-name"><%= fight.name %></p>
                <% } %>                     
             </div>
+            <% if (user && user.profileType==="admin"){ %>
+                <div style="display: flex;flex-direction: column;">
+                    <a class="premium">Premium</a>
+                    <button id="<%=fight.name.replace(/ /g,'_') %>:<%=fighter.id%>" data-open-modal class="secondary-btn tapeindex-btn fight-admin-btn">add tape</button>
+                </div>
+                
+            <% } else{ %>
             <a class="premium">Premium</a>
+            <% } %>
             <p><%= fight.date %></p>
         </div>
         <% count++ %>
@@ -69,7 +77,15 @@
                         <img class="belt-image" src="/image/<%= event.org %>-belt.png">
                     <% } %>              
                 </div>
+                <% if (user && user.profileType==="admin"){ %>
+                    <div style="display: flex;flex-direction: column;">
+                        <a class="premium">Premium</a>
+                        <button id="<%=fight.name.replace(/ /g,'_') %>:<%=fighter.id%>" data-open-modal class="secondary-btn tapeindex-btn fight-admin-btn">add tape</button>
+                    </div>
+                    
+                <% } else{ %>
                 <a class="premium">Premium</a>
+                <% } %>
                 <p><%= fight.date %></p>
             </div>
             <% count++ %>
@@ -198,9 +214,20 @@
         </div>
 
     </dialog>
+    <dialog tapeindex-modal class="tapeindex-modal">
+        <div class="outcome-cont-col">
+            <div class="outcome-cont-col">
+                <label for="tape-link">Enter Link:</label>
+                <input class="tape-link" type="text">
+            </div>
+            <button class="submit-tapeindex secondary-btn">Submit</button>
+            <button tapeindex-close-modal class="secondary-btn">Close</button>
+        </div>
+
+    </dialog>
 <% } %>
             <% event.mainCard.forEach(function(fight,i){ %>
-                <div onclick="if(!isOpen){document.location.href='/fight/<%= fight.fightID %>';return true;}" class=" fight-listing main-card-0">
+                <div id="<%= fight.fightID %>"  class="fight-listing main-card-0">
                     <div class="weightClass">
                         <p><%= fight.weightClass %> Bout</p>
                         <% if (user && user.profileType==="admin"){ %>
@@ -213,9 +240,9 @@
                     <div class="fight-listing-row">
                        <% if(mainResults[i].result==="draw"||mainResults[i].result==="no contest"){ %>
                             <div class="fight-listing-fighter fight-no-contest">
-                        <% } else if(fighters[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(mainResults[i].result.includes(fighters[i].name)){ %>
                             <div class="fight-listing-fighter fight-win">
-                        <% } else if(opponents[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(mainResults[i].result.includes(opponents[i].name)){ %>
                             <div class="fight-listing-fighter fight-loss">
                         <% } else{ %>
                             <div class="fight-listing-fighter">
@@ -230,9 +257,9 @@
                                     <p class="fighter-info">Weight: <%= fighters[i].weight %></p>
                                     <% if(mainResults[i].result==="draw"||mainResults[i].result==="no contest"){ %>
                                         <p class="fw-500 fight-no-contest"><%=mainResults[i].result%></p>
-                                    <% } else if(fighters[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                    <% } else if(mainResults[i].result.includes(fighters[i].name)){ %>
                                         <p class="fw-500 fight-win">win</p>
-                                    <% } else if(opponents[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                    <% } else if(mainResults[i].result.includes(opponents[i].name)){ %>
                                         <p class="fw-500 fight-loss">loss</p>
                                     <% } else{ %>
                                         
@@ -254,9 +281,9 @@
                         <% } %>
                         <% if(mainResults[i].result==="draw"||mainResults[i].result==="no contest"){ %>
                             <div class="fight-listing-fighter fight-no-contest">
-                        <% } else if(opponents[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(mainResults[i].result.includes(opponents[i].name)){ %>
                             <div class="fight-listing-fighter fight-win">
-                        <% } else if(fighters[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(mainResults[i].result.includes(fighters[i].name)){ %>
                             <div class="fight-listing-fighter fight-loss">
                         <% } else{ %>
                             <div class="fight-listing-fighter">
@@ -270,9 +297,9 @@
                                 <p class="fighter-info">Weight: <%= opponents[i].weight %></p>
                                 <% if(mainResults[i].result==="draw"||mainResults[i].result==="no contest"){ %>
                                     <p class="fw-500 fight-no-contest">no contest</p>
-                                <% } else if(opponents[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                <% } else if(mainResults[i].result.includes(opponents[i].name)){ %>
                                     <p class="fw-500 fight-win">win</p>
-                                <% } else if(fighters[i].name===mainResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                <% } else if(mainResults[i].result.includes(fighters[i].name)){ %>
                                     <p class="fw-500 fight-loss">loss</p>
                                 <% } else{ %>
                                     
@@ -299,7 +326,7 @@
 
             <% event.prelims.forEach(function(fight,i){ %>
 
-                <div onclick="if(!isOpen){document.location.href='/fight/<%= fight.fightID %>';return true;}" class=" fight-listing main-card-0">
+                <div id="<%= fight.fightID %>" class=" fight-listing main-card-0">
                     <div class="weightClass">
                         <p><%= fight.weightClass %> Bout</p>
                         <% if (user && user.profileType==="admin"){ %>
@@ -311,9 +338,9 @@
                     <div class="fight-listing-row">
                         <% if(prelimResults[i].result==="draw"||prelimResults[i].result==="no contest"){ %>
                             <div class="fight-listing-fighter fight-no-contest">
-                        <% } else if(prelimFighters[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(prelimResults[i].result.includes(prelimFighters[i].name)){ %>
                             <div class="fight-listing-fighter fight-win">
-                        <% } else if(prelimOpponents[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                        <% } else if(prelimResults[i].result.includes(prelimOpponents[i].name)){ %>
                             <div class="fight-listing-fighter fight-loss">
                         <% } else{ %>
                             <div class="fight-listing-fighter">
@@ -327,9 +354,9 @@
                                     <p class="fighter-info">Weight: <%= prelimFighters[i].weight %></p>
                                     <% if(prelimResults[i].result==="draw"||prelimResults[i].result==="no contest"){ %>
                                         <p class="fw-500 fight-no-contest"><%=prelimResults[i].result%></p>
-                                    <% } else if(prelimFighters[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                    <% } else if(prelimResults[i].result.includes(prelimFighters[i].name)){ %>
                                         <p class="fw-500 fight-win">win</p>
-                                    <% } else if(prelimOpponents[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                    <% } else if(prelimResults[i].result.includes(prelimOpponents[i].name)){ %>
                                         <p class="fw-500 fight-loss">loss</p>
                                     <% } else{ %>
                                         
@@ -341,9 +368,9 @@
                     </div>
                     <% if(prelimResults[i].result==="draw"||prelimResults[i].result==="no contest"){ %>
                         <div class="fight-listing-fighter fight-no-contest">
-                    <% } else if(prelimOpponents[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                    <% } else if(prelimResults[i].result.includes(prelimOpponents[i].name)){ %>
                         <div class="fight-listing-fighter fight-win">
-                    <% } else if(prelimFighters[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                    <% } else if(prelimResults[i].result.includes(prelimFighters[i].name)){ %>
                         <div class="fight-listing-fighter fight-loss">
                     <% } else{ %>
                         <div class="fight-listing-fighter">
@@ -356,9 +383,9 @@
                                 <p class="fighter-info">Weight: <%= prelimOpponents[i].weight %></p>
                                 <% if(prelimResults[i].result==="draw"||prelimResults[i].result==="no contest"){ %>
                                     <p class="fw-500 fight-no-contest"><%=prelimResults[i].result%></p>
-                                <% } else if(prelimOpponents[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                <% } else if(prelimResults[i].result.includes(prelimOpponents[i].name)){ %>
                                     <p class="fw-500 fight-win">win</p>
-                                <% } else if(prelimFighters[i].name===prelimResults[i].result.split(" ").slice(0,2).join(" ")){ %>
+                                <% } else if(prelimResults[i].result.includes(prelimFighters[i].name)){ %>
                                     <p class="fw-500 fight-loss">loss</p>
                                 <% } else{ %>
                                     

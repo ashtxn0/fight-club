@@ -396,6 +396,7 @@ mongoose.connect(uri);
       }
       
       exports.saveFighterByNameAndAddFight = async function(Fname,eventName,eventDate,opponentName,isTitleFight){
+        
         let fight={
           name:eventName,
           date:eventDate,
@@ -418,7 +419,7 @@ mongoose.connect(uri);
               console.log("Fighter already in database");
             } else{
               mma.api(Fname, (data) =>{
-                data.fights.insert(fight);
+                data.fights.unshift(fight);
                 const fighter = new Fighter(data);
                 if(fighter.fights[0].name.substring(0,3)==="UFC"){
                   google.ufcFighterImageSearch(fighter.nickname,fighter.name).then(images => {
@@ -445,10 +446,15 @@ mongoose.connect(uri);
       exports.getUpcomingEvents = async function(){
         let yesterday = new Date();
         yesterday.setDate(yesterday.getDate()-1);
-        // const events = await Event.find({date:{$gte: yesterday }});
-        const events = await Event.find({}).limit(5);
+        const events = await Event.find({date:{$gte: yesterday }});
+        // const events = await Event.find({}).sort({createdAt: -1}).limit(5);
 
         return events;
+      }
+
+      exports.addFightTapeindex = async function(fighterID,fightName,link){
+        await Fighter.updateOne({_id:fighterID,"fights.name":fightName},{"fights.$.tape_url":link});
+        return "tape added"
       }
 
       exports.saveFighterByURL = async function(Fname,URL){
@@ -702,9 +708,20 @@ mongoose.connect(uri);
         })
         
       }
-// Fight.deleteMany({name:"UFC on ESPN 46 - Kara-France vs. Albazi"}).then(function(e){
+
+// Fight.deleteMany({name:"UFC on ABC 5 - Emmett vs. Topuria"}).then(function(e){
 //   console.log("deleted")
 // });
+
+// let eventName="UFC 290 - Volkanovski vs. Rodriguez"
+//         Fighter.updateMany({ 'fights.name': eventName }, { $pull: { fights: { name: eventName } } })
+//         .then(result => {
+//           console.log('Objects deleted successfully:', result);
+//         })
+//         .catch(error => {
+//           console.error('Error deleting objects:', error);
+//         });
+
       exports.saveExistingEvent = async function(event){
         const newEvent = new Event(event);
 
@@ -813,36 +830,38 @@ mongoose.connect(uri);
 
     }
 
-    var updateFightOutcome= exports.updateFightOutcome = async function(fightID,winnerName,method,round,time){
-      let result="";
-
-        if(winnerName==="draw"){
-        result="draw";
-        } else if (winnerName==="no contest"){
-        result="no contest";
-        } else{
-        result=winnerName+" won";
+    var updateFightOutcome = exports.updateFightOutcome = async function(fightID, winnerName, method, round, time) {
+      let result = "";
+    
+      if (winnerName === "draw") {
+        result = "draw";
+      } else if (winnerName === "no contest") {
+        result = "no contest";
+      } else {
+        result = winnerName + " won";
+      }
+    
+      try {
+        const fight = await Fight.findOneAndUpdate({ _id: fightID }, { result: result, method: method, round: round, time: time }, { new: true });
+    
+        if (result === "draw" || result === "no contest") {
+          await Fighter.updateOne({ _id: fight.fighterID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+          await Fighter.updateOne({ _id: fight.opponentID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+        } else {
+          const fighter = await Fighter.findOneAndUpdate({ name: winnerName, "fights.name": fight.name }, { "fights.$.result": "win", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+    
+          if (fighter.id.toString() === fight.fighterID) {
+            await Fighter.updateOne({ _id: fight.opponentID, "fights.name": fight.name }, { "fights.$.result": "loss", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+          } else {
+            await Fighter.updateOne({ _id: fight.fighterID, "fights.name": fight.name }, { "fights.$.result": "loss", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+          }
         }
-
-
-      Fight.findOneAndUpdate({_id:fightID},{result:result,method:method,round:round,time:time},{new: true}).then(function(fight){
-
-        if(result==="draw" || result==="no contest"){
-          Fighter.updateOne({_id:fight.fighterID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":fight.result,"fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
-          Fighter.updateOne({_id:fight.opponentID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":fight.result,"fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
-
-        } else{ 
-          Fighter.findOneAndUpdate({name:winnerName,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"win","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time}).then(function(fighter){
-
-            if(fighter.id.toString()===fight.fighterID){
-              Fighter.updateOne({_id:fight.opponentID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"loss","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
-            } else{
-              Fighter.updateOne({_id:fight.fighterID,"fights.name":fight.name,"fights.date":fight.date},{"fights.$.result":"loss","fights.$.method":fight.method,"fights.$.round":fight.round,"fights.$.time":fight.time});
-            }
-          })
-        }
-        })
-        return("fight and fighter records updated");
+    
+        return "Fight and fighter records updated";
+      } catch (error) {
+        console.error("Error updating fight and fighter records:", error);
+        throw error;
+      }
     }
     
 

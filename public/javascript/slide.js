@@ -2,8 +2,16 @@
     $('.fighter-page-slide-out').toggle('slide');
     let isOpen= 0;
 
+
+    $(".fight-listing").on("click", function(event){
+        if(!isOpen && !event.target.matches(".fight-admin-btn")){
+            document.location.href='/fight/'+event.currentTarget.id;
+            return true;
+        }
+    })
+
 $(document).click(function(event){
-    if(!event.target.matches(".fighter-img") && !event.target.matches(".fighter-name") && !event.target.matches(".fighter-page-slide-out") && !event.target.matches(".fighter-page-slide-out *")){
+    if(!event.target.matches(".fighter-img") && !event.target.matches(".fighter-name") && !event.target.matches(".fighter-page-slide-out") && !event.target.matches(".fighter-page-slide-out *")&& !event.target.matches(".tapeindex-modal") && !event.target.matches(".tapeindex-modal *")){
         if(isOpen){         
        $('.fighter-page-slide-out').slideToggle();
             setTimeout(function(){
@@ -79,14 +87,4 @@ $('.hidden-fights-show-all').click(function(event){
     }
 })
 
-$(document).click(function(event){
-    if(!event.target.matches(".fighter-page-slide-out *")){
-        if(isOpen){         
-       $('.fighter-page-slide-out').slideToggle();
-            setTimeout(function(){
-                $('.close').css('visibility', 'hidden');
-            }, 390);
-        isOpen=0;
-        }
-    }
-  })
+

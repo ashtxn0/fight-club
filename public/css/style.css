@@ -1879,6 +1879,7 @@ h3.events-title{
     padding-bottom: 0%;
     font-size: var(--fs-200);
     text-align: center;
+    color: rgb(88, 0, 0);
 }
 .fight-loss:last-child{
     color: rgb(88, 0, 0);
@@ -2541,6 +2542,7 @@ input:focus{
     margin-top: 80px;
 }
 
+
 .tape-index-page-container{
     display: flex;
     flex-direction: column;
@@ -2593,8 +2595,8 @@ input:focus{
     margin: 0%;
     display: grid;
     justify-content: center;
-
 }
+
 .fight-index-fighter-info-col{
     display: grid;
     max-width: 300px;
@@ -2611,8 +2613,13 @@ input:focus{
 }
 
 
-.tape-index-fighter-title > *{
+.tape-index-fighter-title *{
     margin: 0%;
+    color: var(--color-grey-300);
+}
+
+.tape-index-fighter-title h3:hover{
+    text-decoration: underline;
 }
 
 .tape-index-fighter-info > *{
@@ -2644,6 +2651,14 @@ input:focus{
     align-items: center;
     justify-content: center;
     background-color: var(--color-grey-dim);
+    border: 1px solid var(--color-grey-dim);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.tape-index-fight-row:hover{
+    border: 1px solid var(--color-primary);
+    background-color: color-mix(in srgb,var(--color-grey-dim),#000 15%);
 }
 
 .tape-index-fight-info{
@@ -2652,7 +2667,7 @@ input:focus{
     margin-right: auto;
     padding: .5em
 }
-.tape-index-fight-info a> h3,.tape-index-fight-info > p{
+.tape-index-fight-info *{
     margin: 0%;
 }
 
@@ -2660,11 +2675,19 @@ input:focus{
     text-decoration: underline;
 }
 
+.tape-index-fight-info h3{
+    font-size: var(--fs-300);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
 .tape-index-fight-outcome{
     height: 100%;
     padding: 0% 1em;
     display: flex;
     align-items: center;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
 }
 
 .tape-index-fight-outcome h3{

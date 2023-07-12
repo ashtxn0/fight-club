@@ -366,6 +366,10 @@ app.post("/ajaxAdminFightActions", async function(req,res){
     db.openFightPredictions(req.body.fightID).then(function(outcome){
       res.json(outcome);
     })
+  } else if (req.body.action==="submitTapeIndex"){
+    db.addFightTapeindex(req.body.fighterID,req.body.fightName,req.body.tapeLink).then(function(outcome){
+      res.json(outcome);
+    })
   }
   } else{
     outcome={
@@ -391,10 +395,10 @@ app.post("/", upload.single('eventPicture'), async function(req,res){
     weightClass: req.body.mainWeightClass[i],
     isTitleFight: parseInt(req.body.isTitleFight[j])
   }
-  //  db.saveFighterByNameAndAddFight(req.body.mainFighter1Name[i],req.body.eventName,req.body.date,req.body.mainFighter2Name[i],parseInt(req.body.isTitleFight[j]));
-  //  db.saveFighterByNameAndAddFight(req.body.mainFighter2Name[i],req.body.eventName,req.body.date,req.body.mainFighter1Name[i],parseInt(req.body.isTitleFight[j]));
-await db.saveFighterByName(req.body.mainFighter1Name[i]);
-await db.saveFighterByName(req.body.mainFighter2Name[i]);
+   db.saveFighterByNameAndAddFight(req.body.mainFighter1Name[i],req.body.eventName,req.body.date,req.body.mainFighter2Name[i],parseInt(req.body.isTitleFight[j]));
+   db.saveFighterByNameAndAddFight(req.body.mainFighter2Name[i],req.body.eventName,req.body.date,req.body.mainFighter1Name[i],parseInt(req.body.isTitleFight[j]));
+// await db.saveFighterByName(req.body.mainFighter1Name[i]);
+// await db.saveFighterByName(req.body.mainFighter2Name[i]);
    if (req.body.isTitleFight[j]==="1"){
     j+=2;
   }else{
@@ -409,10 +413,10 @@ await db.saveFighterByName(req.body.mainFighter2Name[i]);
     weightClass: req.body.prelimWeightClass[i],
     prelimisTitleFight: parseInt(req.body.prelimisTitleFight[j])
   }
-  // db.saveFighterByNameAndAddFight(req.body.prelimFighter1Name[i],req.body.eventName,req.body.date,req.body.prelimFighter2Name[i],parseInt(req.body.isTitleFight[j]));
-  // db.saveFighterByNameAndAddFight(req.body.prelimFighter2Name[i],req.body.eventName,req.body.date,req.body.prelimFighter1Name[i],parseInt(req.body.isTitleFight[j]));
-await db.saveFighterByName(req.body.prelimFighter1Name[i]);
-await db.saveFighterByName(req.body.prelimFighter2Name[i]);
+  db.saveFighterByNameAndAddFight(req.body.prelimFighter1Name[i],req.body.eventName,req.body.date,req.body.prelimFighter2Name[i],parseInt(req.body.isTitleFight[j]));
+  db.saveFighterByNameAndAddFight(req.body.prelimFighter2Name[i],req.body.eventName,req.body.date,req.body.prelimFighter1Name[i],parseInt(req.body.isTitleFight[j]));
+// await db.saveFighterByName(req.body.prelimFighter1Name[i]);
+// await db.saveFighterByName(req.body.prelimFighter2Name[i]);
   if (req.body.isTitleFight[j]==="1"){
     j+=2;
   }else{
@@ -444,7 +448,7 @@ await db.saveFighterByName(req.body.prelimFighter2Name[i]);
     prelims: prelims
   }
   setTimeout(()=>{
-    db.saveExistingEvent(event);
+    db.saveEvent(event);
   },"5000")
    
     
