@@ -179,7 +179,7 @@ $(".profile-btn-small").on("click", function(event){
     $(".profile-heading-container").removeClass(theme+"-theme-profile-heading-container");
     $(".prediction-table td:not(.prediction-table-result)").removeClass(theme+"-theme-profile-heading-container");
     $(".prediction-table th").removeClass(theme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3, .prediction-rankings-title p,.prediction-table-result,.prediction-rankings-subtext").removeClass(theme+"-theme-text");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3, .prediction-rankings-title p,.prediction-table-result,.prediction-rankings-subtext,.comment-content").removeClass(theme+"-theme-text");
     $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").removeClass(theme+"-theme-prediction-rankings-table-heading");
     $(".profile-btn").removeClass(theme+"-theme-btn");
     $(".profile-page-container").removeClass(theme+"-theme-profile-page-container");
@@ -191,7 +191,7 @@ $(".profile-btn-small").on("click", function(event){
         $(".profile-heading-container").removeClass(currentTheme+"-theme-profile-heading-container");
         $(".prediction-table td:not(.prediction-table-result)").removeClass(currentTheme+"-theme-profile-heading-container");
         $(".prediction-table th").removeClass(currentTheme+"-theme-profile-table-heading");
-        $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-rankings-subtext,.prediction-table-result").removeClass(currentTheme+"-theme-text");
+        $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-rankings-subtext,.prediction-table-result,.comment-content").removeClass(currentTheme+"-theme-text");
         $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").removeClass(currentTheme+"-theme-prediction-rankings-table-heading");
         $(".profile-btn").removeClass(currentTheme+"-theme-btn");
         $(".profile-page-container").removeClass(currentTheme+"-theme-profile-page-container");
@@ -204,7 +204,7 @@ $(".profile-btn-small").on("click", function(event){
     $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").addClass(profileTheme+"-theme-prediction-rankings-table-heading");
     $(".profile-btn").addClass(profileTheme+"-theme-btn");
     $(".prediction-table th").addClass(profileTheme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-table-result,.prediction-rankings-subtext").addClass(profileTheme+"-theme-text");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-table-result,.prediction-rankings-subtext,.comment-content").addClass(profileTheme+"-theme-text");
     $(".prediction-table td:not(.prediction-table-result)").addClass(profileTheme+"-theme-profile-heading-container");
     $(".profile-page-container").addClass(profileTheme+"-theme-profile-page-container");
     currentTheme=profileTheme;

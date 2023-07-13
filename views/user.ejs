@@ -149,7 +149,7 @@
                             <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading">Fight</th>
                             <th class="prediction-table-event <%=profileUser.profileTheme%>-theme-profile-table-heading">Event</th>
                         </tr>
-                        <%predictions.forEach(function(prediction){ %>
+                        <%predictions.slice(0,10).forEach(function(prediction){ %>
                         <tr>
                                 <td class="prediction-table-predict <%=profileUser.profileTheme%>-theme-profile-heading-container <%=profileUser.profileTheme%>-theme-text"><%= prediction.predictionName %> to win</td>
                             <% if (prediction.outcome==="Correct") { %>
@@ -180,13 +180,83 @@
                         <% } %>
 
                     </table>
+                    <div class="pagination-container">
+                        <button class="profile-btn previous-button <%=profileUser.profileTheme%>-theme-btn">&lt; Previous page</button>
+                        <div class="pagination-pages">Page: <span class="user-prediction-page-number">1</span>/<span class="user-prediction-total-pages"><%=(Math.ceil(predictions.length/10)||1)%></span></div>
+                        <button class="profile-btn next-button <%=profileUser.profileTheme%>-theme-btn"> Next page&gt;</button>
+                    </div>
                 </div>
             </div>
 
 
         
         <div class="profile-comment-section">
-            <h2 class="title-text <%=profileUser.profileTheme%>-theme-profile-title">Comments:</h2>
+            <div class="fight-comments-container user-comments-section">
+                <h2 class="title-text <%=profileUser.profileTheme%>-theme-profile-title">Comments:</h2>
+                <form action="/predict" method="post">
+                    <div class="compose-comment fight-comment-box">
+                        <% if(user){ %>
+                        <textarea class="input input<%= profileUser.id %> form-control" name="comment" cols="30" rows="5" placeholder="Leave a comment"></textarea>
+                        <button  class="comment-btn <%= profileUser.id %> profile-btn <%=profileUser.profileTheme%>-theme-btn" type="submit">comment</button>
+                        <% } else{ %>
+                            <textarea disabled class="input input<%= profileUser.id %> form-control" name="comment" cols="30" rows="5" placeholder="Sign in to leave a comment"></textarea>
+                        <% } %>
+                    </div>
+                    </form>
+                <% profileUser.comments.reverse().forEach(function(comment,i){ %>
+                    
+                    <% if(user){ %>
+                        <div class="comment-row">
+                            <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=comment.picture %>" alt="user profile image">
+                        <div class="comment-col fight-comment">
+                            <div class="comment-col">
+                                <div class="comment-row">      
+                                    <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                    <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                                </div>
+                                <p class="comment-content fight-comment-content <%=profileUser.profileTheme%>-theme-text"><%= comment.content.substring(0, 300) %><span id="comment-<%=i%>" class="hidden-content"><%= comment.content.substring(300, comment.content.length) %></span><% if (comment.content.length > 300) { %><a id="read-btn-<%=i%>" class="expand-comment-btn read-more-btn">... Read more</a> <a id="less-btn-<%=i%>" class="expand-comment-btn show-less-btn hidden-content">Show less</a><% } %></p>
+                            </div>
+                            <div class="comment-row">
+                                <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
+                                <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                                <% } else{ %>
+                                <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>" class="like-btn" src="/image/thumbs-up-blue.svg" height="20px" alt="">
+                                <% } %>
+                                <p class="comment-likes">  <%= comment.likes %> </p>
+                                <% if (comment.usersDisliked===undefined || !comment.usersDisliked.includes(user.username)){ %>
+                                <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                                <% } else{ %>
+                                <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-blue.svg" height="20px" alt="">
+                                <% } %>
+                                <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                            </div>
+                        </div>
+                    </div>
+                    <% } else{ %>
+                        <div class="comment-row">
+                        <img class="prof-image-comment" src="/data/uploads/profilePictures/<%=comment.picture %>" alt="user profile image">
+                        <div class="comment-col fight-comment">
+                            
+                            <div class="comment-col">
+                                <div class="comment-row">      
+                                    <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
+                                    <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
+                                </div>
+                                <p class="comment-content fight-comment-content <%=profileUser.profileTheme%>-theme-text"><%= comment.content.substring(0, 300) %><span id="comment-<%=i%>" class="hidden-content"><%= comment.content.substring(300, comment.content.length) %></span><% if (comment.content.length > 300) { %><a id="read-btn-<%=i%>" class="expand-comment-btn read-more-btn">... Read more</a> <a id="less-btn-<%=i%>" class="expand-comment-btn show-less-btn hidden-content">Show less</a><% } %></p>
+                            </div>
+                            <div class="comment-row">
+                                <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
+                                <p class="comment-likes">  <%= comment.likes %> </p>
+                                <img id="dislike-comment-<%=comment.username%>-<%=comment.timePosted%>" class="dislike-btn" src="/image/thumbs-down-grey.svg" height="20px" alt="">
+                                <p class="comment-dislikes">   <%= comment.dislikes %> </p>
+                            </div>
+                        </div>
+                    </div>    
+                    <% } %>
+                    
+    
+                <% }) %>
+            </div>
         </div>
     
     
@@ -204,6 +274,8 @@
     var profileTheme="<%= profileUser.profileTheme %>"
 </script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script type="text/javascript" src="/javascript/commentExpand.js"></script>
+<script type="text/javascript" src="/javascript/userComment.js"></script>
 <% if(user){ %>
     <script>
         var username= "<%= user.username %>";
@@ -215,5 +287,6 @@
         <script type="text/javascript" src="/javascript/edit-profile.js"></script>    
         <%}%>
 <% } %>
-<script type="text/javascript" src="/javascript/prediction-table.js"></script>   
+<script type="text/javascript" src="/javascript/prediction-table.js" predictions="<%= JSON.stringify(predictions) %>">let predictions = JSON.parse(document.currentScript.getAttribute('predictions'));
+</script>
 <%- include("partials/footer"); -%>

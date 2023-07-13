@@ -48,7 +48,13 @@ mongoose.connect(uri);
         regionalPredictionWins: Number,
         regionalPredictionLosses: Number,
         regionalMmr: Number,
-        mmr: Number
+        mmr: Number,
+        customerId: String,
+        comments: [Object],
+        premium:{
+          type: Boolean,
+          default:false
+        }
       },{timestamps: true})
 
   const predictionSchema = new mongoose.Schema({
@@ -141,6 +147,8 @@ mongoose.connect(uri);
         return events;
       }
 
+      User.updateMany({username:"asht"},{premium:true});
+
       exports.findALLFighters = async function(){
         var fighters= await Fighter.find({});
         return fighters;
@@ -190,21 +198,28 @@ mongoose.connect(uri);
         return "photo changed"
       }
 
-      exports.saveUser = async function(username, password, email){
-        const hashedPassword = await bcrypt.hash(password, 10);
-        let newUser = {
+      exports.saveUser = async function(username, password, email, customer) {
+        try {
+          const hashedPassword = await bcrypt.hash(password, 10);
+          let newUser = {
             username: username,
             email: email,
             password: hashedPassword,
-            profImage_url:"default-prof-image.png",
+            profImage_url: "default-prof-image.png",
             coverImage_url: "default-cover-image.png",
-            PredictionLosses:0,
-            PredictionWins:0,
-            mmr:0
+            PredictionLosses: 0,
+            PredictionWins: 0,
+            mmr: 0,
+            customerId: customer.id,
+          };
+      
+          const newuser = new User(newUser);
+          await newuser.save();
+        } catch (error) {
+          console.error(error);
+          throw new Error('Error saving the user.');
         }
-        const newuser = new User(newUser);
-        newuser.save();
-      }
+      };
 
       exports.findFighterByName = async function (name){
         let fighter=Fighter.findOne({name:name});
@@ -390,6 +405,20 @@ mongoose.connect(uri);
         return comments;
       }
 
+      exports.saveFighterComment = async function(fighterID,comment){
+        await Fighter.findOneAndUpdate({_id:fighterID},{$push:{comments:comment}}).then(function(event){
+        });
+        let comments= Fighter.findOne({_id:fighterID},"comments");
+        return comments;
+      }
+
+      exports.saveUserComment = async function(userID,comment){
+        await User.findOneAndUpdate({_id:userID},{$push:{comments:comment}}).then(function(event){
+        });
+        let comments= User.findOne({_id:userID},"comments");
+        return comments;
+      }
+
       exports.saveFighterByName = async function(Fname){
         Fighter.findOne({name: Fname}).then(function(foundFighter){
             if (foundFighter !=null){
@@ -508,6 +537,10 @@ mongoose.connect(uri);
           foundcontent = await Fight.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
         } else if (contentType==="event"){
           foundcontent = await Event.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
+        } else if (contentType==="fighter"){
+          foundcontent = await Fighter.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
+        } else if (contentType==="user"){
+          foundcontent = await User.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
         }
         }
         
@@ -534,6 +567,10 @@ mongoose.connect(uri);
             await Fight.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
             } else if (contentType==="event"){
               await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+            } else if (contentType==="fighter"){
+              await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+            } else if (contentType==="user"){
+              await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
             }
             return result;
 
@@ -556,6 +593,14 @@ mongoose.connect(uri);
                   await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
                   const result = "unliked";
                   return result;
+                } else if (contentType==="fighter"){
+                  await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+                  const result = "unliked";
+                  return result;
+                } else if (contentType==="user"){
+                  await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+                  const result = "unliked";
+                  return result;
                 }
               };
             }
@@ -574,7 +619,11 @@ mongoose.connect(uri);
                 await Fight.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
                 } else if (contentType==="event"){
                   await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
-                }
+                } else if (contentType==="fighter"){
+                   await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+                } else if (contentType==="user"){
+                  await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersLiked": foundComment.usersLiked,"comments.$.likes": foundComment.likes});
+               }
                 return result;
               
             } 
@@ -591,6 +640,10 @@ mongoose.connect(uri);
           foundcontent = await Fight.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
         } else if (contentType==="event"){
           foundcontent = await Event.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
+        } else if (contentType==="fighter"){
+          foundcontent = await Fighter.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
+        } else if (contentType==="user"){
+          foundcontent = await User.findOne({"comments.username": commentUsername, "comments.timePosted":timePosted});
         }
         }
         
@@ -617,6 +670,10 @@ mongoose.connect(uri);
             await Fight.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
             } else if (contentType==="event"){
               await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+            } else if (contentType==="fighter"){
+              await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+            } else if (contentType==="user"){
+              await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
             }
             return result;
           
@@ -641,6 +698,14 @@ mongoose.connect(uri);
                 await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
                 const result = "undisliked";
                 return result;
+              } else if (contentType==="fighter"){
+                await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+                const result = "undisliked";
+                return result;
+              } else if (contentType==="user"){
+                await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+                const result = "undisliked";
+                return result;
               }
               
               
@@ -663,6 +728,12 @@ mongoose.connect(uri);
             } else if (contentType==="event"){
               await Event.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
             return result;
+            } else if (contentType==="fighter"){
+              await Fighter.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+              return result;
+            } else if (contentType==="user"){
+              await User.findOneAndUpdate({comments: {$elemMatch:{username:commentUsername, timePosted:timePosted}}},{"comments.$.usersDisliked": foundComment.usersDisliked,"comments.$.dislikes": foundComment.dislikes});
+              return result;
             }
             
             

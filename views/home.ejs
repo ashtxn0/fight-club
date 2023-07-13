@@ -4,7 +4,9 @@
 
 
     <div class="home-hero-container">
-
+        <% if (messages.error) { %>
+            <h2 class="error-login-redirect error-home"><%= messages.error %></h2>
+       <% } %>
         <h1>Welcome to the Fightclub, an MMA hub for fight fans</h1>
         
     </div>

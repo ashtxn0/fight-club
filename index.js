@@ -21,6 +21,7 @@ const { image } = require("googlethis");
 const Time = require("time-passed").default;
 const fs = require('fs-extra');
 const path = require("path");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const PORT=process.env.PORT || 3000;
 
 initializePassport(passport);
@@ -88,15 +89,34 @@ app.get("/user", function(req,res){
   res.redirect('/');
 })
 
+// app.get("/user/:username", async function(req,res){
+//   db.findUserByUsername(req.params.username).then(async function(foundUser){
+//     for (const comment of foundUser.comments) {
+//       comment.picture = await db.findUserImage(comment.username);
+//     }
+//     db.findPredictionsByUserID(foundUser.id).then(async function(userPredictions){
+//       console.log(userPredictions)
+//       let rank = await db.findRanking(foundUser.id,"ALL");
+//       res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank,Time:Time.getRelativeTime});
+//     })
+    
+    
+//   })
+// })
+
 app.get("/user/:username", async function(req,res){
-  db.findUserByUsername(req.params.username).then(async function(foundUser){
-    db.findPredictionsByUserID(foundUser.id).then(async function(userPredictions){
-      let rank = await db.findRanking(foundUser.id,"ALL");
-      res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank});
-    })
-    
-    
-  })
+  try{
+    const foundUser = await db.findUserByUsername(req.params.username);
+    for (const comment of foundUser.comments) {
+      comment.picture = await db.findUserImage(comment.username);
+    }
+    let userPredictions=await db.findPredictionsByUserID(foundUser.id);
+    const rank = await db.findRanking(foundUser.id,"ALL");
+    res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank,Time:Time.getRelativeTime});
+  } catch (error) {
+    console.error(error);
+    res.render("error-page");
+  }
 })
 
 
@@ -112,32 +132,57 @@ app.get("/signup",checkNotAuthenticated, function(req,res){
   res.render("signup");
 });
 
-app.post("/signup",checkNotAuthenticated,async function(req,res){
-  db.findUserByUsername(req.body.username).then(async function(userFoundByUsername){
-    db.findUserByEmail(req.body.email).then(function(userFoundByEmail){
-      if (userFoundByUsername != undefined){
-      req.flash("error","Username is taken.");
-      res.redirect("/signup");
-    } else if (userFoundByEmail!=undefined){
-      req.flash("error","An account with that email already exists.");
-      res.redirect("/signup");
-    } else if (req.body.password===req.body.confirmPassword){
-      try{
-        db.saveUser(req.body.username, req.body.password,req.body.email);
-        res.redirect('/login');
-      } catch{
-        res.redirect("/signup");
-      }
-  
-    } else{
-      res.redirect('/signup');
+app.post("/signup", checkNotAuthenticated, async function(req, res) {
+  try {
+    const userFoundByUsername = await db.findUserByUsername(req.body.username);
+    const userFoundByEmail = await db.findUserByEmail(req.body.email);
+
+    if (userFoundByUsername !== undefined) {
+      req.flash("error", "Username is taken.");
+      return res.redirect("/signup");
     }
-    })
-  })
-  
-  
-  
+
+    if (userFoundByEmail !== undefined) {
+      req.flash("error", "An account with that email already exists.");
+      return res.redirect("/signup");
+    }
+
+    if (req.body.password === req.body.confirmPassword) {
+      const customer = await stripe.customers.create({ email: req.body.email });
+      await db.saveUser(req.body.username, req.body.password, req.body.email, customer);
+      return res.redirect('/login');
+    } else {
+      return res.redirect('/signup');
+    }
+  } catch (error) {
+    console.error(error);
+    return res.redirect('/signup');
+  }
 });
+  
+
+// app.post('/webhook', async (req, res) => {
+//   const payload = req.body;
+
+//   // Retrieve the event data from the payload
+//   const event = stripe.webhooks.constructEvent(
+//     req.rawBody,
+//     req.headers['stripe-signature'],
+//     'YOUR_STRIPE_WEBHOOK_SECRET'
+//   );
+
+//   // Handle the specific event types you're interested in
+//   if (event.type === 'payment_intent.succeeded') {
+//     const paymentIntent = event.data.object;
+//     const customerId = paymentIntent.customer;
+
+//     // Update the user's premium status in the database
+//     await User.updateOne({ customerId }, { premium: true });
+
+//     // Respond with a 200 status to acknowledge receipt of the event
+//     res.sendStatus(200);
+//   }
+// });
 
 
 app.get("/login",checkNotAuthenticated, function(req,res){
@@ -151,24 +196,31 @@ app.post("/login", checkNotAuthenticated, passport.authenticate("local", {
   keepSessionInfo: true
 }));
 
-  app.get("/fighter/:fighterName", function(req,res){
-    db.findFighterByName(_.upperFirst((req.params.fighterName).replace(/-/g, ' ').replace(/_/g, ' '))).then(function(fighter){
-      if (fighter ===null){
-        res.render("fighter-error");
-      } else{
-        let lowFighterName = _.lowerCase(req.params.fighterName);
-        let lowFName=_.lowerCase(fighter.name);
-        if (lowFighterName===lowFName){         
-            res.render("fighter", {fighter: fighter});      
-        } else{
-          res.render("fighter-error");
-        }
+app.get("/fighter/:fighterName", async function(req, res) {
+  try {
+    const fighter = await db.findFighterByName(_.upperFirst((req.params.fighterName).replace(/-/g, ' ').replace(/_/g, ' ')));
+
+    if (fighter === null) {
+      res.render("fighter-error");
+    } else {
+      for (const comment of fighter.comments) {
+        comment.picture = await db.findUserImage(comment.username);
       }
-      
-    })
-  
- 
-})
+
+      let lowFighterName = _.lowerCase(req.params.fighterName);
+      let lowFName = _.lowerCase(fighter.name);
+
+      if (lowFighterName === lowFName) {
+        res.render("fighter", { fighter: fighter, Time: Time.getRelativeTime });
+      } else {
+        res.render("fighter-error");
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    res.render("error-page");
+  }
+});
 
 app.get("/compose-event", function(req,res){
   res.render("compose-event");
@@ -221,8 +273,10 @@ app.get("/tape-index", function(req,res){
   db.getUpcomingEvents().then(function(events){
     res.render("tape-index",{events:events});
   })
-  
-  
+})
+
+app.get("/premium", function(req,res){
+    res.render("premium");
 })
 
 app.get("/leaderboards", function(req,res){
@@ -281,6 +335,14 @@ app.post("/ajaxComment", async function(req,res){
   });
   } else if (req.body.contentType ==="event"){
     db.saveEventComment(req.body.eventID,req.body.comment).then(async function(comments){
+      res.json({comments});
+    })
+  }else if (req.body.contentType ==="fighter"){
+    db.saveFighterComment(req.body.fighterID,req.body.comment).then(async function(comments){
+      res.json({comments});
+    })
+  }else if (req.body.contentType ==="user"){
+    db.saveUserComment(req.body.profileUserID,req.body.comment).then(async function(comments){
       res.json({comments});
     })
   }
@@ -524,6 +586,15 @@ function checkAuthenticated(req,res,next){
   req.session.returnTo=req.url;
   req.flash('error', 'Must login to see that page');
   res.redirect('/login');
+}
+
+function requirePremiumUser(req, res, next) {
+  if (req.isAuthenticated() && req.user.premium) {
+    return next();
+  }
+  
+  req.flash('error', 'Must be a premium member to see that page');
+  res.redirect('/'); 
 }
 
 function checkNotAuthenticated(req,res,next){

@@ -91,7 +91,7 @@
                     <% } %>
                 </div>
                 </form>
-            <% fight.comments.reverse().forEach(function(comment){ %>
+            <% fight.comments.reverse().forEach(function(comment,i){ %>
                 
                 <% if(user){ %>
                     <div class="comment-row">
@@ -102,7 +102,7 @@
                                 <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
                                 <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
                             </div>
-                            <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                            <p class="comment-content fight-comment-content"><%= comment.content.substring(0, 300) %><span id="comment-<%=i%>" class="hidden-content"><%= comment.content.substring(300, comment.content.length) %></span><% if (comment.content.length > 300) { %><a id="read-btn-<%=i%>" class="expand-comment-btn read-more-btn">... Read more</a> <a id="less-btn-<%=i%>" class="expand-comment-btn show-less-btn hidden-content">Show less</a><% } %></p>
                         </div>
                         <div class="comment-row">
                             <% if (comment.usersLiked===undefined || !comment.usersLiked.includes(user.username) ){ %>
@@ -130,7 +130,7 @@
                                 <a href="/user/<%= comment.username %>"><p class="comment-username"><%= comment.username %></p></a>
                                 <p class="fight-time-since"><%= Time(Date.now(),Number(comment.timePosted))%></p>
                             </div>
-                        <p class="comment-content fight-comment-content"><%= comment.content %></p>
+                            <p class="comment-content fight-comment-content"><%= comment.content.substring(0, 300) %><span id="comment-<%=i%>" class="hidden-content"><%= comment.content.substring(300, comment.content.length) %></span><% if (comment.content.length > 300) { %><a id="read-btn-<%=i%>" class="expand-comment-btn read-more-btn">... Read more</a> <a id="less-btn-<%=i%>" class="expand-comment-btn show-less-btn hidden-content">Show less</a><% } %></p>
                         </div>
                         <div class="comment-row">
                             <img id="like-comment-<%=comment.username%>-<%=comment.timePosted%>"  class="like-btn" src="/image/thumbs-up-grey.svg" height="20px" alt="">
@@ -168,4 +168,5 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
 <script type="text/javascript" src="/javascript/fightComment.js"></script>
 <script type="text/javascript" src="/javascript/predict.js"></script>
+<script type="text/javascript" src="/javascript/commentExpand.js"></script>
 <%- include("partials/footer"); -%>

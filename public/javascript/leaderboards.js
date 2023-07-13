@@ -1,11 +1,13 @@
 let isOpen="";
 
 $(".expand-btn").on("click",function(event){
-  
     let userID=event.currentTarget.id.split("-")[0];
     let leaderboardType=event.currentTarget.id.split("-")[1];
 
     if (isOpen===""){
+        let loadingTimer = setTimeout(function() {
+            $(event.currentTarget.parentElement).after("<svg class='loading-icon'><circle cx='70' cy='70' r='70'></circle></svg>");
+        }, 500);
         $.ajax({
             url: "/ajaxFetchLeaderboardData",
             data:{
@@ -14,7 +16,8 @@ $(".expand-btn").on("click",function(event){
                 function:"getSubTable"
             },
             success: function(res){
-
+                clearTimeout(loadingTimer);
+                $(".loading-icon").remove();
                 $(event.currentTarget.parentElement).after("<tr class='sub-table-header sub-table-rankings-event'> <th colspan='3'>event</th> <th>record</th> <th>%</th> <th>Points</th> </tr> ");
                 res.forEach(function(event){
                     const percentage=Math.floor(event.correct_count/(event.correct_count+event.incorrect_count)*100)||0;
@@ -32,6 +35,9 @@ $(".expand-btn").on("click",function(event){
         $(".sub-table-rankings-event").remove();
         isOpen="";
     } else{
+        let loadingTimer = setTimeout(function() {
+            $(event.currentTarget.parentElement).after("<svg class='loading-icon'><circle cx='70' cy='70' r='70'></circle></svg>");
+        }, 500);
         $.ajax({
             url: "/ajaxFetchLeaderboardData",
             data:{
@@ -40,7 +46,8 @@ $(".expand-btn").on("click",function(event){
                 function:"getSubTable"
             },
             success: function(res){
-                console.log(res);
+                clearTimeout(loadingTimer);
+                $(".loading-icon").remove();
                 $("#"+isOpen+" .plus-btn").removeClass("minus-hidden");
                 $("#"+isOpen+" .minus-btn").addClass("minus-hidden");
                 $(".sub-table-rankings-event").remove();

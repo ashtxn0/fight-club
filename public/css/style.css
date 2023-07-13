@@ -103,6 +103,13 @@ html{
     display: block;
 }
 
+.logo-dark{
+    display: none;
+}
+.logo-light{
+    display: block;
+}
+
 @media (prefers-color-scheme: dark){
     :root{
         --color-primary: #0031a4;
@@ -142,6 +149,17 @@ html{
     .incorrect{
         background-color: #c400008e !important;
         color: #e4c7c7 !important;
+    }
+    .plus-btn,.minus-btn{
+        filter: invert(100%);
+        -webkit-filter: invert(100%);
+    }
+
+    .logo-dark{
+        display: block;
+    }
+    .logo-light{
+        display: none;
     }
 }
 
@@ -366,18 +384,120 @@ p{
     background-color: rgba(139, 0, 0, 0.185);
     padding: 2%;
     margin: 0;
-    color: darkred;
+    color: rgb(228, 207, 207);
+    border: 1px solid darkred;
     text-align: center;
 }
 
+.error-home{
+    background-color: rgba(139, 0, 0, 0.5);
+    color: rgb(228, 207, 207);
+    border: 1px solid darkred;
+}
+
 .predict-fighter-name-container p{
-    color: var(--color-background);
+    color: var(--color-grey-300);
     opacity: 80%;
 }
 
 .predict-fighter-name-container h2{
-    color: var(--color-background);
+    color: var(--color-grey-300);
     opacity: 80%;
+}
+
+.subscription-page-container{
+    display: grid;
+    margin-top: 80px;
+}
+
+.subscription-page-container h1{
+    margin-top: 0%;
+}
+
+.subscription-page-container p{
+    color: var(--color-text);
+    font-size: var(--fs-300);
+    padding-left: .3em;
+    font-weight: 600;
+}
+
+.more-info-premium{
+    font-size: var(--fs-200) !important;
+}
+
+.premium-sub-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-content: center;
+    background-image: url(/image/FightClub-Octagon.png);
+    background-size: cover;
+    background-position: 50% 50%;
+    border-radius: 5px;
+    padding: 2em;
+    align-items: center;
+}
+
+.premium-feature-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em;
+    max-width:  560px;
+    background-color: var(--color-transparent-card);
+    border-radius: 5px;
+    
+}
+
+.premium-feature-container > h3{
+    align-self: flex-start;
+}
+
+.premium-cta-container{
+    display: flex;
+    flex-direction: column;
+    padding: 2em 1em 0% 1em;
+    max-width:  560px;
+    background-color: var(--color-transparent-card);
+    border-radius: 5px;
+    max-height: fit-content;
+}
+
+.premium-cta-container a{
+    align-self: center;
+}
+
+.premium-cta-container h2,.premium-feature-container > h2{
+    font-size: var(--fs-600);
+    margin-bottom: .3em;
+}
+
+.premium-cta-bg{
+    display: flex;
+    flex-direction: column;
+    padding-top:  1em;
+    padding-bottom: 1em;
+    border-radius: 5px;
+    background-color: var(--color-transparent-card);
+    border: 1px solid var(--color-transparent-card);
+}
+
+.premium-cta-bg p{
+    margin: .5em 0%;
+}
+
+.premium-cta-container li{
+font-family: var(--ff-base);
+margin-bottom: 1em;
+font-weight: 600;
+}
+
+.premium-col{
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    align-items: center;
 }
 
 .comment-row{
@@ -437,7 +557,7 @@ p{
 
 .comment-likes{
     font-size: var(--fs-100);
-    color: #4d4d4d;
+    color: var(--color-text-secondary)
 }
 
 .profile-content-container{
@@ -548,7 +668,7 @@ p{
 }
 .comment-dislikes{
     font-size: var(--fs-100);
-    color: #4d4d4d;
+    color: var(--color-text-secondary);
 }
 .comment-username{
     color: var(--color-primary);
@@ -771,7 +891,7 @@ p{
     margin-bottom: 2%;
   }
 
-.compose-comment button{
+.comment-btn{
    align-self: flex-end;
    margin-right: 1%;
    background-color:var(--color-background);
@@ -787,7 +907,7 @@ p{
     transform: skew(0deg);
 }
 
-.compose-comment button:hover{
+.comment-btn:hover{
 
     background-color:var(--color-primary);
     color:var(--color-background);
@@ -2424,9 +2544,21 @@ input:focus{
     flex-direction: column;
 }
 
+.pagination-container{
+    display: flex;
+    gap: 1em;
+    font-family: var(--ff-base);
+    padding: 1em;
+    color: var(--color-text);
+    font-size: var(--fs-300);
+    font-weight: 500;
+    align-items: center;
+}
+
+
 
 .user-prof-col button{
-    width: 7rem;
+    width: 8rem;
 }
 
 
@@ -2448,6 +2580,25 @@ input:focus{
     border: 1px solid var(--color-grey-dim);
 }
 
+.fighter-comments-container{
+    width: 80%;
+    align-self: center;
+}
+
+.stripe-logo{
+    display: flex;
+    align-items: center;
+    gap: .3em;
+    background-color: white;
+    border-radius: 10px;
+    max-width: fit-content;
+    color: black;
+    padding: 0% .5em;
+    align-self: flex-end;
+    font-size: var(--fs-300);
+}
+
+
 .fight-best-bets-container{
     display: flex;
     flex-direction: column;
@@ -2458,10 +2609,33 @@ input:focus{
     border: 1px solid var(--color-grey-dim);
 }
 
+.hidden-content{
+    display: none;
+}
+
+.expand-comment-btn{
+    cursor: pointer;
+    font-weight: 600;
+    font-size: var(--fs-200);
+}
+
+.expand-comment-btn:hover{
+    text-decoration: underline;
+}
+
+.show-content{
+    display: block;
+}
+
 .fight-tasks-container{
     display: flex;
     padding: 1%;
     justify-content: center;
+}
+
+.user-comments-section{
+    width: 98%;
+    margin-left: -.5em;
 }
 
 .fight-comment{
@@ -2985,6 +3159,10 @@ input:focus{
     width: 20%;
 }
 
+.profile-comment-section textarea{
+    background-color: #00000000;
+}
+
 .ranking-table-ranking{
     font-family: var(--ff-accent);
     font-size: var(--fs-400);
@@ -3023,13 +3201,8 @@ input:focus{
     border: 3px solid black;
 }
 
-.plus-btn:hover{
-    border: 1px solid var(--color-text)!important;
-    cursor: pointer;
-}
-
-.minus-btn:hover{
-    border: 1px solid var(--color-text)!important;
+.plus-btn:hover,.minus-btn:hover{
+    border: 1px solid #060604!important;
     cursor: pointer;
 }
 
@@ -3066,14 +3239,14 @@ input:focus{
  
  .default-theme-btn{
      background-color:var(--color-background);
-     color:var(--color-primary);
+     color:var(--color-text);
  }
  .fight-admin-btn{
     font-size: var(--fs-100);
 }
 
  .default-theme-btn:hover{
-     background-color: var(--color-primary);
+     background-color:var(--color-text);
      color: var(--color-background);
  }
 
@@ -3227,7 +3400,7 @@ input:focus{
 
 .blood-red-theme-btn{
     background-color:var(--color-background-light);
-    color: var(--color-background);
+    color: var(--color-grey-300);
 }
 
 .blood-red-theme-btn:hover{
@@ -3429,6 +3602,11 @@ input:focus{
 }
 
 @media (min-width:1000px){
+
+    .premium-sub-container{
+        flex-direction: row;
+    } 
+
     .fight-fighter img{
         height: 350px;
     }
@@ -3475,13 +3653,9 @@ input:focus{
 
 @media(min-width: 1250px){
 
-    .home-hero-container{
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: flex-end;
-    }
 
-    .home-hero-container h1{
+
+    .home-hero-container h1,.error-home{
         margin-left: -8%;
     }
 
@@ -3524,7 +3698,22 @@ input:focus{
 
 }
 
+
 @media (max-width:800px){
+
+    .premium-col,.youtube-feature-demo{
+        width: 100%;
+    }
+
+    .premium-feature-container{
+        width: 90%;
+        height: auto;
+    }
+    .premium-sub-container{
+        padding-left: 0%;
+        padding-right: 3%;
+    }
+
 
     .home-hero-container h1{
         font-size: var(--fs-700);
