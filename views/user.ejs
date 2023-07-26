@@ -109,6 +109,95 @@
                     </div>
             </div>
 
+            <h2 class="title-text profile-title <%=profileUser.profileTheme%>-theme-profile-title">Tracked Bets:</h2>
+            <div class="profile-tracked-bets-container">
+                <div class="tracked-bets-stats-container <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
+                    <h4 class="tracked-bets-title">Record: <span class="tracked-bets-subtext"><%=profileUser.betWins%>-<%=profileUser.betLosses%></span></h4>
+                    <h4 class="tracked-bets-title">Profit:<span class="tracked-bets-subtext"> <%=profileUser.totalProfit%>U</span></h4>
+                    <h4 class="tracked-bets-title">ROI: <span class="tracked-bets-subtext"><%=Number(profileUser.totalProfit/profileUser.totalWager).toFixed(3)%>%</span></h4>
+                </div>
+                <canvas class="<%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading" id="tracked-bets-chart"></canvas>
+                <div class="tracked-events-container">
+                <% trackedBets.forEach(function(trackedEvent){ %>
+                    <div class="tracked-event-row tracked-first-row">
+                         <img class="user-tracked-bets-picture" src="/data/uploads/<%=trackedEvent.eventPicture%>" alt="">
+                         <div class="tracked-event-col">
+                            <div class="tracked-event-row tracked-event-title">
+                                <h3><%=trackedEvent.eventName%> <span class="tracked-bet-date">- <%=trackedEvent.eventDate.toDateString().split(" ").slice(0,4).join(" ")%></span></h3>
+                            </div>
+                            
+                            <div class="tracked-event-row event-profit-info">
+                                <p>Profit: <%=trackedEvent.profit%>U</p>
+                                <p>Bets: <%=trackedEvent.wager%>U<p>
+                                <p>ROI: <%=Number(trackedEvent.profit/trackedEvent.wager).toFixed(3)%>%</p>
+                            </div>
+                            
+
+                         </div>
+                    </div>
+                    <table class="tracked-event-table">
+                        <tr class="tracked-event-headings">
+                            <th class="tracked-first-heading <%=profileUser.profileTheme%>-theme-profile-table-heading">Bet</th>
+                            <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading">Odds</th>
+                            <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading">Wager (U)</th>
+                            <th class=" <%=profileUser.profileTheme%>-theme-profile-table-heading">Profit (U)</th>
+                            <th class="<%=profileUser.profileTheme%>-theme-profile-table-heading tracked-last-heading">ROI (%)</th>
+                        </tr>
+                        <% trackedEvent.bets.forEach(function(bet){ %>
+                        <tr class="tracked-bet-tr">
+                            <td class="tracked-bet-betinfo">
+                                <% if(bet.win) {%>
+                                        <div class="bet-info-contents bet-win">
+                                            <p class="bet-outcome-text bet-win-text">win</p>
+                                    <%} else if(bet.win===false) {%>
+                                        <div class="bet-info-contents bet-loss">
+                                            <p class="bet-outcome-text bet-loss-text">loss</p>
+                                    <%} else{%>
+                                        <div class="bet-info-contents">
+                                    <%}%>
+                            <% if(bet.bettingLines.length >1){%>
+                                    <p class="tracked-bet-type parlay-bet">parlay</p>
+                                    
+                            <%} else{%>
+                                <p class="tracked-bet-type <%= bet.bettingLines[0].type%>-bet"><%= bet.bettingLines[0].type%></p>
+                            <%}%>
+                            <% bet.bettingLines.forEach(function(line){ %>
+                                
+                                    <p class="tracked-bet-condition"><%= line.condition.split("_").join(" ").split("won").join("");%></p>
+                                    <p class="bet-col tracked-bet-fightname">(<%= line.fightName%>)</p>
+                            <% }) %>
+                                </div>
+                            </td>
+                            <td>
+                                <p><%=(bet.odds<0?"":"+")+bet.odds%></p>
+                            </td>
+                            <td>
+                                <p><%=bet.wager%></p>
+                            </td>
+                            <td>
+                                <%if (bet.profit===null){%>
+                                    <p>-</p>
+                                <% } else if (bet.profit>=0){ %>
+                                    <p class="bet-win"><%=(bet.profit<0?"":"+")+bet.profit%></p>
+                                </td>
+                                <td>
+                                    <p class="bet-win"><%=Number(bet.profit/bet.wager).toFixed(2)%></p>
+                                </td>
+                                <% } else if (bet.profit<0){ %>
+                                    <p class="bet-loss"><%=bet.profit%></p>
+                                </td>
+                                <td>
+                                    <p class="bet-loss"><%=Number(bet.profit/bet.wager).toFixed(2)%></p>
+                                </td>
+                                <%}%>
+                        </tr>
+                        <%})%>
+                    </table>
+                <% }) %>
+                </div>
+
+            </div>
+
             <h2 class="title-text profile-title <%=profileUser.profileTheme%>-theme-profile-title">Prediction rankings:</h2>
             
 
@@ -119,20 +208,20 @@
                 <div class="profile-rankings">
 
                     <div class="prediction-rankings-table-heading <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
-                        <button id="ALL" class="profile-rankings-btn"><div class="active-prediction-rankings-title prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
-                            <h2>ALL </h2>
+                        <button id="ALL" class="profile-rankings-btn"><div class="active-prediction-rankings-title prediction-rankings-title">
+                            <h2 class="<%=profileUser.profileTheme%>-theme-text">ALL </h2>
                         </div></button>
-                        <button id="UFC" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
-                            <h2>UFC </h2>
+                        <button id="UFC" class="profile-rankings-btn"><div class="prediction-rankings-title">
+                            <h2 class="<%=profileUser.profileTheme%>-theme-text">UFC </h2>
                         </div></button>
-                        <button id="PFL" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
-                            <h2>PFL </h2>
+                        <button id="PFL" class="profile-rankings-btn"><div class="prediction-rankings-title">
+                            <h2 class="<%=profileUser.profileTheme%>-theme-text">PFL </h2>
                         </div></button>
-                        <button id="Bellator" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
-                            <h2>Bellator </h2>
+                        <button id="Bellator" class="profile-rankings-btn"><div class="prediction-rankings-title">
+                            <h2 class="<%=profileUser.profileTheme%>-theme-text">Bellator </h2>
                         </div></button>
-                        <button id="Regional" class="profile-rankings-btn"><div class="prediction-rankings-title <%=profileUser.profileTheme%>-theme-text"">
-                            <h2>Regional </h2>
+                        <button id="Regional" class="profile-rankings-btn"><div class="prediction-rankings-title">
+                            <h2 class="<%=profileUser.profileTheme%>-theme-text">Regional </h2>
                         </div></button>
                     </div>
                     <div class="prediction-rankings-subtext-heading <%=profileUser.profileTheme%>-theme-prediction-rankings-table-heading">
@@ -270,6 +359,9 @@
 
 </div>
 <script>
+     var userChartData = <%- JSON.stringify(userChartData) %>;
+</script>
+<script>
     var profileUserID="<%= profileUser.id %>"
     var profileTheme="<%= profileUser.profileTheme %>"
 </script>
@@ -287,6 +379,7 @@
         <script type="text/javascript" src="/javascript/edit-profile.js"></script>    
         <%}%>
 <% } %>
+<script type="text/javascript" src="/javascript/tracking-chart.js"></script>
 <script type="text/javascript" src="/javascript/prediction-table.js" predictions="<%= JSON.stringify(predictions) %>">let predictions = JSON.parse(document.currentScript.getAttribute('predictions'));
 </script>
 <%- include("partials/footer"); -%>

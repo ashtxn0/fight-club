@@ -64,8 +64,8 @@
                         <p></p>
                     </div>
                 <div class="fight-prediction-predict">
-                <a id="<%=fighter.id%>" class="fight-page-predict-button <%= fight.id %> predict-btn" >Vote <%=fighter.name%></a>
-                <a id="<%=opponent.id%>" class="fight-page-predict-button <%= fight.id %> predict-btn" >Vote <%=opponent.name%></a>
+                <a id="<%=fighter.id%>" class="fight-page-predict-button <%= fight.id %> <%=fighter.name.replace(/ /g,"_") %> predict-btn" >Vote <%=fighter.name%></a>
+                <a id="<%=opponent.id%>" class="fight-page-predict-button <%= fight.id %> <%=opponent.name.replace(/ /g,"_") %> predict-btn" >Vote <%=opponent.name%></a>
                 </div>
                 
                 </div>
@@ -144,9 +144,6 @@
                 
 
             <% }) %>
-        </div>
-        <div class="fight-best-bets-container">
-            <h2 class="title-text">Best Bets:</h2>
         </div>
     </div>
 

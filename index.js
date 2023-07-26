@@ -14,21 +14,18 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const flash = require("express-flash");
 var session = require('express-session');
+const mongoose = require('mongoose');
+const uri = process.env.MONGODB_URI;
+const MongoDBStore = require('connect-mongodb-session')(session);
 const initializePassport = require(__dirname+"/passport-config.js");
 const methodOverride = require("method-override");
-const { findFightersByID, findUserByID } = require("./db");
-const { image } = require("googlethis");
 const Time = require("time-passed").default;
 const fs = require('fs-extra');
 const path = require("path");
+const Chart = require("chart.js")
+const cookieParser = require('cookie-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const PORT=process.env.PORT || 3000;
-
-initializePassport(passport);
-
-
-
-// saveFighterOpponents("Irene Aldana");
 
 const app = express();
 
@@ -36,13 +33,32 @@ app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+initializePassport(passport);
+
+app.use(cookieParser());
+
+app.use((req, res, next) => {
+  db.trackVisitor(req,res); 
+  next();
+});
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
+  },
+    saveUninitialized: false,
+    store: new MongoDBStore({
+      uri: process.env.MONGODB_URI,
+      collection: "sessions",
+      mongooseConnection: mongoose.connection,
+    }),
+  })
+);
 
 app.use(flash());
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false
-}))
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -80,7 +96,6 @@ app.get("/event/:eventID", function(req,res){
         let prelimResults= await db.findFightResults(event.prelims.map(({fightID})=> fightID));
         let mainResults= await db.findFightResults(event.mainCard.map(({fightID})=> fightID));
         res.render("event", {mainResults:mainResults,prelimResults:prelimResults,event: event, fighters:mainCardFighters,opponents:mainCardOpponents,prelimFighters:prelimFighters,prelimOpponents:prelimOpponents,Time:Time.getRelativeTime});
-
   })
 })
 
@@ -89,21 +104,6 @@ app.get("/user", function(req,res){
   res.redirect('/');
 })
 
-// app.get("/user/:username", async function(req,res){
-//   db.findUserByUsername(req.params.username).then(async function(foundUser){
-//     for (const comment of foundUser.comments) {
-//       comment.picture = await db.findUserImage(comment.username);
-//     }
-//     db.findPredictionsByUserID(foundUser.id).then(async function(userPredictions){
-//       console.log(userPredictions)
-//       let rank = await db.findRanking(foundUser.id,"ALL");
-//       res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank,Time:Time.getRelativeTime});
-//     })
-    
-    
-//   })
-// })
-
 app.get("/user/:username", async function(req,res){
   try{
     const foundUser = await db.findUserByUsername(req.params.username);
@@ -111,8 +111,12 @@ app.get("/user/:username", async function(req,res){
       comment.picture = await db.findUserImage(comment.username);
     }
     let userPredictions=await db.findPredictionsByUserID(foundUser.id);
+    const currentDate = new Date();
+    let userTrackedBets = await db.getUserTrackedBetInfo(foundUser.id);
+let userChartData = userTrackedBets.filter((bet) => bet.eventDate <= currentDate);
+
     const rank = await db.findRanking(foundUser.id,"ALL");
-    res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank,Time:Time.getRelativeTime});
+    res.render("user", {profileUser:foundUser, predictions:userPredictions,rank:rank,trackedBets:userTrackedBets,userChartData:userChartData,Time:Time.getRelativeTime});
   } catch (error) {
     console.error(error);
     res.render("error-page");
@@ -132,57 +136,69 @@ app.get("/signup",checkNotAuthenticated, function(req,res){
   res.render("signup");
 });
 
+
 app.post("/signup", checkNotAuthenticated, async function(req, res) {
   try {
     const userFoundByUsername = await db.findUserByUsername(req.body.username);
     const userFoundByEmail = await db.findUserByEmail(req.body.email);
 
-    if (userFoundByUsername !== undefined) {
+
+    if (userFoundByUsername) {
       req.flash("error", "Username is taken.");
       return res.redirect("/signup");
     }
 
-    if (userFoundByEmail !== undefined) {
+    if (userFoundByEmail) {
       req.flash("error", "An account with that email already exists.");
       return res.redirect("/signup");
     }
 
     if (req.body.password === req.body.confirmPassword) {
-      const customer = await stripe.customers.create({ email: req.body.email });
-      await db.saveUser(req.body.username, req.body.password, req.body.email, customer);
+      const customer = await stripe.customers.create({
+        email: req.body.email,
+      });
+      await db.saveUser(req.body.username.toLowerCase(), req.body.password, req.body.email,customer.id);
       return res.redirect('/login');
     } else {
       return res.redirect('/signup');
     }
   } catch (error) {
+    req.flash("error", error.message);
     console.error(error);
     return res.redirect('/signup');
   }
 });
   
 
-// app.post('/webhook', async (req, res) => {
-//   const payload = req.body;
+// app.js
+const handleWebhook = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_SIGNING_SECRET;
 
-//   // Retrieve the event data from the payload
-//   const event = stripe.webhooks.constructEvent(
-//     req.rawBody,
-//     req.headers['stripe-signature'],
-//     'YOUR_STRIPE_WEBHOOK_SECRET'
-//   );
+  let event;
 
-//   // Handle the specific event types you're interested in
-//   if (event.type === 'payment_intent.succeeded') {
-//     const paymentIntent = event.data.object;
-//     const customerId = paymentIntent.customer;
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
+  } catch (err) {
+    console.log(`Webhook signature verification failed: ${err}`);
+    return res.sendStatus(400);
+  }
 
-//     // Update the user's premium status in the database
-//     await User.updateOne({ customerId }, { premium: true });
 
-//     // Respond with a 200 status to acknowledge receipt of the event
-//     res.sendStatus(200);
-//   }
-// });
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+    const customerId = paymentIntent.customer;   
+
+    await db.updatePremiumStatusByCustomerId(customerId,true);
+
+
+    return res.sendStatus(200);
+  }
+  return res.sendStatus(200);
+};
+
+app.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
+
 
 
 app.get("/login",checkNotAuthenticated, function(req,res){
@@ -222,15 +238,20 @@ app.get("/fighter/:fighterName", async function(req, res) {
   }
 });
 
-app.get("/compose-event", function(req,res){
+app.get("/compose-event",checkAdmin, function(req,res){
   res.render("compose-event");
   
 })
 
-app.get("/approve-photos", function(req,res){
+app.get("/approve-photos",checkAdmin, function(req,res){
   db.getUnapprovedPhoto().then(function(document){
     res.render("approve-photos",{document:document});
   })
+})
+
+app.get("/betting-hub", async function(req,res){
+  let events = await db.findEventsWithBettingLines();
+  res.render("betting-hub",{events:events});
 })
 
 app.post("/approve-photos",function(req,res){
@@ -269,7 +290,7 @@ app.get("/predict/:eventID",checkAuthenticated, function(req,res){
   
 })
 
-app.get("/tape-index", function(req,res){
+app.get("/tape-index", checkPremiumUser, function(req,res){
   db.getUpcomingEvents().then(function(events){
     res.render("tape-index",{events:events});
   })
@@ -278,6 +299,39 @@ app.get("/tape-index", function(req,res){
 app.get("/premium", function(req,res){
     res.render("premium");
 })
+
+app.post("/premium", async (req, res) => {
+  try {
+    if (!user) {
+      req.flash("error", "Please login or signup before subscribing");
+      res.redirect("/login");
+    } else {
+      let customerId= await db.getUserCustomerId(user._id);
+
+      // Create a Checkout Session with the customer ID
+      const stripeSession = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: "price_1NTFu9FNZa19A5cWVtMeqAnX",
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: 'https://fighthub.club/',
+        cancel_url: 'https://fighthub.club/',
+        customer: customerId,
+      });
+      res.redirect(stripeSession.url);
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+
+
 
 app.get("/leaderboards", function(req,res){
   //get top 25 ranked -including username,user image, wins/losses  
@@ -325,7 +379,6 @@ app.post("/predict", function(req,res){
 
 app.post("/event", function(req,res){
   res.redirect("/");
-  
 })
 
 app.post("/ajaxComment", async function(req,res){
@@ -358,6 +411,14 @@ app.post("/ajaxPredict", async function(req,res){
       res.json({outcome,fighterName});
     });
     
+  });
+  
+  
+})
+
+app.post("/ajaxTrackBet", async function(req,res){
+  db.trackUserBet(req.body.userID,req.body.betSlip,req.body.wager,req.body.odds).then(async function(outcome){
+      res.json({outcome});
   });
   
   
@@ -435,11 +496,13 @@ app.get("/ajaxFetchLeaderboardData", async function(req,res){
 
 app.post("/ajaxAdminFightActions", async function(req,res){
   let user= await db.findUserProfileType(req.body.userID);
-  if(user.profileType==="admin"){
+  if(user.admin){
     if(req.body.action==="submitFightOutcome"){
     db.updateFightOutcome(req.body.fightID,req.body.winner,req.body.method,req.body.round,req.body.time).then(function(outcome){
     db.resolvePredictions(req.body.fightID,req.body.winner).then(function(resolved){
-      res.json(outcome);
+      db.resolveTrackedBets(req.body.fightID).then(function(outcome){
+        res.json(outcome);
+      })
     })
   })
   } else if (req.body.action==="closeFightPredictions"){
@@ -451,7 +514,7 @@ app.post("/ajaxAdminFightActions", async function(req,res){
       res.json(outcome);
     })
   } else if (req.body.action==="submitTapeIndex"){
-    db.addFightTapeindex(req.body.fighterID,req.body.fightName,req.body.tapeLink).then(function(outcome){
+    db.addFightTapeindex(req.body.fighterID,req.body.fightName,req.body.tapeLink,req.body.tapeTime).then(function(outcome){
       res.json(outcome);
     })
   }
@@ -465,7 +528,7 @@ app.post("/ajaxAdminFightActions", async function(req,res){
 
 })
 
-app.post("/", upload.single('eventPicture'), async function(req,res){
+app.post("/compose-event",checkAdmin, upload.single('eventPicture'), async function(req,res){
   let mainCard = [];
   let prelims=[];
   let j=0;
@@ -511,13 +574,6 @@ app.post("/", upload.single('eventPicture'), async function(req,res){
 
 
 }
-  
-// findFightersByID(mainCard[0].fighterName).then(function(ids){
-//   mainCard[0].fighterName=ids;
-// });
-
-  
-
 
   await saveFighters();
 
@@ -542,34 +598,9 @@ app.post("/", upload.single('eventPicture'), async function(req,res){
   db.findALLEvents().then(function(foundEvents){
     res.render("events", {newEvents: foundEvents});
   })
-
-  // let mainCardFights=[];
-  // mainCard.forEach(function(fight){
-  //   getFighterID(fight.fighterName).then(function(fighterID){
-  //     getFighterID(fight.opponentName).then(function(opponentName){
-  //       let fight= {
-  //         fighterID: fighterID,
-  //         opponentID: opponentID,
-  //         weightClass: fight.weightClass
-  //       }
-  //       mainCardFights.push(fight);
-  //     })
-  //   })
-  // })
-  // let prelimFights=[];
-  // mainCard.forEach(function(fight){
-  //   getFighterID(fight.fighterName).then(function(fighterID){
-  //     getFighterID(fight.opponentName).then(function(opponentName){
-  //       let fight= {
-  //         fighterID: fighterID,
-  //         opponentID: opponentID,
-  //         weightClass: fight.weightClass
-  //       }
-  //       prelimFights.push(fight);
-  //     })
-  //   })
   })
 
+  
 app.delete("/logout", function(req,res){
   req.logOut(function(err){
     if (err){return next(err);}
@@ -578,7 +609,6 @@ app.delete("/logout", function(req,res){
   
 })
 
-//use to restrict anyone whos not signed in from going to a page by putting "checkAuthenticated ," after the get route
 function checkAuthenticated(req,res,next){
   if(req.isAuthenticated()){
     return next();
@@ -588,12 +618,21 @@ function checkAuthenticated(req,res,next){
   res.redirect('/login');
 }
 
-function requirePremiumUser(req, res, next) {
+function checkPremiumUser(req, res, next) {
   if (req.isAuthenticated() && req.user.premium) {
     return next();
   }
   
-  req.flash('error', 'Must be a premium member to see that page');
+  req.flash('error', 'Become a premium user to access that page');
+  res.redirect('/premium'); 
+}
+
+function checkAdmin(req, res, next) {
+  if (req.isAuthenticated() && req.user.admin) {
+    return next();
+  }
+  
+  req.flash('error', 'error');
   res.redirect('/'); 
 }
 
@@ -604,6 +643,12 @@ function checkNotAuthenticated(req,res,next){
   next()
 }
 
-app.listen(PORT, function () {
-    console.log(`server started on port ${PORT}`);
+mongoose.connection.once("open", () => {
+  app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
   });
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});

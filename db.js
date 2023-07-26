@@ -2,60 +2,109 @@ const mongoose = require('mongoose');
 var bcrypt = require("bcrypt");
 const mma=require("mma-api");
 const google=require(__dirname+"/googleSearch.js");
+const odds = require(__dirname+"/getBettingLines.js");
 var _ = require("lodash");
 const { name } = require('ejs');
 const { ObjectId } = require('mongodb');
 const fs = require('fs-extra');
 const uri = process.env.MONGODB_URI;
+const levenshtein = require('fast-levenshtein');
 
 
 mongoose.connect(uri);
 
 
-    const userSchema = new mongoose.Schema({
-      username: {
-        type: String,
-        required: [true, "Please enter a name"]
-      },
-      email: {
-        type: String,
-        required: [true, "Please enter an email"]
-      },
-      password: {
-        type: String,
-        required: [true, "Please enter an email"]
-      },
-        followers:[String],
-        following:[String],
-        favFighter: String,
-        favPromo: String,
-        aboutMe: String,
-        profileTheme: String,
-        profileType: String,
-        profImage_url: String,
-        coverImage_url: String,
-        predictionWins: Number,
-        predictionLosses: Number,
-        ufcPredictionWins: Number,
-        ufcPredictionLosses: Number,
-        ufcMmr: Number,
-        pflPredictionWins: Number,
-        pflPredictionLosses: Number,
-        pflMmr: Number,
-        bellatorPredictionWins: Number,
-        bellatorPredictionLosses: Number,
-        bellatorMmr: Number,
-        regionalPredictionWins: Number,
-        regionalPredictionLosses: Number,
-        regionalMmr: Number,
-        mmr: Number,
-        customerId: String,
-        comments: [Object],
-        premium:{
-          type: Boolean,
-          default:false
-        }
-      },{timestamps: true})
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: [true, "Please enter a name"]
+  },
+  email: {
+    type: String,
+    required: [true, "Please enter an email"]
+  },
+  password: {
+    type: String,
+    required: [true, "Please enter a password"]
+  },
+  followers: [String],
+  following: [String],
+  favFighter: String,
+  favPromo: String,
+  aboutMe: String,
+  totalProfit: {
+    type: Number,
+    default:0
+  },
+  totalWager:{
+    type: Number,
+    default:0
+  },
+  betWins: {
+    type: Number,
+    default:0
+  },
+  betLosses:{
+    type: Number,
+    default:0
+  },
+  profileTheme: {
+    type:String,
+    default: "default"
+  },
+  profImage_url: {
+    type:String,
+    default:"default-prof-image.png"
+  },
+  coverImage_url: {
+    type:String,
+    default:"default-cover-image.png"
+  },
+  predictionWins: {
+    type: Number,
+    default: 0
+  },
+  predictionLosses: {
+    type: Number,
+    default: 0
+  },
+  mmr: {
+    type: Number,
+    default: 0
+  },
+  customerId: String,
+  comments: [Object],
+  premium: {
+    type: Boolean,
+    default: false
+  },
+  admin: {
+    type: Boolean,
+    default: false
+  }
+}, {
+  timestamps: true
+});
+
+const gameStats = {
+  type: Number,
+  default: 0
+};
+
+const organizations = ["ufc", "pfl", "bellator", "regional"];
+
+organizations.forEach(org => {
+  const orgPredictionWinsField = `${org}PredictionWins`;
+  const orgPredictionLossesField = `${org}PredictionLosses`;
+  const orgMmrField = `${org}Mmr`;
+
+  userSchema.add({
+    [orgPredictionWinsField]: gameStats,
+    [orgPredictionLossesField]: gameStats,
+    [orgMmrField]: gameStats
+  });
+});
+
 
   const predictionSchema = new mongoose.Schema({
     eventID: {
@@ -87,8 +136,7 @@ mongoose.connect(uri);
   const fighterSchema = new mongoose.Schema({
     url: String,
     name: {
-        type: String,
-        required: [true, "Please check your data entry, no name specified!"]
+        type: String
     },
     nickname: String,
     age: Number,
@@ -131,9 +179,58 @@ mongoose.connect(uri);
         location: String,
         date: Date,
         posterURL: String,
+        cancelledBouts: [Object],
         comments: [Object],
         mainCard: [Object],
         prelims: [Object]
+      });
+
+      const betLineSchema = new mongoose.Schema({
+        eventID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Event',
+        },
+        fightID: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Fight',
+        },
+        fightName: String,
+        type: String,
+        odds: Number,
+        condition: String,
+        opponentName: String,
+        win: Boolean,
+        bettingClose: {
+          type: Boolean,
+          default: false
+        },
+        dislikes: {
+          type: Number,
+          default: 0
+        },
+        likes: {
+          type: Number,
+          default: 0
+        },
+        trackedCount: {
+          type: Number,
+          default: 0
+        },
+        comments:[Object]
+      });
+
+      const betSchema = new mongoose.Schema({
+        betSlip: [betLineSchema],
+        odds: Number,
+        userID: String,
+        wager:Number,
+        win: Boolean,
+        profit: Number
+      });
+
+      const visitorSchema = new mongoose.Schema({
+        visitorId: { type: String, required: true },
+        date: { type: Date, required: true },
       });
 
       const Fighter = mongoose.model("Fighter", fighterSchema);
@@ -141,13 +238,15 @@ mongoose.connect(uri);
       const Fight = mongoose.model("Fight",fightSchema);
       const Prediction = mongoose.model("Prediction",predictionSchema);
       const User = mongoose.model("User", userSchema);
-      
+      const Line = mongoose.model("Line", betLineSchema);
+      const Bet = mongoose.model("Bet", betSchema);
+      const Visitor = mongoose.model('Visitor', visitorSchema);
+
       exports.findALLEvents = async function(){
-        var events= await Event.find({});
+        var events= await Event.find({}).sort({date: 1});
         return events;
       }
 
-      User.updateMany({username:"asht"},{premium:true});
 
       exports.findALLFighters = async function(){
         var fighters= await Fighter.find({});
@@ -165,7 +264,7 @@ mongoose.connect(uri);
       }
 
       exports.findUserProfileType = async function(userID){
-        let foundUser=await User.findOne({_id:userID},"profileType");
+        let foundUser=await User.findOne({_id:userID},"admin");
         return foundUser;
       }
 
@@ -185,8 +284,6 @@ mongoose.connect(uri);
         // console.log(count+"unapproved photos");
         return fighter;
       }
-      
-
 
       exports.approvePhoto = async function(documentId){
         await Fighter.updateOne({_id:documentId},{approvedPhoto:true});
@@ -198,19 +295,64 @@ mongoose.connect(uri);
         return "photo changed"
       }
 
-      exports.saveUser = async function(username, password, email, customer) {
+      exports.findEventsWithBettingLines = async function () {
+        try {
+          const eventsWithLines = await Event.aggregate([
+            {
+              $lookup: {
+                from: 'lines',
+                localField: '_id',
+                foreignField: 'eventID',
+                as: 'lines',
+              },
+            },
+            {
+              $addFields: {
+                lines: {
+                  $filter: {
+                    input: '$lines',
+                    as: 'line',
+                    cond: { $ne: ['$$line.bettingClose', true] },
+                  },
+                },
+              },
+            },
+            {
+              $match: {
+                lines: { $exists: true, $ne: [] },
+              },
+            },
+          ]);
+      
+          // Sort the lines array within each event document by fightID
+          eventsWithLines.forEach((eventWithLines) => {
+            if (Array.isArray(eventWithLines.lines)) {
+              eventWithLines.lines.sort((a, b) => {
+                const fightIDA = a.fightID.toString();
+                const fightIDB = b.fightID.toString();
+                return fightIDA.localeCompare(fightIDB);
+              });
+            }
+          });
+      
+          return eventsWithLines;
+        } catch (error) {
+          console.log('Error:', error);
+          throw error;
+        }
+      };
+      
+      
+
+
+      exports.saveUser = async function(username, password, email,stripeCustomerId) {
         try {
           const hashedPassword = await bcrypt.hash(password, 10);
           let newUser = {
             username: username,
             email: email,
             password: hashedPassword,
-            profImage_url: "default-prof-image.png",
-            coverImage_url: "default-cover-image.png",
-            PredictionLosses: 0,
-            PredictionWins: 0,
-            mmr: 0,
-            customerId: customer.id,
+            customerId:stripeCustomerId,
           };
       
           const newuser = new User(newUser);
@@ -221,6 +363,160 @@ mongoose.connect(uri);
         }
       };
 
+      exports.trackUserBet = async function(userID,betSlip,wager,odds){
+        try{
+
+          const hasBettingClose = betSlip.some((line) => line.bettingClose === true);
+
+          if (hasBettingClose) {
+            console.log("Betting is closed for one or more bet slips. Not saving the bet.");
+            return; // Return early without saving anything
+          }
+
+          for (const line of betSlip) {
+            const foundLine = await Line.findById(line._id);
+            if (foundLine) {
+              line.fightName = foundLine.fightName;
+            } else {
+              console.error("Line not found in the database for lineID:", line.lineID);
+            }
+          }
+          
+          let newBet = {
+            betSlip:betSlip,
+            wager:wager,
+            odds:odds,
+            userID:userID,
+          }
+          console.log(newBet);
+          const bet= new Bet(newBet);
+          await bet.save();
+          for (const line of betSlip) {
+            await Line.findByIdAndUpdate(line.lineID, { $inc: { trackedCount: 1 } });
+          }
+        } catch (error){
+          console.error(error);
+          throw new Error('Error saving the bet.');
+        }
+      }
+
+      
+
+      exports.getUserTrackedBetInfo = async function (userID) {
+        try {
+          const result = await Bet.aggregate([
+            // Filter bets for a specific userID
+            { $match: { userID: userID } },
+      
+            // Unwind the betSlip array to create separate documents for each bet
+            { $unwind: "$betSlip" },
+      
+            // Lookup to join the fight information
+            {
+              $lookup: {
+                from: "fights", // Assuming "fights" is the name of the Fight collection
+                localField: "betSlip.fightID",
+                foreignField: "_id",
+                as: "fightInfo",
+              },
+            },
+      
+            // Unwind the fightInfo array to create separate documents for each fight
+            { $unwind: "$fightInfo" },
+      
+
+            {
+              $lookup: {
+                from: "events", // Assuming "fights" is the name of the Fight collection
+                localField: "betSlip.eventID",
+                foreignField: "_id",
+                as: "eventInfo",
+              },
+            },
+      
+            // Unwind the fightInfo array to create separate documents for each fight
+            { $unwind: "$eventInfo" },
+
+
+
+      
+            // Group by eventID and fightID to calculate profit and other details
+            {
+              $group: {
+                _id: "$_id",
+                eventID: { $first: "$fightInfo.eventID" },
+                odds: { $first: "$odds" },
+                eventName: { $first: "$fightInfo.name" },
+                eventDate: { $first: "$fightInfo.date" },
+                profit: { $first: "$profit" },
+                wager: { $first: "$wager" },
+                win: { $first: "$win" },
+                bettingLines: {
+                  $push: {
+                    condition: "$betSlip.condition",
+                    fightID: "$betSlip.fightID",
+                    odds: "$betSlip.odds",
+                    fightName: "$betSlip.fightName",
+                    opponentName: "$betSlip.opponentName",
+                    type: "$betSlip.type",
+                  },
+                },
+                eventPicture: {$first: "$eventInfo.picture"},
+              },
+            },
+      
+            // Group by eventID to consolidate fight-level data into event-level data
+            {
+              $group: {
+                _id: "$eventID",
+                eventName: { $first: "$eventName" },
+                eventDate: { $first: "$eventDate" },
+                eventPicture: {$first: "$eventPicture"},
+                profit: { $sum: "$profit" },
+                wager: { $sum: "$wager" }, // Calculate the total wager directly from the Bet document
+                bets: {
+                  $push: {
+                    odds: "$odds",
+                    wager: "$wager",
+                    profit: "$profit",
+                    win: "$win",
+                    bettingLines: "$bettingLines",
+                  },
+                },
+              },
+            },
+
+            { $sort: { eventDate: -1 } },
+      
+            // Project to rename _id to eventID
+            {
+              $project: {
+                _id: 0,
+                eventID: "$_id",
+                eventName: 1,
+                eventPicture: 1,
+                eventDate: 1,
+                profit: 1,
+                wager: 1,
+                bets: 1,
+              },
+            },
+          ]);
+      
+          return result;
+        } catch (err) {
+          console.error("Error while aggregating data:", err);
+          return [];
+        }
+      };
+      
+      
+      
+      exports.getUserCustomerId = async function(id){
+        const user = await User.findOne({_id:id},"customerId");
+        return user.customerId
+      }
+
       exports.findFighterByName = async function (name){
         let fighter=Fighter.findOne({name:name});
         return fighter;
@@ -228,7 +524,7 @@ mongoose.connect(uri);
 
       exports.findFightResults = async function(fightID){
      
-        let results= await Fight.find({_id:fightID},"result");
+        let results= await Fight.find({_id:fightID},"result method");
    
         return sortArray(results,"_id",fightID);
       }
@@ -276,32 +572,85 @@ mongoose.connect(uri);
         }
       }
 
-      var getUserPredictionInfo = exports.getUserPredictionInfo=async function(userID,orgName){
-        let predictions=[];
-        if (orgName==="ALL"){
-          mmr="mmr";
-          wins="predictionWins";
-          losses="predictionLosses";
-          predictions= (await Prediction.find({userID:userID})).reverse();
-        } else{
-          wins=_.lowerCase(orgName)+"PredictionWins";
-          losses=_.lowerCase(orgName)+"PredictionLosses";
-          mmr=_.lowerCase(orgName)+"Mmr";
-          predictions= (await Prediction.find({userID:userID,orgName:orgName})).reverse();
+      var getUserPredictionInfo = exports.getUserPredictionInfo = async function(userID, orgName) {
+        let predictions = new Map();
+        let fighterIDs = new Set();
+        let fightIDs = new Set();
+      
+        let mmr, wins, losses;
+        if (orgName === "ALL") {
+          mmr = "mmr";
+          wins = "predictionWins";
+          losses = "predictionLosses";
+          const allPredictions = (await Prediction.find({ userID: userID })).reverse();
+          allPredictions.forEach((prediction, index) => {
+            predictions.set(index, prediction);
+            fighterIDs.add(prediction.fighterID);
+            fightIDs.add(prediction.fightID);
+          });
+        } else {
+          wins = _.lowerCase(orgName) + "PredictionWins";
+          losses = _.lowerCase(orgName) + "PredictionLosses";
+          mmr = _.lowerCase(orgName) + "Mmr";
+          const filteredPredictions = (await Prediction.find({ userID: userID, orgName: orgName })).reverse();
+          filteredPredictions.forEach((prediction, index) => {
+            predictions.set(index, prediction);
+            fighterIDs.add(prediction.fighterID);
+            fightIDs.add(prediction.fightID);
+          });
         }
-        let stats = await User.find({_id:userID},[wins, losses, mmr]);
-        let rank = await findRanking(userID,orgName);
-
-        let data={
-          predictions:predictions,
-          wins:stats[0][wins],
-          losses:stats[0][losses],
-          mmr:stats[0][mmr],
-          rank:rank
+      
+        let stats = await User.find({ _id: userID }, [wins, losses, mmr]);
+        let rank = await findRanking(userID, orgName);
+      
+        let [fighters, fights] = await Promise.all([
+          Fighter.find({ _id: { $in: Array.from(fighterIDs) } }, "name"),
+          Fight.find({ _id: { $in: Array.from(fightIDs) } }, "fighterID opponentID name")
+        ]);
+      
+        let fighterMap = new Map(fighters.map(fighter => [fighter._id.toString(), fighter.name]));
+      
+        let opponentIDs = new Set();
+        let opponentMap = new Map();
+      
+        for (let fight of fights) {
+          opponentIDs.add(fight.fighterID.toString());
+          opponentIDs.add(fight.opponentID.toString());
         }
+      
+        let opponents = await Fighter.find({ _id: { $in: Array.from(opponentIDs) } }, "name");
+        for (let opponent of opponents) {
+          opponentMap.set(opponent._id.toString(), opponent.name);
+        }
+      
+        for (let [index, prediction] of predictions) {
+          let fight = fights.find(f => f._id.toString() === prediction.fightID);
+          if (fight) {
+            prediction.fighterName = fighterMap.get(prediction.fighterID.toString()) || "";
+            prediction.opponentName = (prediction.fighterID.toString() === fight.fighterID.toString())
+              ? opponentMap.get(fight.opponentID.toString()) || ""
+              : opponentMap.get(fight.fighterID.toString()) || "";
+            prediction.eventName = fight.name || "";
+            predictions.set(index, prediction);
+          }
+        }
+      
 
+        let data = {
+          predictions: Array.from(predictions.values()),
+          wins: stats[0][wins],
+          losses: stats[0][losses],
+          mmr: stats[0][mmr],
+          rank: rank
+        };
+      
         return data;
       }
+      
+      
+      
+      
+      
 
       var findRanking = exports.findRanking = async function(userID,orgName){
         if(orgName==="ALL"){
@@ -419,6 +768,14 @@ mongoose.connect(uri);
         return comments;
       }
 
+      exports.updatePremiumStatus = async function(userID,premiumStatus,customerId){
+        await User.updateOne({_id:userID}, {premium: premiumStatus,customerId:customerId});
+      }
+
+      exports.updatePremiumStatusByCustomerId = async function(customerId,premiumStatus){
+        await User.updateOne({customerId:customerId}, {premium: premiumStatus});
+      }
+
       exports.saveFighterByName = async function(Fname){
         Fighter.findOne({name: Fname}).then(function(foundFighter){
             if (foundFighter !=null){
@@ -443,8 +800,9 @@ mongoose.connect(uri);
             }
           })
       }
-      
-      exports.saveFighterByNameAndAddFight = async function(Fname,eventName,eventDate,opponentName,isTitleFight){
+
+
+      var saveFighterByNameAndAddFight = exports.saveFighterByNameAndAddFight = async function(Fname,eventName,eventDate,opponentName,isTitleFight){
         
         let fight={
           name:eventName,
@@ -478,8 +836,14 @@ mongoose.connect(uri);
             
                 } else{
                   google.regionalFighterImageSearch(fighter.nickname,fighter.name).then(images => {
-                    fighter.image_url=images[0].url;
-                    fighter.save();
+                    if (images[0]!=undefined){
+                      fighter.image_url=images[0].url;
+                      fighter.save();
+                    } else{
+                      fighter.save();
+                    }
+                    
+                    
                   })
                 };
               });
@@ -501,13 +865,36 @@ mongoose.connect(uri);
         return events;
       }
 
-      exports.addFightTapeindex = async function(fighterID,fightName,link){
-        await Fighter.updateOne({_id:fighterID,"fights.name":fightName},{"fights.$.tape_url":link});
+      exports.addFightTapeindex = async function(fighterID,fightName,link,time){
+        try{
+          //Update the fight in the fighter document with the tape
+          let fighter;
+          if(time){
+            fighter = await Fighter.findOneAndUpdate({_id:fighterID,"fights.name":fightName},{"fights.$.tape_url":link,"fights.$.tape_time":time});
+          } else{
+            fighter = await Fighter.findOneAndUpdate({_id:fighterID,"fights.name":fightName},{"fights.$.tape_url":link});
+          }
+          //obtain the name of the opponent
+          const fightIndex = fighter.fights.findIndex(fight => fight.name === fightName);
+          const opponent = fighter.fights[fightIndex].opponent;
+          //Also update the fight in the opponent document with the tape
+          const opponentFighter = await Fighter.findOneAndUpdate({name:opponent,"fights.name":fightName},{"fights.$.tape_url":link});
+          if (opponentFighter) {
+            return "Tape added";
+          } else {
+            return "Opponent fighter not found";
+          }
+
+        } catch (error){
+          console.error("Error updating fighter document:", error);
+          return "Error updating fighter document";
+        }
+        
+        
         return "tape added"
       }
-
-      exports.saveFighterByURL = async function(Fname,URL){
-        Fighter.findOne({name: Fname,url:URL}).then(function(foundFighter){
+      var saveFighterByURL = exports.saveFighterByURL = async function(URL){
+        Fighter.findOne({url:URL}).then(function(foundFighter){
             if (foundFighter !=null){
               console.log("Fighter already in database")
             } else{
@@ -530,6 +917,8 @@ mongoose.connect(uri);
           })
       }
 
+
+      // saveFighterByURL('https://www.sherdog.com/fighter/Erique-Owens-305079');
       var likeComment = exports.likeComment =  async function(commentUsername,timePosted,username,contentType){
         let foundcontent={};
         async function init(){
@@ -743,17 +1132,17 @@ mongoose.connect(uri);
         await init();
         return await dislike();
     }
-
+    
       exports.saveEvent = async function(event){
         const newEvent = new Event(event);
 
         event.mainCard.forEach(async function(mainFight){
-          let fighterID = await Fighter.findOne({name: mainFight.fighterName},"_id");
-          let opponentID = await Fighter.findOne({name: mainFight.opponentName}, "_id");
+          let fighterID = await Fighter.findOne({name: mainFight.fighterName});
+          let opponentID = await Fighter.findOne({name: mainFight.opponentName});
           let fight={
             name: event.name,
             date: event.date,
-            fighterID:fighterID.id,
+            fighterID: fighterID.id,
             opponentID: opponentID.id,
             weightClass: mainFight.weightClass,
             result:"-",
@@ -764,14 +1153,13 @@ mongoose.connect(uri);
              
         });
         event.prelims.forEach(async function(prelim){
-          let fighterID = await Fighter.findOne({name: prelim.fighterName},"_id");
-          let opponentID = await Fighter.findOne({name: prelim.opponentName}, "_id");
-
+          let fighterID = await Fighter.findOne({name: prelim.fighterName});
+          let opponentID = await Fighter.findOne({name: prelim.opponentName});
 
           let newPrelim={
             name: event.name,
             date: event.date,
-            fighterID:fighterID.id,
+            fighterID: fighterID.id,
             opponentID: opponentID.id,
             weightClass: prelim.weightClass,
             result:"-",
@@ -800,10 +1188,15 @@ mongoose.connect(uri);
         
       }
 
-// Fight.deleteMany({name:"UFC on ABC 5 - Emmett vs. Topuria"}).then(function(e){
+      
+      
+      
+// Fight.deleteMany({name:"LFA 163 - Johns vs. Garcia"}).then(function(e){
 //   console.log("deleted")
 // });
-
+// Fighter.deleteMany({"fights.name":"Cage Warriors 157: London"}).then(function(e){
+//   console.log("deleted")
+// });
 // let eventName="UFC 290 - Volkanovski vs. Rodriguez"
 //         Fighter.updateMany({ 'fights.name': eventName }, { $pull: { fights: { name: eventName } } })
 //         .then(result => {
@@ -928,24 +1321,81 @@ mongoose.connect(uri);
         result = "draw";
       } else if (winnerName === "no contest") {
         result = "no contest";
+      } else if (winnerName.toLowerCase().includes("cancel")){
+        result= "cancelled";
+        cancelFightBettingLines(fightID);
       } else {
         result = winnerName + " won";
       }
     
       try {
-        const fight = await Fight.findOneAndUpdate({ _id: fightID }, { result: result, method: method, round: round, time: time }, { new: true });
+        const fight = await Fight.findOneAndUpdate(
+          { _id: fightID },
+          { result: result, method: method, round: round, time: time },
+          { new: true }
+        );
     
         if (result === "draw" || result === "no contest") {
-          await Fighter.updateOne({ _id: fight.fighterID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
-          await Fighter.updateOne({ _id: fight.opponentID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+          await Promise.all([
+            Fighter.updateOne({ _id: fight.fighterID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time }),
+            Fighter.updateOne({ _id: fight.opponentID, "fights.name": fight.name }, { "fights.$.result": fight.result, "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time })
+          ]);
+        } else if (result==="cancelled"){
+          const event = await Event.findOne(
+            { $or: [{ "mainCard.fightID": fightID }, { "prelims.fightID": fightID }] }
+          );
+
+          const cancelledFight = event.mainCard.find(fight => fight.fightID === fightID) || event.prelims.find(fight => fight.fightID === fightID);
+
+          event.cancelledBouts.push(cancelledFight);
+          event.mainCard = event.mainCard.filter(fight => fight.fightID !== fightID);
+          event.prelims = event.prelims.filter(fight => fight.fightID !== fightID);
+
+          event.save();
         } else {
-          const fighter = await Fighter.findOneAndUpdate({ name: winnerName, "fights.name": fight.name }, { "fights.$.result": "win", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
-    
+
+          const fighter = await Fighter.findOneAndUpdate(
+            { name: winnerName, "fights.name": fight.name },
+            {
+              $set: {
+                "fights.$.result": "win",
+                "fights.$.method": fight.method,
+                "fights.$.round": fight.round,
+                "fights.$.time": fight.time
+              },
+              $inc: {
+                "wins.total": 1,
+                ...(method.toLowerCase().includes("ko") && { "wins.knockouts": 1 }),
+                ...(method.toLowerCase().includes("sub") && { "wins.submissions": 1 }),
+                ...(method.toLowerCase().includes("dec") && { "wins.decisions": 1 })
+              }
+            }
+          );
+
+          let loserID;
           if (fighter.id.toString() === fight.fighterID) {
-            await Fighter.updateOne({ _id: fight.opponentID, "fights.name": fight.name }, { "fights.$.result": "loss", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+            loserID = fight.opponentID;
           } else {
-            await Fighter.updateOne({ _id: fight.fighterID, "fights.name": fight.name }, { "fights.$.result": "loss", "fights.$.method": fight.method, "fights.$.round": fight.round, "fights.$.time": fight.time });
+            loserID = fight.fighterID;
           }
+    
+          await Fighter.findOneAndUpdate(
+            { _id: loserID, "fights.name": fight.name },
+            {
+              $set: {
+                "fights.$.result": "loss",
+                "fights.$.method": fight.method,
+                "fights.$.round": fight.round,
+                "fights.$.time": fight.time
+              },
+              $inc: {
+                "losses.total": 1,
+                ...(method.toLowerCase().includes("ko") && { "losses.knockouts": 1 }),
+                ...(method.toLowerCase().includes("sub") && { "losses.submissions": 1 }),
+                ...(method.toLowerCase().includes("dec") && { "losses.decisions": 1 })
+              }
+            }
+          );
         }
     
         return "Fight and fighter records updated";
@@ -955,10 +1405,17 @@ mongoose.connect(uri);
       }
     }
     
+    
+    var cancelFightBettingLines = exports.cancelFightBettingLines = async function(fightID){
+      await Line.deleteMany({fightID: fightID});
+      return "lines deleted"
+    }
 
     exports.closeFightPredictions=async function(fightID){
       Fight.findOneAndUpdate({_id:fightID},{predictionClosed:true}).then(function(e){
-        return"Predictions Closed";
+        Line.updateMany({fightID:fightID},{bettingClose:true}).then(function(e){
+          return "Predictions closed";
+        })
       })
     }
 
@@ -968,7 +1425,7 @@ mongoose.connect(uri);
       })
     }
       exports.resolvePredictions= async function(fightID,winnerName){
-        if(winnerName==="draw"||winnerName==="no contest"){
+        if(winnerName==="draw"||winnerName==="no contest"||winnerName.toLowerCase().includes("cancel")){
           await Prediction.updateMany({fightID:fightID},{outcome:"Push"});
         } else{
             await Prediction.updateMany({fightID:fightID,predictionName:winnerName},{outcome:"Correct"});
@@ -977,13 +1434,13 @@ mongoose.connect(uri);
               predictions.forEach(async function(prediction){
                 const countPredictions = await Prediction.countDocuments({userID:prediction.userID,orgName:prediction.orgName});
                 let gainedPoints=Number;
-                if (countPredictions<=60){
+                if (countPredictions<=40){
                   gainedPoints=100;
-                } else if (countPredictions<=120){
+                } else if (countPredictions<=80){
                   gainedPoints=70;
-                } else if (countPredictions<=200){
+                } else if (countPredictions<=120){
                   gainedPoints=50;
-                } else if (countPredictions<=300){
+                } else if (countPredictions<=200){
                   gainedPoints=30;
                 } else{
                   gainedPoints=20;
@@ -1005,13 +1462,13 @@ mongoose.connect(uri);
               predictions.forEach(async function(prediction){
                 const countPredictions = await Prediction.countDocuments({userID:prediction.userID,orgName:prediction.orgName});
                 let lossedPoints=Number;
-                if (countPredictions<=60){
+                if (countPredictions<=40){
                   lossedPoints=-20;
-                } else if (countPredictions<=120){
+                } else if (countPredictions<=80){
                   lossedPoints=-30;
-                } else if (countPredictions<=200){
+                } else if (countPredictions<=120){
                   lossedPoints=-40;
-                } else if (countPredictions<=300){
+                } else if (countPredictions<=200){
                   lossedPoints=-50;
                 } else{
                   lossedPoints=-60;
@@ -1033,6 +1490,198 @@ mongoose.connect(uri);
         return("updated");
         
       }
+
+
+      var resolveTrackedBets = exports.resolveTrackedBets = async function (fightID){
+
+        const fight = await Fight.findById(fightID);
+
+        if (!fight) {
+          console.log("fight not found");
+          return;
+        }
+
+        const betLines = await Line.find({fightID});
+
+        for (const betLine of betLines){
+          const betCondition= betLine.condition;
+          const outcome = {
+            result: fight.result,
+            method: fight.method,
+            round: fight.round,
+            time: fight.time,
+          }
+
+          const won = await resolveBet(betCondition, outcome);
+          betLine.win=won;
+
+          await betLine.save();
+
+          const parentBets = await Bet.find({ "betSlip._id": betLine._id });
+
+          for (const parentBet of parentBets) {
+            // Find the corresponding betLine in the parentBet's betSlip
+            const parentBetLine = parentBet.betSlip.find((line) => line._id.equals(betLine._id));
+
+            if (parentBetLine) {
+              parentBetLine.win = won;
+              if (parentBet.win===true || parentBet.win===false){
+                continue;
+              }
+              const anyBetLineLost = parentBet.betSlip.some((line) => line.win === false);
+              const allBetLinesWon = parentBet.betSlip.every((line) => line.win);
+            if (allBetLinesWon) {
+              parentBet.win = true;
+              if (parentBet.odds>0){
+                parentBet.profit = ((parentBet.wager*parentBet.odds)/100);
+              } else{
+                parentBet.profit=((parentBet.wager*100)/Math.abs(parentBet.odds));
+              }
+              parentBet.profit = Number(parentBet.profit.toFixed(2));
+              await User.updateOne({_id: parentBet.userID}, { $inc: { betWins: 1,totalProfit: parentBet.profit,totalWager:parentBet.wager} });
+            } else if (anyBetLineLost){
+              parentBet.win = false;
+              parentBet.profit = -parentBet.wager;
+              parentBet.profit = Number(parentBet.profit.toFixed(2));
+              await User.updateOne({_id: parentBet.userID}, { $inc: { betLosses: 1,totalProfit: parentBet.profit,totalWager:parentBet.wager} });
+            }
+            parentBet.profit = Number(parentBet.profit.toFixed(2));
+            await parentBet.save();
+            }
+          }
+        }
+      }
+
+      function normalizeFighterName(name) {
+        return name.toLowerCase().trim();
+      }
+
+      const rulesLookup = {
+        "{fighterName} wins by ko/tko": {
+          result: "{fighterName} won",
+          method: ["tko","ko","dq","ko/tko"],
+        },
+        "{fighterName} wins by submission": {
+          result: "{fighterName} won",
+          method: "submission",
+        },
+        "{fighterName} wins by decision": {
+          result: "{fighterName} won",
+          method: "decision",
+        },
+        "{fighterName} won": {
+          result: "{fighterName} won",
+        },
+        "over 2½ rounds": {
+          conditions: [
+            { method: "dec" },
+            { round: 3, time: "2:30", timeOperator: ">" }
+          ]
+        },
+        "under 2½ rounds": {
+          conditions: [
+            { round: 1 },
+            { round: 2 },
+            { round: 3, time: "2:30", timeOperator: "<" }
+          ]
+        },
+        "over 1½ rounds": {
+          conditions: [
+            { method: "dec" },
+            { round:3 },
+            { round: 2, time: "2:30", timeOperator: ">" }
+          ]
+        },
+        "under 2½ rounds": {
+          conditions: [
+            { round: 1 },
+            { round: 2, time: "2:30", timeOperator: "<" }
+          ]
+        },
+        "fight goes to decision": {
+          method:"decision",
+        },
+        "fight doesn't goes to decision": {
+          method:["submission","ko","tko","dq"]
+        },
+      };
+
+      function evaluateConditions(outcome, conditions) {
+        for (const condition of conditions) {
+          if (condition.round && outcome.round !== condition.round) {
+            continue;
+          }
+      
+          if (condition.method && !normalizeFighterName(outcome.method).includes(condition.method)) {
+            continue;
+          }
+
+          if (condition.time && outcome.time && !compareTime(outcome.time, condition.time, condition.timeOperator)) {
+            continue;
+          }
+      
+          return true;
+        }
+      
+        return false;
+      }
+      
+      function compareTime(outcomeTime, conditionTime, timeOperator) {
+        // Assuming outcome.time and condition.time are in the format "2:30"
+        const [outcomeMinutes, outcomeSeconds] = outcomeTime.split(":").map(parseFloat);
+        const [conditionMinutes, conditionSeconds] = conditionTime.split(":").map(parseFloat);
+      
+        if (timeOperator === ">") {
+          return outcomeMinutes > conditionMinutes || (outcomeMinutes === conditionMinutes && outcomeSeconds > conditionSeconds);
+        } else if (timeOperator === ">=") {
+          return outcomeMinutes > conditionMinutes || (outcomeMinutes === conditionMinutes && outcomeSeconds >= conditionSeconds);
+        } else if (timeOperator === "<") {
+          return outcomeMinutes < conditionMinutes || (outcomeMinutes === conditionMinutes && outcomeSeconds < conditionSeconds);
+        } else if (timeOperator === "<=") {
+          return outcomeMinutes < conditionMinutes || (outcomeMinutes === conditionMinutes && outcomeSeconds <= conditionSeconds);
+        }
+      
+        return false;
+      }
+      
+      var resolveBet = async function (condition, outcome) {
+        const betFighterName= normalizeFighterName(condition.split("_")[0]);
+        const betCondition= normalizeFighterName(condition.split("_").join(" "));
+        const outcomeResult = normalizeFighterName(outcome.result);
+        const outcomeMethod = normalizeFighterName(outcome.method.split("(")[0]);
+        const outcomeRound = outcome.round;
+        const outcomeTime = outcome.time;
+
+        for (const [betConditionTemplate, rule] of Object.entries(rulesLookup)) {
+          const normalizedTemplate = betConditionTemplate.replace("{fighterName}", betFighterName);
+
+
+          if(normalizedTemplate===betCondition){
+            console.log(normalizedTemplate,betCondition)
+            if(!rule.round || rule.round.includes(outcomeRound)){
+              if (!rule.conditions || evaluateConditions(outcome,rule.conditions)){
+                if(!rule.result || rule.result.replace("{fighterName}", betFighterName)===outcomeResult){
+                  if(!rule.method || rule.method.includes(outcomeMethod)){
+                    console.log("win")
+                    return true;
+                  }
+                }
+              }
+            }
+            console.log("loss")
+            return false
+          }
+        }
+
+
+      };
+      
+
+      
+      
+      
+      
+      
 
       exports.getFightersByID = async function(fighterID){
         let fighters= await Fighter.find({_id: fighterID});
@@ -1177,6 +1826,74 @@ mongoose.connect(uri);
           fs.unlink(__dirname+'/public/data/uploads/profilePictures/'+imagePath,resultHandler);
         }
       }
+
+
+      var getEventFightOdds = async function getEventFightOdds(i, eventName) {
+        try {
+          const bettingLines = await odds.scrapeBettingOdds(i);
+          const event = await Event.findOne({ name: eventName });
+      
+          if (!event) {
+            console.error("Event not found in the database for event:", eventName);
+            return; // Exit the function since there's no event to process.
+          }
+      
+          let fights = event.mainCard.concat(event.prelims);
+      
+          for (const line of bettingLines) {
+            const fighter = line.condition.split("_")[0].toLowerCase();
+      
+            const foundFight = fights.find((fight) => {
+              const fighterNameLower = fight.fighterName.toLowerCase();
+              const opponentNameLower = fight.opponentName.toLowerCase();
+      
+              return (
+                levenshtein.get(fighter, fighterNameLower) <= 2 || // Tolerate up to 3 edit distance
+                levenshtein.get(fighter, opponentNameLower) <= 2
+              );
+            });
+      
+            if (foundFight && foundFight.result != "cancelled") {
+              // Retrieve all lines for the foundFight.fightID from the database
+              const existingLines = await Line.find({ fightID: foundFight.fightID });
+            
+              // Find the line with the closest condition using Levenshtein distance
+              let closestMatchingLine;
+              let closestDistance = Infinity;
+            
+              for (const existingLine of existingLines) {
+                const distance = levenshtein.get(existingLine.condition.toLowerCase(), line.condition.toLowerCase());
+                if (distance <= 3 && distance < closestDistance) {
+                  closestMatchingLine = existingLine;
+                  closestDistance = distance;
+                }
+              }
+            
+              if (closestMatchingLine) {
+                // Update the existing line with new odds
+                closestMatchingLine.odds = line.odds;
+                closestMatchingLine.fightName = foundFight.fighterName + " vs. " + foundFight.opponentName;
+                await closestMatchingLine.save();
+              } else {
+                // Create and save a new line
+                line.fightID = foundFight.fightID;
+                line.eventID = event.id;
+                line.fightName = foundFight.fighterName + " vs. " + foundFight.opponentName;
+                const bettingLine = new Line(line);
+                await bettingLine.save();
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error occurred while fetching event or saving betting lines:", error);
+        }
+      };
+      
+      // getEventFightOdds(3, "UFC 291 - Poirier vs. Gaethje 2");
+
+
+
+
     //   let fight={
     //     name:"UFC 289 - Nunes vs. Aldana",
     //     date:"Jun/10/2023",
@@ -1196,3 +1913,59 @@ mongoose.connect(uri);
     // }).then(function(e){
     //   console.log("updated")
     // })
+
+    exports.trackVisitor = async (req,res) => {
+      let visitorId = req.cookies.visitorId;
+    
+      if (!visitorId) {
+        visitorId = generateUniqueVisitorId();
+        res.cookie('visitorId', visitorId, { maxAge: 86400000, httpOnly: true }); // Cookie lasts for one day
+      }
+    
+      const currentDate = new Date();
+    
+      // Check if the visitor with the same ID and date exists
+      try {
+        const existingVisitor = await Visitor.findOne({
+          visitorId,
+          date: { $gte: currentDate.setHours(0, 0, 0, 0) },
+        });
+    
+        if (!existingVisitor) {
+          // Create a new visitor record if it's a unique visitor for the day
+          const newVisitor = new Visitor({
+            visitorId,
+            date: currentDate,
+          });
+          await newVisitor.save();
+        }
+      } catch (err) {
+        console.error('Error tracking visitor:', err);
+      }
+    };
+
+    var getDailyVisitorCount = exports.getDailyVisitorCount = async () => {
+      try {
+        const targetDate = new Date();
+        if (!targetDate || isNaN(targetDate)) {
+          console.log("invalid date format");
+          return;
+        }
+    
+        const uniqueVisitors = await Visitor.distinct('visitorId', {
+          date: { $gte: targetDate.setHours(0, 0, 0, 0), $lt: targetDate.setHours(23, 59, 59, 999) },
+        });
+    
+        const dailyVisitorCount = uniqueVisitors.length;
+        console.log(dailyVisitorCount);
+      } catch (err) {
+        console.error('Error fetching daily visitor count:', err);
+      }
+    };
+    
+    // getDailyVisitorCount();
+    
+    const generateUniqueVisitorId = () => {
+      return 'visitor_' + Math.random().toString(36).substr(2, 9);
+    };
+

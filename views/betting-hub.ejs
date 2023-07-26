@@ -1,0 +1,146 @@
+<%- include("partials/header"); -%>
+
+<dialog data-modal class="change-odds-modal">
+    <h3>Got a different line? Enter the odds below:</h3>
+    <input class="changed-odds" type="text" inputmode="numeric" placeholder="0">
+    <button class="submit-odds-change secondary-btn">Submit</button>
+    <button data-close-modal class="secondary-btn">Cancel</button>
+</dialog>
+
+<div class="betting-hub-container">
+    <div class="betting-hub-header">
+        <div class="title-text-row">
+            <div class="rect"></div>
+            <h1 class="title-text events-title">Betting Hub</h1>
+            <div class="rect"></div>
+        </div>   
+        <div class="header-intro-row">
+            <p class="betting-hub-description">Browse top betting lines, track your bets and vote on best bets.</p>
+            <% if (!user){ %>
+            <div class="betting-hub-signup-cta">
+                <p>Sign up for a free acount to track your bets</p>
+                <a class="button-1" href="/signup">Signup</a>
+            </div>
+            <% } %>
+         
+        </div>
+       
+        
+        <div class="betting-hub-events-container">
+            <% events.forEach(function(event, i){ %>
+                <div id="<%=i%>" class="betting-hub-event-container change-event-btn">
+                    <img class="betting-hub-event-picture" src="/data/uploads/<%=event.picture%>" alt="event picture">
+                    <div class="background-gradient"></div>
+                    <h2 class="betting-hub-event-name"><%= event.name.split("-")[0] %></h2>
+                </div>
+            <% }) %>
+        </div>    
+    </div>
+    <div class="betting-hub-ml-container">
+        <div class="title-text-row title-text-left">
+            <div class="rect-sm"></div>
+            <h2 class="title-text line-type-title">Moneylines</h2>
+            <div class="rect-sm"></div>
+        </div>
+        <div class="betting-hub-bets-container">
+            <% for(let i=0;i<events[0].lines.length;i+=2){ %>
+                <div class="betting-hub-bet">
+                    <div class="betting-hub-bet-head">
+                        <p><%=events[0].name%></p>
+                        <div id="<%=events[0].lines[i].fightID%>" class="comments-icon-container">
+                            <img class="icon-dark comments-icon" src="/image/comment-dark.svg" alt="comment icon">
+                            <img class="icon-light comments-icon" src="/image/comment-light.svg" alt="comment icon">
+                            <p class="betting-hub-bet-subtext"><%=events[0].lines[i].comments.length%></p>
+                        </div>
+                    </div>
+                    <div class="bet-info-container">
+                        <div style="display: grid;">
+                            <h2 class="betting-hub-bet-text"><%=events[0].lines[i].condition.split("_")[0] %><span class="betting-hub-bet-subtext">- <%=events[0].lines[i].type %></span></h2>
+                            <div class="comment-row">
+                                <img id="<%=events[0].lines[i]._id.toString()%>?<%=events[0].lines[i].condition%>?<%=events[0].lines[i].odds%>?<%=events[0].lines[i].fightID%>?<%=events[0].lines[i].type%>?<%=events[0].lines[i+1].eventID%>?<%=events[0].lines[i+1].condition %>" class="track-bet" src="/image/track-light.svg" height="30px" alt="bet tracking icon">
+                                <p class="comment-likes tracked-count">  <%= events[0].lines[i].trackedCount %> </p>
+                                
+                                <img  class="like-btn" src="/image/thumbs-up-grey.svg" height="35px" alt="">
+                                <p class="comment-likes">  <%= events[0].lines[i].likes %> </p>
+                                <img class="dislike-btn" src="/image/thumbs-down-grey.svg" height="35px" alt="">
+                                <p class="comment-dislikes">   <%= events[0].lines[i].dislikes %> </p>
+                            </div>
+                        </div>
+                        
+                        <p class="betting-hub-bet-odds odds-track-btn <%=events[0].lines[i]._id.toString()%>-redirect"><%=(events[0].lines[i].odds<0?"":"+")+events[0].lines[i].odds %></p>
+                    </div>
+                    
+
+                    <div class="bet-info-container">
+                        <div style="display: grid;">
+                            <h2 class="betting-hub-bet-text"><%=events[0].lines[i+1].condition.split("_")[0] %><span class="betting-hub-bet-subtext">- <%=events[0].lines[i+1].type %></span></h2>
+                            <div class="comment-row">
+                                <img id="<%=events[0].lines[i+1]._id.toString()%>?<%=events[0].lines[i+1].condition%>?<%=events[0].lines[i+1].odds%>?<%=events[0].lines[i+1].fightID%>?<%=events[0].lines[i+1].type%>?<%=events[0].lines[i+1].eventID%>?<%=events[0].lines[i].condition %>" class="track-bet" src="/image/track-light.svg" height="30px" alt="bet tracking icon">
+                                <p class="comment-likes tracked-count">  <%= events[0].lines[i+1].trackedCount %> </p>
+                                <img  class="like-btn" src="/image/thumbs-up-grey.svg" height="35px" alt="">
+                                <p class="comment-likes">  <%= events[0].lines[i+1].likes %> </p>
+                                <img class="dislike-btn" src="/image/thumbs-down-grey.svg" height="35px" alt="">
+                                <p class="comment-dislikes">   <%= events[0].lines[i+1].dislikes %> </p>
+                            </div>
+                        </div>
+                        <p class="betting-hub-bet-odds odds-track-btn <%=events[0].lines[i+1]._id.toString()%>-redirect"><%=(events[0].lines[i+1].odds<0?"":"+")+events[0].lines[i+1].odds %></p>
+                    </div>
+                </div>
+            <% } %>
+
+        </div>
+        <div class="track-bet-slide-down">
+            <div class="track-bet-row">
+                <img src="/image/track-light.svg" height="40px" alt="bet tracking icon">
+                <h3>Track bet</h3>
+            </div>
+
+            <div class="betslip-bets">
+
+            </div>
+
+            <div class="parlay-odds-container">
+                <p class="betting-hub-bet-subtext">Parlay:</p>
+                <p class="betting-hub-bet-odds parlay-odds"></p>
+            </div>
+            
+
+
+            
+                <div style="display: grid;">
+                    <label for="wager">Wager:</label>
+                    <div class="track-bet-row">    
+                        <input class="track-input" name="wager" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="0">
+                        <p class="betting-hub-bet-subtext">(Units)</p>
+                    </div>
+                </div>
+                
+                
+            
+            <div class="track-bet-row">
+                <button class="button-1 submit-track">Track</button>
+                <button class="secondary-btn track-cancel-btn">Cancel</button>
+            </div>
+            
+
+
+        </div>  
+    </div> 
+    
+
+    
+</div>
+<script>
+    var eventData = <%- JSON.stringify(events) %>;
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<% if(user){ %>
+    <script>
+        var userID="<%= user.id %>";
+        </script>   
+        <script type="text/javascript" src="/javascript/track-bets.js"></script>
+<% } %>
+
+<script type="text/javascript" src="/javascript/change-event.js"></script>
+<%- include("partials/footer"); -%>

@@ -4,7 +4,7 @@ const db=require(__dirname+"/db.js");
 
 function initialize(passport){
     const authenticateUser = async (username,password,done) =>{
-        const user = await db.findUserByUsername(username);
+        const user = await db.findUserByUsername(username.toLowerCase());
         if(user==null){
             return done(null, false, {message: "No user with that username"})
         }

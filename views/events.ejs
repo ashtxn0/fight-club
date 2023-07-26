@@ -37,7 +37,7 @@
             <div class="swiper-button-next swiper-button-next1 swipe"><img class="swiper-nav-button nav-dark" style="height: 68px;" src="/image/right-arrow-btn.svg" alt=""><img class="swiper-nav-button nav-light" style="height: 68px;" src="/image/right-arrow-btn-black.svg" alt=""></div>
          </div>       
         <div class="divider"></div>
-         <h3 class="events-title">LFA</h3>            
+         <h3 class="events-title">Regional</h3>            
          <div class="swiper-container swiper2">
             <div class="swiper-wrapper">
                 <% newEvents.reverse().forEach(function(event){ %>                                   
@@ -47,7 +47,7 @@
                         <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
                         <div class="events-info-container">
                           <h3><%= event.name %></h3>
-                          <p><%= event.date %></p>
+                          <p><%= event.date.toDateString().split(" ").slice(0,4).join(" ") %></p>
                           <p><%= event.location %></p>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
                       <a href=<%= "/event/"+ event._id %>><img class="events-Photo" src=<%="/data/uploads/"+ event.picture %> alt="event picture"></a>
                       <div class="events-info-container">
                         <h3><%= event.name %></h3>
-                        <p><%= event.date %></p>
+                        <p><%= event.date.toDateString().split(" ").slice(0,4).join(" ") %></p>
                         <p><%= event.location %></p>
                       </div>
                   </div>

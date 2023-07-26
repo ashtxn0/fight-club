@@ -28,7 +28,7 @@ $(".profile-rankings-btn").on("click", function(event){
             $("#prediction-rankings-mmr").text("Points: "+res.mmr);
             $(".prediction-table td:not(.headings)").remove();
             if(res.predictions.length){
-                predictions=res.predictions.reverse();
+                predictions=res.predictions;
                 predictions.slice(0,10).forEach(function(prediction){
                     let mmrChange="";
                     let outcomeBackground=prediction.outcome.toLowerCase();
@@ -42,7 +42,7 @@ $(".profile-rankings-btn").on("click", function(event){
                     } if(outcomeBackground==="push"){
                         prediction.mmrChange=0;
                     }
-                    $(".prediction-table .headings").after("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>fighter name vs. opponent name</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>event name</td> </tr>")
+                    $(".prediction-table > tbody").append("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.fighterName+" vs. "+prediction.opponentName+"</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.eventName+"</td> </tr>")
                     currentPage = 1;
                     $(".user-prediction-page-number").text(currentPage.toString());
                     totalPages=Math.ceil(predictions.length/predictionsPerPage);
@@ -80,7 +80,7 @@ $(".next-button").on("click", function(event){
             } if(outcomeBackground==="push"){
                 prediction.mmrChange=0;
             }
-            $(".prediction-table .headings").after("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>fighter name vs. opponent name</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>event name</td> </tr>")
+            $(".prediction-table > tbody").append("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.fighterName+" vs. "+prediction.opponentName+"</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.eventName+"</td> </tr>")
         })
         currentPage++;
         $(".user-prediction-page-number").text(currentPage.toString())
@@ -110,7 +110,7 @@ $(".previous-button").on("click", function(event){
             } if(outcomeBackground==="push"){
                 prediction.mmrChange=0;
             }
-            $(".prediction-table .headings").after("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>fighter name vs. opponent name</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>event name</td> </tr>")
+            $(".prediction-table > tbody").append("<tr> <td class='prediction-table-predict "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.predictionName+" to win</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+prediction.outcome+"</td> <td class='prediction-table-result "+outcomeBackground+" "+profileTheme+"-theme-text'>"+mmrChange+prediction.mmrChange+"</td> <td class='prediction-table-fight "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.fighterName+" vs. "+prediction.opponentName+"</td> <td class='prediction-table-event "+profileTheme+"-theme-profile-heading-container "+profileTheme+"-theme-text'>"+prediction.eventName+"</td> </tr>")
         })
     }
     

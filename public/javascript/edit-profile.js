@@ -9,6 +9,7 @@ let result = document.querySelector('.result'),
 cropped = document.querySelector('.cropped');
 const submitCrop= document.querySelector('.submit-crop');
 const saveCrop= document.querySelector('.crop-save');
+let currentTheme = profileTheme;
 
 openButton.addEventListener("click",()=>{
     modal.showModal();
@@ -178,9 +179,9 @@ $(".profile-btn-small").on("click", function(event){
     $(".username-text").removeClass(theme+"-theme-profile-title");
     $(".profile-heading-container").removeClass(theme+"-theme-profile-heading-container");
     $(".prediction-table td:not(.prediction-table-result)").removeClass(theme+"-theme-profile-heading-container");
-    $(".prediction-table th").removeClass(theme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3, .prediction-rankings-title p,.prediction-table-result,.prediction-rankings-subtext,.comment-content").removeClass(theme+"-theme-text");
-    $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").removeClass(theme+"-theme-prediction-rankings-table-heading");
+    $(".prediction-table th,.tracked-event-headings th").removeClass(theme+"-theme-profile-table-heading");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3, .prediction-rankings-title > h2,.prediction-table-result,.prediction-rankings-subtext,.comment-content").removeClass(theme+"-theme-text");
+    $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading,.tracked-bets-stats-container,#tracked-bets-chart").removeClass(theme+"-theme-prediction-rankings-table-heading");
     $(".profile-btn").removeClass(theme+"-theme-btn");
     $(".profile-page-container").removeClass(theme+"-theme-profile-page-container");
 
@@ -190,9 +191,9 @@ $(".profile-btn-small").on("click", function(event){
         $(".username-text").removeClass(currentTheme+"-theme-profile-title");
         $(".profile-heading-container").removeClass(currentTheme+"-theme-profile-heading-container");
         $(".prediction-table td:not(.prediction-table-result)").removeClass(currentTheme+"-theme-profile-heading-container");
-        $(".prediction-table th").removeClass(currentTheme+"-theme-profile-table-heading");
-        $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-rankings-subtext,.prediction-table-result,.comment-content").removeClass(currentTheme+"-theme-text");
-        $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").removeClass(currentTheme+"-theme-prediction-rankings-table-heading");
+        $(".prediction-table th,.tracked-event-headings th").removeClass(currentTheme+"-theme-profile-table-heading");
+        $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > h2,.prediction-rankings-subtext,.prediction-table-result,.comment-content").removeClass(currentTheme+"-theme-text");
+        $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading,.tracked-bets-stats-container,#tracked-bets-chart").removeClass(currentTheme+"-theme-prediction-rankings-table-heading");
         $(".profile-btn").removeClass(currentTheme+"-theme-btn");
         $(".profile-page-container").removeClass(currentTheme+"-theme-profile-page-container");
     }
@@ -200,11 +201,11 @@ $(".profile-btn-small").on("click", function(event){
     $(".title-text").addClass(profileTheme+"-theme-profile-title");
     $(".username-text").addClass(profileTheme+"-theme-profile-title");
     $(".profile-heading-container").addClass(profileTheme+"-theme-profile-heading-container");
-    $(".prediction-table th").addClass(profileTheme+"-theme-profile-table-heading");
-    $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading").addClass(profileTheme+"-theme-prediction-rankings-table-heading");
+    $(".prediction-table th,.tracked-event-headings th").addClass(profileTheme+"-theme-profile-table-heading");
+    $(".prediction-rankings-table-heading,.prediction-rankings-subtext-heading,.tracked-bets-stats-container,#tracked-bets-chart").addClass(profileTheme+"-theme-prediction-rankings-table-heading");
     $(".profile-btn").addClass(profileTheme+"-theme-btn");
-    $(".prediction-table th").addClass(profileTheme+"-theme-profile-table-heading");
-    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > *,.prediction-table-result,.prediction-rankings-subtext,.comment-content").addClass(profileTheme+"-theme-text");
+    $(".prediction-table th,.tracked-event-headings th").addClass(profileTheme+"-theme-profile-table-heading");
+    $(".prediction-table-fight, .prediction-table-event, .prediction-table-predict,.profile-about,.profile-favs > h3 *,.profile-about,.profile-favs > h3,.prediction-rankings-title > h2,.prediction-table-result,.prediction-rankings-subtext,.comment-content").addClass(profileTheme+"-theme-text");
     $(".prediction-table td:not(.prediction-table-result)").addClass(profileTheme+"-theme-profile-heading-container");
     $(".profile-page-container").addClass(profileTheme+"-theme-profile-page-container");
     currentTheme=profileTheme;

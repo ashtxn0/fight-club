@@ -5,7 +5,14 @@
         <h1 class="title-text eventName">Premium</h1>
         <div class="rect"></div>
     </div>   
-    <h1>Support the developer and get exclusive perks!</h1>
+    <div class="premium-error-container">
+        
+    <% if (messages.error) { %>
+        <p class="error-premium"><%= messages.error %></p>
+   <% } %>
+    </div>
+    <div class="premium-sub-background-container">
+        <h1>Support the developer and get exclusive perks!</h1>
     <div class="premium-sub-container">
         
         <div class="premium-col">
@@ -32,10 +39,15 @@
                 <li>Cancel anytime.</li>
                 <li>More to come.</li>
             </ul>
-            <a target="_blank" class="button-1" href="https://buy.stripe.com/8wM4k14JI0TD3mg000">Subscribe</a>
+
+              
+            <!-- <a target="_blank" class="button-1" href="https://buy.stripe.com/8wM4k14JI0TD3mg000">Subscribe</a> -->
             
             
         </div>
+        <form class="subscribe-form" action="/premium" method="POST">
+            <button type="submit" class="button-1">Subscribe</button>
+          </form>
         <h3 class="stripe-logo">
 
             <img height="30px" src="/image/lock-light.svg" alt="secure icon">
@@ -44,6 +56,7 @@
         </h3>
         </div>
     </div>
+</div>
 </div>
 
 

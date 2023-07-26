@@ -16,7 +16,16 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.css" integrity="sha512-C4k/QrN4udgZnXStNFS5osxdhVECWyhMsK1pnlk+LkC7yJGCqoYxW4mH3/ZXLweODyzolwdWSqmmadudSHMRLA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" integrity="sha512-cyzxRvewl+FOKTtpBzYjW6x6IAYUCZy3sGP40hn+DQkqeluGRCax7qztK2ImL64SA+C7kVWdLI6wvdlStawhyw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+var darkEnabled;
+if (localStorage.getItem('themeMode') === 'dark') {
+    document.documentElement.classList.add('dark');
+    darkEnabled = "dark";
+  } else if(!localStorage.getItem('themeMode') && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.documentElement.classList.add('dark');
+    darkEnabled = "dark";
+  }</script>
 </head>
 <body>
 
@@ -25,7 +34,8 @@
         <a href="/" class="logo logo-dark"><img class="logo" src="/image/fightclublogo3d-dark.png" alt="fight club logo"/></a>
         <a class="task events-task" href="/events">Events</a>
         <a class="task" href="/tape-index">Tape Index</a>
-        <a class="task" href="/home">Best Bets</a>
+            <a  class="task" href="/betting-hub">Betting Hub</a>
+        
         <a class="task" href="/leaderboards">Prediction Rankings</a>
         <a class="task" class="premium" href="/premium">Premium</a>
         <% if(user){ %>
@@ -35,11 +45,23 @@
                 <a href="/user/<%=user.username%>">View Profile</a>
                 <a class="task events-task mobile-task" href="/events">Events</a>
                 <a class="task mobile-task" href="/tape-index">Tape Index</a>
-                <a class="task mobile-task" href="/home">Best Bets</a>
+                <a  class="task mobile-task" href="/betting-hub">Betting Hub</a>
                 <a class="task mobile-task" href="/leaderboards">Prediction Rankings</a>
-                <a class="task mobile-task" class="premium" href="/home">Premium</a>
-                <form action="/logout?_method=DELETE" method="post">
-                    <button style="padding: 5px;" class="fight-page-predict-button" type="submit">logout</button>
+                <a class="task mobile-task" class="premium" href="/premium">Premium</a>
+                <div class="dark-theme-container">
+                    
+                <p class="task-title">Dark theme </p>
+                <div class="theme-checkbox">
+                    <input type="checkbox" class="checkbox" id="checkbox">
+                    <label for="checkbox" class="checkbox-label">
+                      <img src="/image/dark-mode.svg" height="20px" alt="">
+                      <img src="/image/light-mode.svg" height="20px" alt="">
+                      <span class="ball"></span>
+                    </label>
+                  </div>
+                  </div>
+                <form style="display: flex; justify-content: center; margin: 0%;" action="/logout?_method=DELETE" method="post">
+                    <button class="logout-btn" type="submit">Logout</button>
                 </form>
             </div>
         </div>
@@ -51,10 +73,22 @@
                 <a onclick="userDropDown()" class="drop-down-btn menu-dark"><img style="margin-right: 5px;" class="drop-down-img prof-image-comment" src="/image/hamburger-ui-dark.svg" alt="ui menu icon"></a>
                 <div id="userDropDown" class="user-drop-content">
                     <a class="task events-task mobile-task" href="/events">Events</a>
-                    <a class="task mobile-task" href="/event">Study Buddy</a>
-                    <a class="task mobile-task" href="/home">Best Bets</a>
+                    <a  class="task mobile-task" href="/betting-hub">Betting Hub</a>
                     <a class="task mobile-task" href="/leaderboards">Prediction Rankings</a>
-                    <a class="task mobile-task" class="premium" href="/premium">Premium</a>
+                    <a class="task mobile-task" href="/tape-index">Tape Index</a>
+                    <a class="task mobile-task" href="/premium">Premium</a>
+                    <div class="dark-theme-container">
+                    
+                    <p class="task-title">Dark theme </p>
+                    <div class="theme-checkbox">
+                        <input type="checkbox" class="checkbox" id="checkbox">
+                        <label for="checkbox" class="checkbox-label">
+                          <img src="/image/dark-mode.svg" height="20px" alt="">
+                          <img src="/image/light-mode.svg" height="20px" alt="">
+                          <span class="ball"></span>
+                        </label>
+                      </div>
+                      </div>
                     <a class="task login-task mobile-task" href="/login">Login/Signup</a>
                 </div>
             </div>

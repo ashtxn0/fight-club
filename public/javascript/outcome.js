@@ -8,16 +8,27 @@ const tapeindexModal=document.querySelector("[tapeindex-modal]");
 const tapeindexButtonsOpen = document.querySelectorAll(".tapeindex-btn");
 const tapeindexButtonClose=document.querySelector("[tapeindex-close-modal]");
 
+const outcomeSelect = document.getElementById("outcome");
+const fighterNameOption = outcomeSelect.querySelector('option[value="fighterName"]');
+const opponentNameOption = outcomeSelect.querySelector('option[value="opponentName"]');
+
 let currentTheme="";
 let fightID="";
 let fightName="";
 let fighterID="";
+let fighterName;
+let opponentName;
 
 openButtons.forEach(function(btn){
     btn.addEventListener("click",(event)=>{
         modal.showModal();
-
+        fighterName=btn.name.split("?")[0];
+        opponentName=btn.name.split("?")[1];
         fightID=event.target.id.split("-")[0];
+        fighterNameOption.textContent = fighterName;
+        fighterNameOption.value = fighterName;
+        opponentNameOption.textContent = opponentName;
+        opponentNameOption.value = opponentName;
     })
 })
 
@@ -32,9 +43,8 @@ predictionButtonsOpen.forEach(function(btn){
 tapeindexButtonsOpen.forEach(function(btn){
     btn.addEventListener("click",(event)=>{
         tapeindexModal.showModal();
-        fighterID=event.target.id.split(":")[1];
-        fightName=event.target.id.split(":")[0].replace(/_/g, ' ');
-        console.log(fighterID,fightName)
+        fighterID=event.target.id.split("?")[1];
+        fightName=event.target.id.split("?")[0].replace(/_/g, ' ');
         // fightID=event.target.id.split("-")[0];
     })
 })
@@ -51,12 +61,19 @@ predictionButtonsClose.addEventListener("click",()=>{
     predictionModal.close();
 })
 
+$(".add-timing-btn").on("click", function(event){
+    $(".add-timing-btn").after("<label for='tape-time'>Enter time:</label><input class='tape-time' type='text'>");
+})
+
 $(".submit-tapeindex").on("click", function(event){
 
     let action="submitTapeIndex";
     let tapeLink=$(".tape-link").val();
-
-      closeButton.click();
+    let tapeTime=$(".tape-time").val() || "";
+    $(".tape-time").remove();
+    $(".tape-link").val("");
+    tapeindexButtonClose.click();
+    
     $.ajax({
         url: "/ajaxAdminFightActions",
         method:"post",
@@ -65,6 +82,7 @@ $(".submit-tapeindex").on("click", function(event){
             fightName:fightName,
             action:action,
             tapeLink:tapeLink,
+            tapeTime:tapeTime,
             userID:userID
         },
         success: function(res){
@@ -74,19 +92,27 @@ $(".submit-tapeindex").on("click", function(event){
 })
 
 $(".submit-fight-outcome").on("click", function(event){
-    let winner=$(".winner").val();
+    let winner;
     let method=$(".method").val();
     let round=$(".round").val();
     let time=$(".time").val();
     let result="";
     let action="submitFightOutcome";
-    if(winner==="draw"){
-        result="draw";
-      } else if (winner==="no contest"){
-        result="no contest";
-      } else{
-        result=winner+" won";
+
+      let outcomeSelect = document.getElementById("outcome");
+      let selectedOption = outcomeSelect.options[outcomeSelect.selectedIndex].value;
+      
+      if (selectedOption === "draw") {
+        winner = "draw";
+        result = "draw";
+      } else if (selectedOption === "no contest") {
+        winner = "no contest";
+        result = "no contest";
+      } else {
+        winner = selectedOption;
+        result = winner + " won";
       }
+
       closeButton.click();
     $.ajax({
         url: "/ajaxAdminFightActions",

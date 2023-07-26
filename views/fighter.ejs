@@ -11,14 +11,10 @@
                 </div>
                 <div class="fighter-page-info">
                     <p><%= fighter.locality %> | <%= fighter.nationality %></p>
-                    <p>Age: <%= fighter.age %> (Born: <%= fighter.birthday %>)</p>
-                    <p>Height: <%= fighter.height %></p>
-                    <p>Weight Class: <%= fighter.weight_class %> (<%= fighter.weight %>)</p>
+                    <p><span class="fighter-info-title">Age:</span> <%= fighter.age %> (Born: <%= fighter.birthday %>)</p>
+                    <p><span class="fighter-info-title">Height:</span> <%= fighter.height %></p>
+                    <p><span class="fighter-info-title">Weightclass:</span> <%= fighter.weight_class %> (<%= fighter.weight %>)</p>
                 </div>
-        </div>
-        <div class="fighter-page-comments">
-            <h2 class="title-text">Comments: </h2>
-
         </div>
     </div>
     <div class="event-fight-history">
@@ -36,7 +32,7 @@
                 <a href="/fighter/<%= fight.opponent.replace(/\s+/g, '-') %>"><%= fight.opponent %></a>
             </div>
             <div class="event-fight-history-col">
-                <p><span class="<%= fight.result %>"><%= fight.result %></span> via <span><%= fight.method %> R<%= fight.round %>: <%= fight.time %></span></p>
+                <p><span class="<%= fight.result %>"><%= fight.result %></span><% if(fight.method){ %> via <span><%= fight.method %><% } %> <% if(fight.round){ %>R<%= fight.round %>: <%= fight.time %><% } %></span> </p>
                 <% if (fight.isTitleFight) { %>
                     <div class="belt-row">
                         <p class="event-fight-name"><%= fight.name %></p>

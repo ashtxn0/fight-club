@@ -4,7 +4,7 @@ $(".predict-btn").on("click", function(event){
     if(username){
         let fightID=event.currentTarget.classList[1];
         let fighterID=event.currentTarget.id;
-        let predictionName=[event.currentTarget.classList[2],event.currentTarget.classList[3]].join(" ");
+        let predictionName=event.currentTarget.classList[2].replace(/_/g, ' ');
         let prediction={
             fighterID:fighterID,
             fightID:fightID,

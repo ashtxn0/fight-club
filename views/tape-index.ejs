@@ -10,71 +10,12 @@
             <!-- <img style="max-width: 150px;" class="belt-image" src="/image/ufc-belt.png" alt="ufc belt"> -->
         <div class="tape-index-row">
             <div class="fight-index-fighter-col slide-out-fighter">
-                <!-- <div class="fight-index-fighter-info-col">
-                    <div class="tape-index-fighter-img-container">
-                        <img class="tape-index-fighter-img-lg" src=<%="/data/uploads/"+ events[0].picture %> alt="event picture">
-                        <div class="background-gradient"></div>
-                        <div class="tape-index-fighter-title">
-                            <h3>Fighter name</h3>
-                            <p>(w-L)</p>
-                        </div>                
-                    </div>
-                    <div class="tape-index-fighter-info">
-                        <p>age</p>
-                        <p>height</p>
-                        <p>weight</p>
-                        <p>wins via: #KO - #SUB - #DEC</p>
-                        <p>losses via: #KO - #SUB - #DEC</p>
-                    </div>                
-                </div>
-                <h3>Fight Links:</h3>
-                <div class="tape-index-fights">
-                    <div class="tape-index-fight-row">
-                        <div class="tape-index-fight-outcome fight-win">
-                            <h3>Win</h3>
-                        </div>
-                        <div class="tape-index-fight-info">
-                            <h3>vs. Opponent Nadfgedrfgdfgme <span>(W-L)</span></h3>
-                            <p>opponent reach/height</p>
-                            <p>outcome</p>
-                        </div>
-                    </div>                      
-                </div> -->
 
 
 
             </div>
             <div class="fight-index-fighter-col slide-out-opponent">
-                <!-- <div class="fight-index-fighter-info-col">
-                    <div class="tape-index-fighter-img-container">
-                        <img class="tape-index-fighter-img-lg" src=<%="/data/uploads/"+ events[0].picture %> alt="event picture">
-                        <div class="background-gradient"></div>
-                        <div class="tape-index-fighter-title">
-                            <h3>Fighter name</h3>
-                            <p>(w-L)</p>
-                        </div>                
-                    </div>
-                    <div class="tape-index-fighter-info">
-                        <p>age</p>
-                        <p>height</p>
-                        <p>weight</p>
-                        <p>wins via: #KO - #SUB - #DEC</p>
-                        <p>losses via: #KO - #SUB - #DEC</p>
-                    </div>                
-                </div>
-                <h3 style="visibility: hidden;">Fight Links:</h3>
-                <div class="tape-index-fights">
-                    <div class="tape-index-fight-row">
-                        <div class="tape-index-fight-outcome fight-win">
-                            <h3>Win</h3>
-                        </div>
-                        <div class="tape-index-fight-info">
-                            <h3>vs. Opponent Nadfgedrfgdfgme <span>(W-L)</span></h3>
-                            <p>opponent reach/height</p>
-                            <p>outcome</p>
-                        </div>
-                    </div>                      
-                </div> -->
+ 
             </div>
         </div>
     </div>
@@ -108,5 +49,7 @@
 
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-<script type="text/javascript" src="/javascript/tapeindex.js"></script> 
+<% if(user.premium){ %>
+    <script type="text/javascript" src="/javascript/tapeindex.js"></script> 
+<% } %>
 <%- include("partials/footer"); -%>
